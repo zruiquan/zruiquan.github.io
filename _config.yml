@@ -112,7 +112,29 @@ deploy:
   repo: git@github.com:zruiquan/zruiquan.github.io.git
   branch: master
 
+#hexo-admin 配置
 admin:
   username: zruiquan
   password_hash: $2a$10$UO2AHDPB.2X8Ql9MjDcqbuy/aedOAQb2F120CSVDwHAanAOe2YjXS
   secret: secret
+
+# 宠物配置
+live2d:
+  enable: true   #开启宠物
+  scriptFrom: local
+  model:
+    use: live2d-widget-model-shizuku
+  display:
+    position: right   #指定宠物显示的位置
+    width: 120    #指定宠物显示的宽度
+    height: 230   #指定宠物显示的高度
+  mobile:
+    show: true  #是否在手机上显示
+
+# 阅读更多配置
+excerpt:
+  depth: 5  
+  excerpt_excludes: []
+  more_excludes: []
+  hideWholePostExcerpts: true
+
