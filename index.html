@@ -287,161 +287,14 @@
 <td>后宫三国</td>
 </tr>
 </tbody></table>
-<h3 id="服务端配置"><a href="#服务端配置" class="headerlink" title="服务端配置"></a>服务端配置</h3><table>
-<thead>
-<tr>
-<th><code>game*Context.xml</code></th>
-<th><code>serverContext.xml</code></th>
-<th><code>zonesContext.xml</code></th>
-</tr>
-</thead>
-<tbody><tr>
-<td>321</td>
-<td>sg2</td>
-<td>s321  ig308</td>
-</tr>
-</tbody></table>
-<h2 id="开区"><a href="#开区" class="headerlink" title="开区"></a>开区</h2><h3 id="修改配置"><a href="#修改配置" class="headerlink" title="修改配置"></a>修改配置</h3><ol>
-<li><p>更新策划配置文件</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">svn up /usr/local/tomcat/webapps/sanguo/WEB-INF/configs</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>添加&amp;修改<code>custom</code>下的分区文件（有规律的看下就好）</p>
-<ol>
-<li>新增配置文件 <code>gameXXXContext.xml</code> <code>zonesContext.xml</code></li>
-<li>修改其中一台服务器中的<code>serverContext.xml</code></li>
-<li><code>serverContext.xml</code>在<code>sg1</code></li>
-</ol>
-</li>
-</ol>
-<h3 id="新增通行证入口"><a href="#新增通行证入口" class="headerlink" title="新增通行证入口"></a>新增通行证入口</h3><ol>
-<li><p><a href="http://xia.gz.1251010508.clb.myqcloud.com/sanguo/admin/doLogin.admin" target="_blank" rel="noopener">登录后台</a> –&gt;添加游戏分区</p>
-</li>
-<li><p>添加对应最新的分区信息</p>
-<table>
-<thead>
-<tr>
-<th>游戏标识</th>
-<th>游戏中文名</th>
-<th>扩展名</th>
-<th>优先级</th>
-<th>回调地址</th>
-<th>所属平台</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>sanguo321</td>
-<td>宫三国321区</td>
-<td>新区</td>
-<td>3210</td>
-<td><a href="https://sanguo.h5eco.com/sanguo/indexss.html" target="_blank" rel="noopener">https://sanguo.h5eco.com/sanguo/indexss.html</a></td>
-<td>安卓</td>
-</tr>
-<tr>
-<td>isanguo308</td>
-<td>宫三国308区</td>
-<td>新区</td>
-<td>13080</td>
-<td><a href="https://sanguo.h5eco.com/sanguo/indexss.html" target="_blank" rel="noopener">https://sanguo.h5eco.com/sanguo/indexss.html</a></td>
-<td>ios</td>
-</tr>
-</tbody></table>
-</li>
-</ol>
-<h3 id="新增客服"><a href="#新增客服" class="headerlink" title="新增客服"></a>新增客服</h3><ol>
-<li><p><a href="http://cs.gz.1251010508.clb.myqcloud.com/custom2" target="_blank" rel="noopener">登陆后台</a> –&gt;分区列表–&gt;添加分区</p>
-</li>
-<li><p>添加最新分区的客服信息</p>
-<table>
-<thead>
-<tr>
-<th>游戏标识</th>
-<th>中文名</th>
-<th>回调地址</th>
-<th>游戏选择</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>sanguo321</td>
-<td>宫三国321</td>
-<td><a href="http://10.66.101.217/sanguo/passport/service.jsp" target="_blank" rel="noopener">http://10.66.101.217/sanguo/passport/service.jsp</a></td>
-<td>后宫三国</td>
-</tr>
-</tbody></table>
-</li>
-</ol>
-<h3 id="服务器重启"><a href="#服务器重启" class="headerlink" title="服务器重启"></a>服务器重启</h3><ol>
-<li><p><a href="https://console.cloud.tencent.com/clb/detail?rid=1&id=lb-p7vs4h4b&tab=listener" target="_blank" rel="noopener">登陆腾讯云lb后台</a></p>
-<p><img src="https://qn.nasx.top/20200221123354.png" alt></p>
-</li>
-</ol>
-<ol start="2">
-<li><p>解绑两台中的其中一台服务器后，重启该服务器，重启后重新绑定再解绑两外一台，之后重复上次操作直至每台服务器都重启成功</p>
-<p><img src="https://qn.nasx.top/20200221123514.png" alt></p>
-</li>
-</ol>
-<h3 id="开放通行证入口"><a href="#开放通行证入口" class="headerlink" title="开放通行证入口"></a>开放通行证入口</h3><ol>
-<li><p><a href="http://xia.gz.1251010508.clb.myqcloud.com/sanguo/admin/doLogin.admin" target="_blank" rel="noopener">登录后台</a> </p>
-</li>
-<li><p>打开之前新增分区的开关即可，ios和安卓的都要开</p>
-<p><img src="https://qn.nasx.top/20200221124118.png" alt></p>
-<p><img src="https://qn.nasx.top/20200221131758.png" alt></p>
-</li>
-</ol>
-<h2 id="上活动"><a href="#上活动" class="headerlink" title="上活动"></a>上活动</h2><h3 id="关通行证"><a href="#关通行证" class="headerlink" title="关通行证"></a>关通行证</h3><ol>
-<li><p>登录后台</p>
-</li>
-<li><p>停掉关闭所有通行证分区入口</p>
-<p><img src="https://qn.nasx.top/20200221125558.png" alt></p>
-</li>
-</ol>
-<h3 id="踢人"><a href="#踢人" class="headerlink" title="踢人"></a>踢人</h3><ol>
-<li><p>分别修改两台服务器的<code>server.jsp</code></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /usr/local/tomcat/webapps/sanguo/admin/server.jsp</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://qn.nasx.top/20200221125928.png" alt></p>
-</li>
-<li><p>访问链接踢人</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">http://134.175.116.144/sanguo/admin/server.jsp</span><br><span class="line">http://134.175.116.165/sanguo/admin/server.jsp</span><br></pre></td></tr></table></figure>
-
-</li>
-</ol>
-<h3 id="更新"><a href="#更新" class="headerlink" title="更新"></a>更新</h3><ol>
-<li><p>更新两台服务器端配置</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">svn up /usr/local/tomcat/webapps/sanguo/WEB-INF/configs</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>上传到cdn最新资源并刷新</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">http://sgcdn.h5eco.com/sg/img/addshort.png</span><br><span class="line">http://sgcdn.h5eco.com/sg/img/wheel/wheelConfig.jpg</span><br><span class="line">http://sgcdn.h5eco.com/sg/img/spring/new-year.png</span><br><span class="line">http://sgcdn.h5eco.com/sg/img/spring/1.jpg</span><br><span class="line">http://sgcdn.h5eco.com/sg/img/activity/51festi.jpg</span><br><span class="line">http://sgcdn.h5eco.com/sg/img/activity/s11Bg.jpg</span><br><span class="line">http://sgcdn.h5eco.com/sg/img/activity/shuang11z.png</span><br><span class="line">http://sgcdn.h5eco.com/sg/img/activity/shuangdan.png</span><br><span class="line">http://sgcdn.h5eco.com/sg/img/activity/jifen.jpg</span><br><span class="line">http://sgcdn.h5eco.com/sg/img/activity/rich2.jpg</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>重启服务器</p>
-</li>
-</ol>
-<h3 id="开放入口"><a href="#开放入口" class="headerlink" title="开放入口"></a>开放入口</h3><h4 id="开放服务器入口"><a href="#开放服务器入口" class="headerlink" title="开放服务器入口"></a>开放服务器入口</h4><ol>
-<li><p>分别修改两台服务器的<code>server.jsp</code></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /usr/local/tomcat/webapps/sanguo/admin/server.jsp</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://qn.nasx.top/20200306113648.png" alt></p>
-</li>
-<li><p>访问开放入口链接</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">http://134.175.116.144/sanguo/admin/server.jsp</span><br><span class="line">http://134.175.116.165/sanguo/admin/server.jsp</span><br></pre></td></tr></table></figure>
-
-</li>
-</ol>
-<h4 id="开放通行证入口-1"><a href="#开放通行证入口-1" class="headerlink" title="开放通行证入口"></a>开放通行证入口</h4><p><img src="https://qn.nasx.top/20200221130812.png" alt></p>
-<h2 id="下活动"><a href="#下活动" class="headerlink" title="下活动"></a>下活动</h2><h4 id="更新配置"><a href="#更新配置" class="headerlink" title="更新配置"></a>更新配置</h4><p>分别登陆两台服务器更新配置</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd /usr/local/tomcat/webapps/sanguo/WEB-INF/</span><br><span class="line">svn up configs</span><br></pre></td></tr></table></figure>
-
-<h4 id="解绑负载均衡"><a href="#解绑负载均衡" class="headerlink" title="解绑负载均衡"></a>解绑负载均衡</h4><p><a href="https://console.cloud.tencent.com/clb/index?rid=1&keyword=sg1&type=2%2C3&forward=0" target="_blank" rel="noopener">登陆腾讯云<code>lb</code>后台</a></p>
-<p><img src="https://qn.nasx.top/20200302174353.png" alt></p>
-<p>同时解绑两个<code>lb</code>的同一台服务器（我一般是先解绑<code>sg1</code>后解绑<code>sg2</code>）</p>
-<p><img src="https://qn.nasx.top/20200302174724.png" alt></p>
-<p><img src="https://qn.nasx.top/20200302174804.png" alt></p>
-<h4 id="重启tomcat"><a href="#重启tomcat" class="headerlink" title="重启tomcat"></a>重启tomcat</h4><p>当解绑完<code>sg1</code>后再去重启<code>tomcat</code></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 停tomcat</span></span><br><span class="line">cd /usr/local/tomcat/bin</span><br><span class="line">./shutdown.sh</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 检查是否停成功</span></span><br><span class="line">ps aux|grep tomcat</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 确保tomcat进程消失后再启动tomcat</span></span><br><span class="line">./startup.sh</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 通过启动日志检查tomcat是否启动成功</span></span><br><span class="line">tail -f /data/tomcat_logs/catalina.out</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 当看到如下日志说明tomcat已经启动完成</span></span><br><span class="line">INFO: Server startup in 216965 ms</span><br></pre></td></tr></table></figure>
-
-<h4 id="重新绑定服务器"><a href="#重新绑定服务器" class="headerlink" title="重新绑定服务器"></a>重新绑定服务器</h4><p>重新绑定刚才解绑的<code>sg1</code>服务器</p>
-<p><img src="https://qn.nasx.top/20200302180054.png" alt></p>
-<p>重复刚才<code>sg1</code>的步骤完成<code>sg2</code>的维护即可</p>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/02/21/%E5%90%8E%E5%AE%AB%E4%B8%89%E5%9B%BD/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -537,6 +390,9 @@
       </div>
   </nav>
 </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
 
 
 
@@ -575,15 +431,7 @@
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
     <span title="站点阅读时长">2 分钟</span>
 </div>
-<div class="powered-by">
-<i class="fa fa-user-md"></i>
-<span id="busuanzi_container_site_uv">
-  本站总访客数:<span id="busuanzi_value_site_uv"></span>&nbsp;&nbsp;| 
-</span>
-<span id="busuanzi_container_site_pv">
-    &nbsp;本站总访问量<span id="busuanzi_value_site_pv"></span>次
-</span>
-</div>
+
 
 
 
@@ -638,7 +486,7 @@
 
   
 
-</body>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"right","width":120,"height":230},"mobile":{"show":true},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
 </html>
 <!-- 页面点击小红心 -->
 <script type="text/javascript" src="/js/src/clicklove.js"></script>
