@@ -46,7 +46,7 @@ npm install
 npm install hexo-deployer-git --save
 ```
 
-## 7、生成，部署：
+## 7、生成，部署
 
 ```
 hexo g
@@ -59,7 +59,7 @@ hexo d
 hexo new newpage
 ```
 
-## Tips:
+## Tips
 
 ```
 不要忘了，每次写完最好都把源文件上传一下
