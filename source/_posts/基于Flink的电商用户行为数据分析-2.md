@@ -15,6 +15,8 @@ categories:
 * 在UserBehaviorAnalysis下新建一个maven module作为子项目，命名为HotItemsAnalysis
 * 父项目只是为了规范化项目结构，方便依赖管理，本身是不需要代码实现的，所以UserBehaviorAnalysis下的src 文件夹可以删掉
 
+
+
 ```xml
 <properties>
     <flink.version>1.10.1</flink.version>
@@ -60,20 +62,22 @@ categories:
 
 ### 数据准备
 
-​		将数据文件UserBehavior.csv复制到资源文件目录src/main/resources 下，我们将从这里读取数据。至此，我们的准备工作都已完成，接下来可以写代码了
+将数据文件UserBehavior.csv复制到资源文件目录src/main/resources 下，我们将从这里读取数据。至此，我们的准备工作都已完成，接下来可以写代码了
 
 ### 模块代码实现
 
-​		我们将实现一个"实时热门商品"的需求，可以将"实时热门商品"翻译成程序员更好理解的需求：每隔5分钟输出最近一小时内点击量最多的前N个商品。将这个需求进行分解我们大概要做这么几件事情：
+我们将实现一个"实时热门商品"的需求，可以将"实时热门商品"翻译成程序员更好理解的需求：每隔5分钟输出最近一小时内点击量最多的前N个商品。将这个需求进行分解我们大概要做这么几件事情：
 
 * 抽取出业务时间戳，告诉Flink框架基于业务时间做窗口
 * 过滤出点击行为数据
 * 按一小时的窗口大小,每5分钟统计一次,做滑动窗口聚合( Sliding Window)
 * 按每个窗口聚合，输出每个窗口中点击量前N名的商品
 
+
+
 #### 程序主体
 
-​		在 src/main/java/beans 下定义 POJOs： UserBehavior 和 ItemViewCount。 创建类  HotItems， 在 main 方 法中创建 StreamExecutionEnvironment 并做配 置，然后从 UserBehavior.csv 文件中读取数据，并包装成 UserBehavior 类型。代码如下：  
+在 src/main/java/beans 下定义 POJOs： UserBehavior 和 ItemViewCount。 创建类  HotItems， 在 main 方 法中创建 StreamExecutionEnvironment 并做配 置，然后从 UserBehavior.csv 文件中读取数据，并包装成 UserBehavior 类型。代码如下：  
 
 ```java
 public class HotItems {
@@ -103,14 +107,15 @@ public class HotItems {
 }
 ```
 
-​		这里注意， 我们需要统计业务时间上的每小时的点击量，所以要基于 EventTime来处理。那么如果让 Flink 按照我们想要的业务时间来处理呢？这里主要有两件事情要做。
-​		第一件是告诉 Flink 我们现在按照 EventTime 模式进行处理， Flink 默认使用ProcessingTime 处理，所以我们要显式设置如下：  
+这里注意， 我们需要统计业务时间上的每小时的点击量，所以要基于 EventTime来处理。那么如果让 Flink 按照我们想要的业务时间来处理呢？这里主要有两件事情要做。
+
+第一件是告诉 Flink 我们现在按照 EventTime 模式进行处理， Flink 默认使用ProcessingTime 处理，所以我们要显式设置如下：  
 
 ```java
 env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
 ```
 
-​	第二件事情是指定如何获得业务时间，以及生成 Watermark。 Watermark 是用来追踪业务事件的概念，可以理解成 EventTime 世界中的时钟，用来指示当前处理到什么时刻的数据了。由于我们的数据源的数据已经经过整理，没有乱序，即事件的时间戳是单调递增的，所以可以将每条数据的业务时间就当做 Watermark。这里我们用 AscendingTimestampExtractor 来实现时间戳的抽取和 Watermark 的生成。  
+第二件事情是指定如何获得业务时间，以及生成 Watermark。 Watermark 是用来追踪业务事件的概念，可以理解成 EventTime 世界中的时钟，用来指示当前处理到什么时刻的数据了。由于我们的数据源的数据已经经过整理，没有乱序，即事件的时间戳是单调递增的，所以可以将每条数据的业务时间就当做 Watermark。这里我们用 AscendingTimestampExtractor 来实现时间戳的抽取和 Watermark 的生成。  
 
 ```java
 .assignTimestampsAndWatermarks(new AscendingTimestampExtractor<UserBehavior>() {
@@ -121,11 +126,11 @@ env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
 });
 ```
 
-​		这样我们就得到了一个带有时间标记的数据流了，后面就能做一些窗口的操作。  
+这样我们就得到了一个带有时间标记的数据流了，后面就能做一些窗口的操作。  
 
 #### 过滤出点击事件
 
-​		在开始窗口操作之前，先回顾下需求“每隔 5 分钟输出过去一小时内点击量最多的前 N 个商品”。由于原始数据中存在点击、购买、收藏、喜欢各种行为的数据，但是我们只需要统计点击量，所以先使用 filter 将点击行为数据过滤出来。  
+在开始窗口操作之前，先回顾下需求“每隔 5 分钟输出过去一小时内点击量最多的前 N 个商品”。由于原始数据中存在点击、购买、收藏、喜欢各种行为的数据，但是我们只需要统计点击量，所以先使用 filter 将点击行为数据过滤出来。  
 
 ```java
 .filter( data -> "pv".equals(data.getBehavior()) )
@@ -133,7 +138,7 @@ env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
 
 #### 设置滑动窗口，统计点击量  
 
-​		由于要每隔 5 分钟统计一次最近一小时每个商品的点击量，所以窗口大小是一小时，每隔 5 分钟滑动一次。即分别要统计[09:00, 10:00), [09:05, 10:05), [09:10,10:10)…等窗口的商品点击量。是一个常见的滑动窗口需求（ Sliding Window）。  
+由于要每隔 5 分钟统计一次最近一小时每个商品的点击量，所以窗口大小是一小时，每隔 5 分钟滑动一次。即分别要统计[09:00, 10:00), [09:05, 10:05), [09:10,10:10)…等窗口的商品点击量。是一个常见的滑动窗口需求（ Sliding Window）。  
 
 ```java
 .keyBy("itemId")
@@ -141,7 +146,7 @@ env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
 .aggregate(new CountAgg(), new WindowResultFunction());
 ```
 
-​		我们使用.keyBy("itemId")对商品进行分组，使用.timeWindow(Time size, Time slide)对 每 个 商 品 做 滑 动 窗 口 （ 1 小 时 窗 口 ， 5 分 钟 滑 动 一 次 ） 。 然 后 我 们 使用 .aggregate(AggregateFunction af, WindowFunction wf) 做增量的聚合操作，它能使用 AggregateFunction 提 前 聚 合 掉 数 据 ， 减 少 state 的 存 储 压 力 。 较之 .apply(WindowFunction wf) 会将窗口中的数据都存储下来，最后一起计算要高效地多。这里的 CountAgg 实现了 AggregateFunction 接口，功能是统计窗口中的条数，即遇到一条数据就加一。  
+我们使用.keyBy("itemId")对商品进行分组，使用.timeWindow(Time size, Time slide)对 每 个 商 品 做 滑 动 窗 口 （ 1 小 时 窗 口 ， 5 分 钟 滑 动 一 次 ） 。 然 后 我 们 使用 .aggregate(AggregateFunction af, WindowFunction wf) 做增量的聚合操作，它能使用 AggregateFunction 提 前 聚 合 掉 数 据 ， 减 少 state 的 存 储 压 力 。 较之 .apply(WindowFunction wf) 会将窗口中的数据都存储下来，最后一起计算要高效地多。这里的 CountAgg 实现了 AggregateFunction 接口，功能是统计窗口中的条数，即遇到一条数据就加一。  
 
 ```java
 // 自定义预聚合函数类，每来一个数据就 count 加 1
@@ -165,7 +170,7 @@ public static class ItemCountAgg implements AggregateFunction<UserBehavior, Long
 }
 ```
 
-​		聚 合 操 作 .aggregate(AggregateFunction af, WindowFunction wf) 的 第 二 个 参 数WindowFunction 将每个 key 每个窗口聚合后的结果带上其他信息进行输出。我们这里 实 现 的 WindowResultFunction 将 < 主 键 商 品 ID ， 窗 口 ， 点 击 量 > 封 装 成 了ItemViewCount 进行输出。  
+聚 合 操 作 .aggregate(AggregateFunction af, WindowFunction wf) 的 第 二 个 参 数WindowFunction 将每个 key 每个窗口聚合后的结果带上其他信息进行输出。我们这里 实 现 的 WindowResultFunction 将 < 主 键 商 品 ID ， 窗 口 ， 点 击 量 > 封 装 成 了ItemViewCount 进行输出。  
 
 代码如下:
 
@@ -183,21 +188,22 @@ public static class WindowCountResult implements WindowFunction<Long,ItemViewCou
 }
 ```
 
-​		现在我们就得到了每个商品在每个窗口的点击量的数据流 。
+现在我们就得到了每个商品在每个窗口的点击量的数据流 。
 
 
 
 #### 计算最热门 Top N 商品  
 
-​		为了统计每个窗口下最热门的商品，我们需要再次按窗口进行分组，这里根据ItemViewCount 中的 windowEnd 进行 keyBy()操作。然后使用 ProcessFunction 实现一个自定义的 TopN 函数 TopNHotItems 来计算点击量排名前 3 名的商品，并将排名结果格式化成字符串，便于后续输出。  
+为了统计每个窗口下最热门的商品，我们需要再次按窗口进行分组，这里根据ItemViewCount 中的 windowEnd 进行 keyBy()操作。然后使用 ProcessFunction 实现一个自定义的 TopN 函数 TopNHotItems 来计算点击量排名前 3 名的商品，并将排名结果格式化成字符串，便于后续输出。  
 
 ```java
 .keyBy("windowEnd")
 .process(new TopNHotItems(3)); // 求点击量前 3 名的商品
 ```
 
-​		ProcessFunction 是 Flink 提供的一个 low-level API，用于实现更高级的功能。它主要提供了定时器 timer 的功能（支持 EventTime 或 ProcessingTime）。本案例中我们将利用 timer 来判断何时收齐了某个 window 下所有商品的点击量数据。由于Watermark 的 进 度 是 全 局 的 ， 在 processElement 方 法 中 ， 每 当 收 到 一 条 数 据ItemViewCount，我们就注册一个 windowEnd+1 的定时器（ Flink 框架会自动忽略同一时间的重复注册）。 windowEnd+1 的定时器被触发时，意味着收到了 windowEnd+1的 Watermark，即收齐了该 windowEnd 下的所有商品窗口统计值。我们在 onTimer()中处理将收集的所有商品及点击量进行排序，选出 TopN，并将排名信息格式化成字符串后进行输出。
-​		这里我们还使用了 ListState<ItemViewCount>来存储收到的每条 ItemViewCount消息，保证在发生故障时，状态数据的不丢失和一致性。 ListState 是 Flink 提供的类似 Java List 接口的 State API，它集成了框架的 checkpoint 机制，自动做到了exactly-once 的语义保证。  
+ProcessFunction 是 Flink 提供的一个 low-level API，用于实现更高级的功能。它主要提供了定时器 timer 的功能（支持 EventTime 或 ProcessingTime）。本案例中我们将利用 timer 来判断何时收齐了某个 window 下所有商品的点击量数据。由于Watermark 的 进 度 是 全 局 的 ， 在 processElement 方 法 中 ， 每 当 收 到 一 条 数 据ItemViewCount，我们就注册一个 windowEnd+1 的定时器（ Flink 框架会自动忽略同一时间的重复注册）。 windowEnd+1 的定时器被触发时，意味着收到了 windowEnd+1的 Watermark，即收齐了该 windowEnd 下的所有商品窗口统计值。我们在 onTimer()中处理将收集的所有商品及点击量进行排序，选出 TopN，并将排名信息格式化成字符串后进行输出。
+
+这里我们还使用了 ListState<ItemViewCount>来存储收到的每条 ItemViewCount消息，保证在发生故障时，状态数据的不丢失和一致性。 ListState 是 Flink 提供的类似 Java List 接口的 State API，它集成了框架的 checkpoint 机制，自动做到了exactly-once 的语义保证。  
 
 ```java
 // 求某个窗口中前 N 名的热门点击商品， key 为窗口时间戳，输出为 TopN 的结果字符串
@@ -443,7 +449,7 @@ public class HotItems
 
 #### 更换Kafka数据源
 
-​		实际生产环境中， 我们的数据流往往是从 Kafka 获取到的。如果要让代码更贴近生产实际，我们只需将 source 更换为 Kafka 即可：  
+实际生产环境中， 我们的数据流往往是从 Kafka 获取到的。如果要让代码更贴近生产实际，我们只需将 source 更换为 Kafka 即可：  
 
 ```java
 Properties properties = new Properties();
