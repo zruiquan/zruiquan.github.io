@@ -247,8 +247,8 @@ public class HotPages {
 
 ```java
 package com.test.networkflow_analysis;
-import com.atguigu.networkflow_analysis.beans.PageViewCount;
-import com.atguigu.networkflow_analysis.beans.UserBehavior;
+import com.test.networkflow_analysis.beans.PageViewCount;
+import com.test.networkflow_analysis.beans.UserBehavior;
 import org.apache.flink.api.common.functions.AggregateFunction;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.state.ValueState;
@@ -403,8 +403,8 @@ public class PageView {
 
 ```java
 package com.test.networkflow_analysis;
-import com.atguigu.networkflow_analysis.beans.PageViewCount;
-import com.atguigu.networkflow_analysis.beans.UserBehavior;
+import com.test.networkflow_analysis.beans.PageViewCount;
+import com.test.networkflow_analysis.beans.UserBehavior;
 import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
@@ -461,6 +461,189 @@ public class UniqueVisitor {
             for (UserBehavior ub: values)
                 uidSet.add(ub.getUserId());
             out.collect( new PageViewCount("uv", window.getEnd(), (long)uidSet.size()) );
+        }
+    }
+}
+```
+
+#### 使用布隆过滤器的UV统计
+
+在上节的例子中，我们把所有数据的 userId 都存在了窗口计算的状态里，在窗口收集数据的过程中，状态会不断增大。一般情况下，只要不超出内存的承受范围，这种做法也没什么问题；但如果我们遇到的数据量很大呢？
+
+把所有数据暂存放到内存里，显然不是一个好注意。我们会想到，可以利用 redis这种内存级 k-v 数据库，为我们做一个缓存。但如果我们遇到的情况非常极端，数据大到惊人呢？比如上亿级的用户，要去重计算 UV。
+
+如果放到 redis 中，亿级的用户 id（每个 20 字节左右的话）可能需要几 G 甚至几十 G 的空间来存储。当然放到 redis 中，用集群进行扩展也不是不可以，但明显
+代价太大了。
+
+一个更好的想法是，其实我们不需要完整地存储用户 ID 的信息，只要知道他在不在就行了。所以其实我们可以进行压缩处理，用一位（ bit）就可以表示一个用户
+的状态。这个思想的具体实现就是布隆过滤器（ Bloom Filter）。
+
+本质上布隆过滤器是一种数据结构，比较巧妙的概率型数据结构（ probabilisticdata structure），特点是高效地插入和查询，可以用来告诉你 “某样东西一定不存
+在或者可能存在”。
+
+它本身是一个很长的二进制向量，既然是二进制的向量，那么显而易见的，存放的不是 0，就是 1。 相比于传统的 List、 Set、 Map 等数据结构，它更高效、占用
+空间更少，但是缺点是其返回的结果是概率性的，而不是确切的。
+我们的目标就是，利用某种方法（一般是 Hash 函数）把每个数据，对应到一个位图的某一位上去；如果数据存在，那一位就是 1，不存在则为 0。    
+
+注意这里我们用到了 redis 连接存取数据，所以需要加入 redis 客户端的依赖  ：
+
+```xml
+<dependencies>
+	<dependency>
+		<groupId>redis.clients</groupId>
+		<artifactId>jedis</artifactId>
+		<version>2.8.1</version>
+	</dependency>
+</dependencies>
+```
+
+在 src/main/java 下创建 UniqueVisitor.java 文件，具体代码如下：  
+
+```java
+package com.test.networkflow_analysis;
+import com.test.networkflow_analysis.beans.PageViewCount;
+import com.test.networkflow_analysis.beans.UserBehavior;
+import kafka.server.DynamicConfig;
+import org.apache.flink.configuration.Configuration;
+import org.apache.flink.streaming.api.TimeCharacteristic;
+import org.apache.flink.streaming.api.datastream.DataStream;
+import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
+import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.api.functions.timestamps.AscendingTimestampExtractor;
+import org.apache.flink.streaming.api.functions.windowing.ProcessAllWindowFunction;
+import org.apache.flink.streaming.api.windowing.time.Time;
+import org.apache.flink.streaming.api.windowing.triggers.Trigger;
+import org.apache.flink.streaming.api.windowing.triggers.TriggerResult;
+import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
+import org.apache.flink.util.Collector;
+import redis.clients.jedis.Jedis;
+import java.net.URL;
+
+public class UvWithBloomFilter { 
+    public static void main(String[] args) throws Exception {
+        // 1. 创建执行环境
+        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+        env.setParallelism(1);
+        env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
+
+        // 2. 读取数据，创建DataStream
+        URL resource = UniqueVisitor.class.getResource("/UserBehavior.csv");
+        DataStream<String> inputStream = env.readTextFile(resource.getPath());
+
+        // 3. 转换为POJO，分配时间戳和watermark
+        DataStream<UserBehavior> dataStream = inputStream
+                .map(line -> {
+                    String[] fields = line.split(",");
+                    return new UserBehavior(new Long(fields[0]), new Long(fields[1]), new Integer(fields[2]), fields[3], new 						Long(fields[4]));
+                })
+                .assignTimestampsAndWatermarks(new AscendingTimestampExtractor<UserBehavior>() {
+                    @Override
+                    public long extractAscendingTimestamp(UserBehavior element) {
+                        return element.getTimestamp() * 1000L;
+                    }
+                });
+
+        // 开窗统计uv值
+        SingleOutputStreamOperator<PageViewCount> uvStream = dataStream
+                .filter(data -> "pv".equals(data.getBehavior()))
+                .timeWindowAll(Time.hours(1))
+                .trigger( new MyTrigger() )
+                .process( new UvCountResultWithBloomFliter() );
+
+        uvStream.print();
+
+        env.execute("uv count with bloom filter job");
+    }
+
+    // 自定义触发器
+    public static class MyTrigger extends Trigger<UserBehavior, TimeWindow>{
+        @Override
+        public TriggerResult onElement(UserBehavior element, long timestamp, TimeWindow window, TriggerContext ctx) throws 		         	 Exception {
+            // 每一条数据来到，直接触发窗口计算，并且直接清空窗口
+            return TriggerResult.FIRE_AND_PURGE;
+        }
+
+        @Override
+        public TriggerResult onProcessingTime(long time, TimeWindow window, TriggerContext ctx) throws Exception {
+            return TriggerResult.CONTINUE;
+        }
+
+        @Override
+        public TriggerResult onEventTime(long time, TimeWindow window, TriggerContext ctx) throws Exception {
+            return TriggerResult.CONTINUE;
+        }
+
+        @Override
+        public void clear(TimeWindow window, TriggerContext ctx) throws Exception {
+        }
+    }
+
+    // 自定义一个布隆过滤器
+    public static class MyBloomFilter {
+        // 定义位图的大小，一般需要定义为2的整次幂
+        private Integer cap;
+
+        public MyBloomFilter(Integer cap) {
+            this.cap = cap;
+        }
+        // 实现一个hash函数
+        public Long hashCode( String value, Integer seed ){
+            Long result = 0L;
+            for( int i = 0; i < value.length(); i++ ){
+                result = result * seed + value.charAt(i);
+            }
+            return result & (cap - 1);
+        }
+    }
+
+    // 实现自定义的处理函数
+    public static class UvCountResultWithBloomFliter extends ProcessAllWindowFunction<UserBehavior, PageViewCount, TimeWindow>{
+        // 定义jedis连接和布隆过滤器
+        Jedis jedis;
+        MyBloomFilter myBloomFilter;
+
+        @Override
+        public void open(Configuration parameters) throws Exception {
+            jedis = new Jedis("localhost", 6379);
+            myBloomFilter = new MyBloomFilter(1<<29);    // 要处理1亿个数据，用64MB大小的位图
+        }
+
+        @Override
+        public void process(Context context, Iterable<UserBehavior> elements, Collector<PageViewCount> out) throws Exception {
+            // 将位图和窗口count值全部存入redis，用windowEnd作为key
+            Long windowEnd = context.window().getEnd();
+            String bitmapKey = windowEnd.toString();
+            // 把count值存成一张hash表
+            String countHashName = "uv_count";
+            String countKey = windowEnd.toString();
+
+            // 1. 取当前的userId
+            Long userId = elements.iterator().next().getUserId();
+
+            // 2. 计算位图中的offset
+            Long offset = myBloomFilter.hashCode(userId.toString(), 61);
+
+            // 3. 用redis的getbit命令，判断对应位置的值
+            Boolean isExist = jedis.getbit(bitmapKey, offset);
+
+            if( !isExist ){
+                // 如果不存在，对应位图位置置1
+                jedis.setbit(bitmapKey, offset, true);
+
+                // 更新redis中保存的count值
+                Long uvCount = 0L;    // 初始count值
+                String uvCountString = jedis.hget(countHashName, countKey);
+                if( uvCountString != null && !"".equals(uvCountString) )
+                    uvCount = Long.valueOf(uvCountString);
+                jedis.hset(countHashName, countKey, String.valueOf(uvCount + 1));
+
+                out.collect(new PageViewCount("uv", windowEnd, uvCount + 1));
+            }
+        }
+
+        @Override
+        public void close() throws Exception {
+            jedis.close();
         }
     }
 }
