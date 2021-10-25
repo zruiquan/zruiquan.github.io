@@ -23,48 +23,48 @@
   <meta name="description" content="基于Flink的电商用户行为数据分析（1）主要内容  批处理和流处理批处理：Spark、Hadoop">
 <meta property="og:type" content="article">
 <meta property="og:title" content="基于Flink的电商用户行为数据分析（1）">
-<meta property="og:url" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/index.html">
+<meta property="og:url" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/index.html">
 <meta property="og:site_name" content="没有尾巴的小驴">
 <meta property="og:description" content="基于Flink的电商用户行为数据分析（1）主要内容  批处理和流处理批处理：Spark、Hadoop">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210907163218315-16310035485911.png">
-<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210907181408398.png">
-<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210907181420096.png">
-<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210907181350975.png">
-<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210907181339487.png">
-<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210907181125503.png">
-<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210907181146592.png">
-<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210907181252559.png">
-<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210907181804431.png">
-<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210907182003343.png">
-<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210907182822735.png">
-<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210907185117027.png">
-<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210907185043540.png">
-<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210907183845471.png">
-<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210907185016768.png">
-<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210907185920519.png">
-<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210907190145538.png">
-<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210907190911254.png">
-<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210907190932450.png">
-<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210907191340721.png">
-<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210908111834836.png">
-<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210908111906850.png">
-<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210908111934004.png">
-<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210908114105077.png">
-<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210908115310855.png">
-<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210908115346261.png">
-<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210908115414325.png">
-<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210908115428854.png">
-<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210908115443382.png">
-<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210908115500342.png">
+<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210907163218315-16310035485911.png">
+<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210907181408398.png">
+<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210907181420096.png">
+<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210907181350975.png">
+<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210907181339487.png">
+<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210907181125503.png">
+<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210907181146592.png">
+<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210907181252559.png">
+<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210907181804431.png">
+<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210907182003343.png">
+<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210907182822735.png">
+<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210907185117027.png">
+<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210907185043540.png">
+<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210907183845471.png">
+<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210907185016768.png">
+<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210907185920519.png">
+<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210907190145538.png">
+<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210907190911254.png">
+<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210907190932450.png">
+<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210907191340721.png">
+<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210908111834836.png">
+<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210908111906850.png">
+<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210908111934004.png">
+<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210908114105077.png">
+<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210908115310855.png">
+<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210908115346261.png">
+<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210908115414325.png">
+<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210908115428854.png">
+<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210908115443382.png">
+<meta property="og:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210908115500342.png">
 <meta property="article:published_time" content="2021-09-07T07:43:00.000Z">
-<meta property="article:modified_time" content="2021-09-09T01:59:08.037Z">
+<meta property="article:modified_time" content="2021-10-25T09:19:40.121Z">
 <meta property="article:author" content="Rui Zhang">
 <meta property="article:tag" content="Flink">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210907163218315-16310035485911.png">
+<meta name="twitter:image" content="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210907163218315-16310035485911.png">
 
-<link rel="canonical" href="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/">
+<link rel="canonical" href="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/">
 
 
 <script id="page-configurations">
@@ -157,17 +157,17 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">3</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">4</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">3</span></a>
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">4</span></a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">5</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">6</span></a>
 
   </li>
   </ul>
@@ -196,7 +196,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/head.jpg">
@@ -226,7 +226,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-09-09 09:59:08" itemprop="dateModified" datetime="2021-09-09T09:59:08+08:00">2021-09-09</time>
+                <time title="修改时间：2021-10-25 17:19:40" itemprop="dateModified" datetime="2021-10-25T17:19:40+08:00">2021-10-25</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -263,7 +263,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="基于Flink的电商用户行为数据分析（1）"><a href="#基于Flink的电商用户行为数据分析（1）" class="headerlink" title="基于Flink的电商用户行为数据分析（1）"></a>基于Flink的电商用户行为数据分析（1）</h2><h4 id="主要内容"><a href="#主要内容" class="headerlink" title="主要内容"></a><strong>主要内容</strong></h4><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210907163218315-16310035485911.png" alt="image-20210907163218315" style="zoom:67%;">
+        <h2 id="基于Flink的电商用户行为数据分析（1）"><a href="#基于Flink的电商用户行为数据分析（1）" class="headerlink" title="基于Flink的电商用户行为数据分析（1）"></a>基于Flink的电商用户行为数据分析（1）</h2><h4 id="主要内容"><a href="#主要内容" class="headerlink" title="主要内容"></a><strong>主要内容</strong></h4><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210907163218315-16310035485911.png" alt="image-20210907163218315" style="zoom:67%;">
 
 <h4 id="批处理和流处理"><a href="#批处理和流处理" class="headerlink" title="批处理和流处理"></a><strong>批处理和流处理</strong></h4><p>批处理：Spark、Hadoop</p>
 <p>流处理：Flink、Storm</p>
@@ -282,56 +282,56 @@
 <li><p>处理结果立刻可用，并会随着新数据的抵达继续更新</p>
 </li>
 </ul>
-<h4 id="电商用户行为分析"><a href="#电商用户行为分析" class="headerlink" title="电商用户行为分析"></a>电商用户行为分析</h4><p><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210907181408398.png" alt="image-20210907181408398"></p>
-<p><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210907181420096.png" alt="image-20210907181420096"></p>
+<h4 id="电商用户行为分析"><a href="#电商用户行为分析" class="headerlink" title="电商用户行为分析"></a>电商用户行为分析</h4><p><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210907181408398.png" alt="image-20210907181408398"></p>
+<p><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210907181420096.png" alt="image-20210907181420096"></p>
 <blockquote>
 <p>用户画像：用户信息标签化</p>
 </blockquote>
-<h4 id="项目模块设计"><a href="#项目模块设计" class="headerlink" title="项目模块设计"></a>项目模块设计</h4><p><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210907181350975.png" alt="image-20210907181350975"></p>
-<p><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210907181339487.png" alt="image-20210907181339487"></p>
-<h4 id="数据源解析"><a href="#数据源解析" class="headerlink" title="数据源解析"></a>数据源解析</h4><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210907181125503.png" alt="image-20210907181125503">
+<h4 id="项目模块设计"><a href="#项目模块设计" class="headerlink" title="项目模块设计"></a>项目模块设计</h4><p><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210907181350975.png" alt="image-20210907181350975"></p>
+<p><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210907181339487.png" alt="image-20210907181339487"></p>
+<h4 id="数据源解析"><a href="#数据源解析" class="headerlink" title="数据源解析"></a>数据源解析</h4><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210907181125503.png" alt="image-20210907181125503">
 
 
 
 
 
-<img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210907181146592.png" alt="image-20210907181146592" style="zoom:90%;">
+<img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210907181146592.png" alt="image-20210907181146592" style="zoom:90%;">
 
-<img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210907181252559.png" alt="image-20210907181252559" style="zoom:90%;">
+<img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210907181252559.png" alt="image-20210907181252559" style="zoom:90%;">
 
 
 
-<h4 id="项目模块"><a href="#项目模块" class="headerlink" title="项目模块"></a>项目模块</h4><p><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210907181804431.png" alt="image-20210907181804431"></p>
-<h5 id="热门实时商品统计"><a href="#热门实时商品统计" class="headerlink" title="热门实时商品统计"></a>热门实时商品统计</h5><p><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210907182003343.png" alt="image-20210907182003343"></p>
-<p><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210907182822735.png" alt="image-20210907182822735"></p>
-<h6 id="按照商品ID进行分区"><a href="#按照商品ID进行分区" class="headerlink" title="按照商品ID进行分区"></a>按照商品ID进行分区</h6><p><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210907185117027.png" alt="image-20210907185117027"></p>
-<h6 id="设置时间窗口"><a href="#设置时间窗口" class="headerlink" title="设置时间窗口"></a>设置时间窗口</h6><p><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210907185043540.png" alt="image-20210907185043540"></p>
-<p><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210907183845471.png" alt="image-20210907183845471"></p>
-<h6 id="窗口聚合"><a href="#窗口聚合" class="headerlink" title="窗口聚合"></a>窗口聚合</h6><p><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210907185016768.png" alt="image-20210907185016768"></p>
+<h4 id="项目模块"><a href="#项目模块" class="headerlink" title="项目模块"></a>项目模块</h4><p><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210907181804431.png" alt="image-20210907181804431"></p>
+<h5 id="热门实时商品统计"><a href="#热门实时商品统计" class="headerlink" title="热门实时商品统计"></a>热门实时商品统计</h5><p><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210907182003343.png" alt="image-20210907182003343"></p>
+<p><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210907182822735.png" alt="image-20210907182822735"></p>
+<h6 id="按照商品ID进行分区"><a href="#按照商品ID进行分区" class="headerlink" title="按照商品ID进行分区"></a>按照商品ID进行分区</h6><p><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210907185117027.png" alt="image-20210907185117027"></p>
+<h6 id="设置时间窗口"><a href="#设置时间窗口" class="headerlink" title="设置时间窗口"></a>设置时间窗口</h6><p><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210907185043540.png" alt="image-20210907185043540"></p>
+<p><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210907183845471.png" alt="image-20210907183845471"></p>
+<h6 id="窗口聚合"><a href="#窗口聚合" class="headerlink" title="窗口聚合"></a>窗口聚合</h6><p><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210907185016768.png" alt="image-20210907185016768"></p>
 <blockquote>
 <p>使用增量聚合函数和全窗口函数在一起的API得到输出结构，单独使用ReduceFunction 不能自定义输出结构，单独使用AggregateFunction又不能拿到window信息，因此使用结合起来的API调用形式，全窗口函数本来是拿所有数据，但这里只需要拿前面聚合的结果。</p>
 </blockquote>
 <p><strong>增量聚合函数</strong>：</p>
-<p><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210907185920519.png" alt="image-20210907185920519"></p>
+<p><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210907185920519.png" alt="image-20210907185920519"></p>
 <p><strong>全窗口函数</strong></p>
-<img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210907190145538.png" alt="image-20210907190145538" style="zoom:90%;">
+<img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210907190145538.png" alt="image-20210907190145538" style="zoom:90%;">
 
-<p><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210907190911254.png" alt="image-20210907190911254"></p>
-<h6 id="统计整理"><a href="#统计整理" class="headerlink" title="统计整理"></a>统计整理</h6><p><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210907190932450.png" alt="image-20210907190932450"></p>
-<h6 id="状态编程"><a href="#状态编程" class="headerlink" title="状态编程"></a>状态编程</h6><p><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210907191340721.png" alt="image-20210907191340721"></p>
-<h6 id="排序输出"><a href="#排序输出" class="headerlink" title="排序输出"></a>排序输出</h6><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210908111834836.png" alt="image-20210908111834836" style="zoom:80%;">
+<p><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210907190911254.png" alt="image-20210907190911254"></p>
+<h6 id="统计整理"><a href="#统计整理" class="headerlink" title="统计整理"></a>统计整理</h6><p><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210907190932450.png" alt="image-20210907190932450"></p>
+<h6 id="状态编程"><a href="#状态编程" class="headerlink" title="状态编程"></a>状态编程</h6><p><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210907191340721.png" alt="image-20210907191340721"></p>
+<h6 id="排序输出"><a href="#排序输出" class="headerlink" title="排序输出"></a>排序输出</h6><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210908111834836.png" alt="image-20210908111834836" style="zoom:80%;">
 
-<img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210908111906850.png" alt="image-20210908111906850" style="zoom:80%;">
+<img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210908111906850.png" alt="image-20210908111906850" style="zoom:80%;">
 
-<p><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210908111934004.png" alt="image-20210908111934004"></p>
-<h5 id="实时流量统计-热门页面"><a href="#实时流量统计-热门页面" class="headerlink" title="实时流量统计-热门页面"></a>实时流量统计-热门页面</h5><p><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210908114105077.png" alt="image-20210908114105077"></p>
-<h5 id="实时流量统计-PV-UV"><a href="#实时流量统计-PV-UV" class="headerlink" title="实时流量统计-PV-UV"></a>实时流量统计-PV-UV</h5><p><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210908115310855.png" alt="image-20210908115310855"></p>
-<h5 id="市场营销分析-APP推广统计"><a href="#市场营销分析-APP推广统计" class="headerlink" title="市场营销分析-APP推广统计"></a>市场营销分析-APP推广统计</h5><p><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210908115346261.png" alt="image-20210908115346261"></p>
-<h5 id="市场营销分析-页面广告统计"><a href="#市场营销分析-页面广告统计" class="headerlink" title="市场营销分析-页面广告统计"></a>市场营销分析-页面广告统计</h5><p><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210908115414325.png" alt="image-20210908115414325"></p>
-<h5 id="恶意登陆监控"><a href="#恶意登陆监控" class="headerlink" title="恶意登陆监控"></a>恶意登陆监控</h5><p><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210908115428854.png" alt="image-20210908115428854"></p>
-<h5 id="订单支付实时监控"><a href="#订单支付实时监控" class="headerlink" title="订单支付实时监控"></a>订单支付实时监控</h5><p><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210908115443382.png" alt="image-20210908115443382"></p>
+<p><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210908111934004.png" alt="image-20210908111934004"></p>
+<h5 id="实时流量统计-热门页面"><a href="#实时流量统计-热门页面" class="headerlink" title="实时流量统计-热门页面"></a>实时流量统计-热门页面</h5><p><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210908114105077.png" alt="image-20210908114105077"></p>
+<h5 id="实时流量统计-PV-UV"><a href="#实时流量统计-PV-UV" class="headerlink" title="实时流量统计-PV-UV"></a>实时流量统计-PV-UV</h5><p><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210908115310855.png" alt="image-20210908115310855"></p>
+<h5 id="市场营销分析-APP推广统计"><a href="#市场营销分析-APP推广统计" class="headerlink" title="市场营销分析-APP推广统计"></a>市场营销分析-APP推广统计</h5><p><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210908115346261.png" alt="image-20210908115346261"></p>
+<h5 id="市场营销分析-页面广告统计"><a href="#市场营销分析-页面广告统计" class="headerlink" title="市场营销分析-页面广告统计"></a>市场营销分析-页面广告统计</h5><p><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210908115414325.png" alt="image-20210908115414325"></p>
+<h5 id="恶意登陆监控"><a href="#恶意登陆监控" class="headerlink" title="恶意登陆监控"></a>恶意登陆监控</h5><p><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210908115428854.png" alt="image-20210908115428854"></p>
+<h5 id="订单支付实时监控"><a href="#订单支付实时监控" class="headerlink" title="订单支付实时监控"></a>订单支付实时监控</h5><p><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210908115443382.png" alt="image-20210908115443382"></p>
 <p>订单支付实施对账</p>
-<p><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/image-20210908115500342.png" alt="image-20210908115500342"></p>
+<p><img src="/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/image-20210908115500342.png" alt="image-20210908115500342"></p>
 
     </div>
 
@@ -347,7 +347,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/" title="基于Flink的电商用户行为数据分析（1）">http://yoursite.com/2021/09/07/基于Flink的电商用户行为数据分析/</a>
+    <a href="http://yoursite.com/2021/09/07/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-1/" title="基于Flink的电商用户行为数据分析（1）">http://yoursite.com/2021/09/07/基于Flink的电商用户行为数据分析-1/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -449,20 +449,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">5</span>
+          <span class="site-state-item-count">6</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-count">4</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-count">4</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -500,7 +500,7 @@
       <i class="fa fa-area-chart"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">40k</span>
+    <span title="站点总字数">41k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
