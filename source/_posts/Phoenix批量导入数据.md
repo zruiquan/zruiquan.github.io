@@ -55,14 +55,14 @@ CREATE TABLE example (
 HADOOP_CLASSPATH=/usr/hdp/3.1.4.0-315/hbase/lib/hbase-protocol.jar:/usr/hdp/3.1.4.0-315/hbase/conf hadoop jar /usr/hdp/3.1.4.0-315/phoenix/phoenix-5.0.0.3.1.4.0-315-client.jar org.apache.phoenix.mapreduce.CsvBulkLoadTool --table PEMS.TB_TAGDAYVALUE  --input /user/root/test.csv
 ```
 
->  /tmp/YCB/data.csv为hdfs上对应的文件路径
+>  /user/root/test.csv为hdfs上对应的文件路径
 >
 > 该命令可随意挑集群中一台机器，当然也可以通过指定具体机器执行，如添加-z 机器:端口便可
 
 * 注：官网指出如果为phoenix4.0及以上要用如下方式
 
 ```shell
-HADOOP_CLASSPATH=/path/to/hbase-protocol.jar:/path/to/hbase/conf hadoop jar phoenix-<version>-client.jar org.apache.phoenix.mapreduce.CsvBulkLoadTool --table EXAMPLE --input /data/example.csv
+HADOOP_CLASSPATH=/path/to/hbase-protocol.jar:/path/to/hbase/conf hadoop jar phoenix-<version>-client.jar org.apache.phoenix.mapreduce.CsvBulkLoadTool --table EXAMPLE --input /user/root/test.csv
 ```
 
 ## 总结
