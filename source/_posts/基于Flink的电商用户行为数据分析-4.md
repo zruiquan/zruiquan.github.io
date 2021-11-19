@@ -295,6 +295,100 @@ public class AdStatisticsByProvince {
                         return element.getTimestamp() * 1000L;
                     }
                 });
+    
+        // 2. 基于省份分组，开窗聚合
+        SingleOutputStreamOperator<AdCountViewByProvince> adCountResultStream = adClickEventStream
+                .keyBy(AdClickEvent::getProvince)
+                .timeWindow(Time.hours(1), Time.minutes(5))     // 定义滑窗，5分钟输出一次
+                .aggregate(new AdCountAgg(), new AdCountResult());
+
+        adCountResultStream.print();
+        env.execute("ad count by province job");
+    }
+
+    public static class AdCountAgg implements AggregateFunction<AdClickEvent, Long, Long>{
+        @Override
+        public Long createAccumulator() {
+            return 0L;
+        }
+
+        @Override
+        public Long add(AdClickEvent value, Long accumulator) {
+            return accumulator + 1;
+        }
+
+        @Override
+        public Long getResult(Long accumulator) {
+            return accumulator;
+        }
+
+        @Override
+        public Long merge(Long a, Long b) {
+            return a + b;
+        }
+    }
+
+    public static class AdCountResult implements WindowFunction<Long, AdCountViewByProvince, String, TimeWindow>{
+        @Override
+        public void apply(String province, TimeWindow window, Iterable<Long> input, Collector<AdCountViewByProvince> out) throws         Exception {
+            String windowEnd = new Timestamp( window.getEnd() ).toString();
+            Long count = input.iterator().next();
+            out.collect( new AdCountViewByProvince(province, windowEnd, count) );
+        }
+    }
+}
+```
+
+#### 黑名单过滤
+
+上节我们进行的点击量统计，同一用户的重复点击是会叠加计算的。在实际场景中，同一用户确实可能反复点开同一个广告，这也说明了用户对广告更大的兴趣；
+但是如果用户在一段时间非常频繁地点击广告， 这显然不是一个正常行为，有刷点击量的嫌疑。所以我们可以对一段时间内（比如一天内）的用户点击行为进行约束，如果对同一个广告点击超过一定限额（比如 100 次），应该把该用户加入黑名单并报警，此后其点击行为不应该再统计。
+具体代码实现如下 ：
+
+```java
+package com.test.market_analysis;
+import com.test.market_analysis.beans.AdClickEvent;
+import com.test.market_analysis.beans.AdCountViewByProvince;
+import com.test.market_analysis.beans.BlackListUserWarning;
+import org.apache.flink.api.common.functions.AggregateFunction;
+import org.apache.flink.api.common.state.ValueState;
+import org.apache.flink.api.common.state.ValueStateDescriptor;
+import org.apache.flink.api.java.tuple.Tuple;
+import org.apache.flink.configuration.Configuration;
+import org.apache.flink.streaming.api.TimeCharacteristic;
+import org.apache.flink.streaming.api.datastream.DataStream;
+import org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;
+import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.api.functions.KeyedProcessFunction;
+import org.apache.flink.streaming.api.functions.timestamps.AscendingTimestampExtractor;
+import org.apache.flink.streaming.api.functions.windowing.WindowFunction;
+import org.apache.flink.streaming.api.windowing.time.Time;
+import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
+import org.apache.flink.util.Collector;
+import org.apache.flink.util.OutputTag;
+import sun.awt.SunHints;
+import java.net.URL;
+import java.sql.Timestamp;
+
+public class AdStatisticsByProvince {
+    public static void main(String[] args) throws Exception{
+        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+        env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
+        env.setParallelism(1);
+
+        // 1. 从文件中读取数据
+        URL resource = AdStatisticsByProvince.class.getResource("/AdClickLog.csv");
+        DataStream<AdClickEvent> adClickEventStream = env.readTextFile(resource.getPath())
+                .map( line -> {
+                    String[] fields = line.split(",");
+                    return new AdClickEvent(new Long(fields[0]), new Long(fields[1]), fields[2], fields[3], new 			                                Long(fields[4]));
+                } )
+                .assignTimestampsAndWatermarks(new AscendingTimestampExtractor<AdClickEvent>() {
+                    @Override
+                    public long extractAscendingTimestamp(AdClickEvent element) {
+                        return element.getTimestamp() * 1000L;
+                    }
+                });
 
         // 2. 对同一个用户点击同一个广告的行为进行检测报警
         SingleOutputStreamOperator<AdClickEvent> filterAdClickStream = adClickEventStream
@@ -337,7 +431,7 @@ public class AdStatisticsByProvince {
 
     public static class AdCountResult implements WindowFunction<Long, AdCountViewByProvince, String, TimeWindow>{
         @Override
-        public void apply(String province, TimeWindow window, Iterable<Long> input, Collector<AdCountViewByProvince> out) throws         Exception {
+        public void apply(String province, TimeWindow window, Iterable<Long> input, Collector<AdCountViewByProvince> out) throws             Exception {
             String windowEnd = new Timestamp( window.getEnd() ).toString();
             Long count = input.iterator().next();
             out.collect( new AdCountViewByProvince(province, windowEnd, count) );
@@ -382,7 +476,7 @@ public class AdStatisticsByProvince {
                 if( !isSentState.value() ){
                     isSentState.update(true);    // 更新状态
                     ctx.output( new OutputTag<BlackListUserWarning>("blacklist"){},
-                            new BlackListUserWarning(value.getUserId(), value.getAdId(), "click over " + countUpperBound + 		                                 "times."));
+                            new BlackListUserWarning(value.getUserId(), value.getAdId(), "click over " + countUpperBound +                                       "times."));
                 }
                 return;    // 不再执行下面操作
             }
@@ -400,14 +494,5 @@ public class AdStatisticsByProvince {
         }
     }
 }
-```
-
-#### 黑名单过滤
-
-上节我们进行的点击量统计，同一用户的重复点击是会叠加计算的。在实际场景中，同一用户确实可能反复点开同一个广告，这也说明了用户对广告更大的兴趣；
-但是如果用户在一段时间非常频繁地点击广告， 这显然不是一个正常行为，有刷点击量的嫌疑。所以我们可以对一段时间内（比如一天内）的用户点击行为进行约束，如果对同一个广告点击超过一定限额（比如 100 次），应该把该用户加入黑名单并报警，此后其点击行为不应该再统计。
-具体代码实现如下 ：
-
-```
 ```
 
