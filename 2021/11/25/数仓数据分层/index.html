@@ -33,7 +33,7 @@
 <meta property="og:image" content="http://yoursite.com/2021/11/25/%E6%95%B0%E4%BB%93%E6%95%B0%E6%8D%AE%E5%88%86%E5%B1%82/3.png">
 <meta property="og:image" content="http://yoursite.com/2021/11/25/%E6%95%B0%E4%BB%93%E6%95%B0%E6%8D%AE%E5%88%86%E5%B1%82/4.png">
 <meta property="article:published_time" content="2021-11-25T07:50:15.000Z">
-<meta property="article:modified_time" content="2021-11-25T09:36:05.291Z">
+<meta property="article:modified_time" content="2021-11-25T09:47:11.868Z">
 <meta property="article:author" content="Rui Zhang">
 <meta property="article:tag" content="数仓">
 <meta name="twitter:card" content="summary">
@@ -195,7 +195,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2021-11-25 15:50:15 / 修改时间：17:36:05" itemprop="dateCreated datePublished" datetime="2021-11-25T15:50:15+08:00">2021-11-25</time>
+              <time title="创建时间：2021-11-25 15:50:15 / 修改时间：17:47:11" itemprop="dateCreated datePublished" datetime="2021-11-25T15:50:15+08:00">2021-11-25</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -250,11 +250,7 @@
 <p>3、注意,ODS层数据还起到一个数据备份作用,如果是比较特殊行业,在ODS层的数据会保留一年甚至多年.不过普通公司一般就保存3–6个月,看数据量和存储压力以及存储预算决定.</p>
 <p>4、日志数据估算,如日活100万用户,每个用户访问1次,每次操作5min,每个用户平均3秒一条日志数据,一条数据1kb.最后体积是100w<em>1</em>5<em>60/3</em>1kb=100w*100kb=97656.25MB=95.36GB;</p>
 <blockquote>
-<p>注意,数据估算最好结合公司实际情况,如果已经运行一段,可以让运维同事帮忙做估算</p>
-<p>因为数据本身可以做压缩,数仓数据还需要做分层,数据本身存储时还会有备份机制(HDFS\Kafka等框架)</p>
-<p>数据还会源源不断增长,同时磁盘还需要预留一定缓冲空间,一般是30%缓冲空间.所以除非是新建项目或者遇到超快速增长的公司,一般的大数据容量评估都是按照最高上限做半年甚至一年总容量做评估的.</p>
-<p>注意,在服务器领域,磁盘的成本相对CPU\内存来说,成本是相对最低的,甚至有专门的存储服务器,如24硬盘位,甚至48硬盘位的服务器.</p>
-<p>而2020年先在已经开发出了单磁盘12TB甚至14TB的企业硬盘,这意味着单节点机器容量上限进一步提升,存储成本也随着技术提升,成本开始降低下来.</p>
+<p>注意,数据估算最好结合公司实际情况,如果已经运行一段,可以让运维同事帮忙做估算<br>因为数据本身可以做压缩,数仓数据还需要做分层,数据本身存储时还会有备份机制(HDFS\Kafka等框架)<br>数据还会源源不断增长,同时磁盘还需要预留一定缓冲空间,一般是30%缓冲空间.所以除非是新建项目或者遇到超快速增长的公司,一般的大数据容量评估都是按照最高上限做半年甚至一年总容量做评估的.<br>注意,在服务器领域,磁盘的成本相对CPU\内存来说,成本是相对最低的,甚至有专门的存储服务器,如24硬盘位,甚至48硬盘位的服务器。而2020年先在已经开发出了单磁盘12TB甚至14TB的企业硬盘,这意味着单节点机器容量上限进一步提升,存储成本也随着技术提升,成本开始降低下来.</p>
 </blockquote>
 <p>5、ODS中数据不意味着里面的数据就是最原始没经过处理的.一般企业开发,因为真实环境中数据上报,存储,采集中错误,bug,网络等问题,会造成原始数据的各类问题.</p>
 <blockquote>
