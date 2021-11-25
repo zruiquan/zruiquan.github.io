@@ -27,7 +27,8 @@
 <meta property="og:site_name" content="没有尾巴的小驴">
 <meta property="og:description" content="大数据OLAP查询引擎分析总结前言OLAP的历史与基本概念OLAP全称为在线联机分析应用，是一种对于多维数据分析查询的解决方案。典型的OLAP应用场景包括销售、市场、管理等商务报表，预算决算，经济报表等等。 最早的OLAP查询工具是发布于1970年的Express，然而完整的OLAP概念是在1993年由关系数据库之父EdgarF.Codd 提出，伴随而来的是著名的“twelvelaws of on">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://yoursite.com/2021/11/23/OLAP%E6%9F%A5%E8%AF%A2%E5%BC%95%E6%93%8E%E9%80%89%E5%9E%8B/dba40b3c-6fc7-3530-8908-c35ced7073ae.jpg">
+<meta property="og:image" content="http://yoursite.com/2021/11/23/OLAP%E6%9F%A5%E8%AF%A2%E5%BC%95%E6%93%8E%E9%80%89%E5%9E%8B/v2-233fffbd488d5cb0658d44cf6e3a5aeb_720w.jpg">
+<meta property="og:image" content="http://yoursite.com/2021/11/23/OLAP%E6%9F%A5%E8%AF%A2%E5%BC%95%E6%93%8E%E9%80%89%E5%9E%8B/v2-331f1f5c75a51ca1a2efda701483cb5e_720w.jpg">
 <meta property="og:image" content="http://yoursite.com/2021/11/23/OLAP%E6%9F%A5%E8%AF%A2%E5%BC%95%E6%93%8E%E9%80%89%E5%9E%8B/image-20211123181640902.png">
 <meta property="og:image" content="http://yoursite.com/2021/11/23/OLAP%E6%9F%A5%E8%AF%A2%E5%BC%95%E6%93%8E%E9%80%89%E5%9E%8B/image-20211124151016262.png">
 <meta property="og:image" content="http://yoursite.com/2021/11/23/OLAP%E6%9F%A5%E8%AF%A2%E5%BC%95%E6%93%8E%E9%80%89%E5%9E%8B/image-20211124151123988.png">
@@ -40,12 +41,17 @@
 <meta property="og:image" content="http://yoursite.com/2021/11/23/OLAP%E6%9F%A5%E8%AF%A2%E5%BC%95%E6%93%8E%E9%80%89%E5%9E%8B/852983-20191014134726234-428907581.jpg">
 <meta property="og:image" content="http://yoursite.com/2021/11/23/OLAP%E6%9F%A5%E8%AF%A2%E5%BC%95%E6%93%8E%E9%80%89%E5%9E%8B/852983-20191014134726499-1687611154.jpg">
 <meta property="og:image" content="http://yoursite.com/2021/11/23/OLAP%E6%9F%A5%E8%AF%A2%E5%BC%95%E6%93%8E%E9%80%89%E5%9E%8B/852983-20191014134726707-272794413.jpg">
+<meta property="og:image" content="http://yoursite.com/2021/11/23/OLAP%E6%9F%A5%E8%AF%A2%E5%BC%95%E6%93%8E%E9%80%89%E5%9E%8B/v2-235aead7b92db39688a7865b35c67bba_720w.jpg">
+<meta property="og:image" content="http://yoursite.com/2021/11/23/OLAP%E6%9F%A5%E8%AF%A2%E5%BC%95%E6%93%8E%E9%80%89%E5%9E%8B/v2-523207f700ab9a3b357c5595574abfd5_720w.jpg">
+<meta property="og:image" content="http://yoursite.com/2021/11/23/OLAP%E6%9F%A5%E8%AF%A2%E5%BC%95%E6%93%8E%E9%80%89%E5%9E%8B/v2-1f6a877ef3fc3310ba679939c3c62687_720w.jpg">
+<meta property="og:image" content="http://yoursite.com/2021/11/23/OLAP%E6%9F%A5%E8%AF%A2%E5%BC%95%E6%93%8E%E9%80%89%E5%9E%8B/v2-28cbdc2aac8faec57cca4e9010423276_720w.jpg">
+<meta property="og:image" content="http://yoursite.com/2021/11/23/OLAP%E6%9F%A5%E8%AF%A2%E5%BC%95%E6%93%8E%E9%80%89%E5%9E%8B/v2-36cf90f473888cea9c6c826e3c8ef700_720w.jpg">
 <meta property="article:published_time" content="2021-11-23T07:30:58.000Z">
-<meta property="article:modified_time" content="2021-11-25T02:37:55.998Z">
+<meta property="article:modified_time" content="2021-11-25T12:11:55.671Z">
 <meta property="article:author" content="Rui Zhang">
 <meta property="article:tag" content="OLAP">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://yoursite.com/2021/11/23/OLAP%E6%9F%A5%E8%AF%A2%E5%BC%95%E6%93%8E%E9%80%89%E5%9E%8B/dba40b3c-6fc7-3530-8908-c35ced7073ae.jpg">
+<meta name="twitter:image" content="http://yoursite.com/2021/11/23/OLAP%E6%9F%A5%E8%AF%A2%E5%BC%95%E6%93%8E%E9%80%89%E5%9E%8B/v2-233fffbd488d5cb0658d44cf6e3a5aeb_720w.jpg">
 
 <link rel="canonical" href="http://yoursite.com/2021/11/23/OLAP%E6%9F%A5%E8%AF%A2%E5%BC%95%E6%93%8E%E9%80%89%E5%9E%8B/">
 
@@ -209,7 +215,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-11-25 10:37:55" itemprop="dateModified" datetime="2021-11-25T10:37:55+08:00">2021-11-25</time>
+                <time title="修改时间：2021-11-25 20:11:55" itemprop="dateModified" datetime="2021-11-25T20:11:55+08:00">2021-11-25</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -227,14 +233,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>16k</span>
+              <span>21k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>14 分钟</span>
+              <span>19 分钟</span>
             </span>
 
         </div>
@@ -265,11 +271,31 @@
 <p>​        相对比MPP系统，在入库时将数据转换为倒排索引，采用Scatter-Gather计算模型，牺牲了灵活性换取很好的性能，在搜索类查询上能做到亚秒级响应。但是对于扫描聚合为主的查询，随着处理数据量的增加，响应时间也会退化到分钟级。</p>
 <p>3、<strong>预计算系统</strong>（Druid/Kylin等）</p>
 <p>​        在入库时对数据进行预聚合，进一步牺牲灵活性换取性能，以实现对超大数据集的秒级响应。没有一个引擎能同时在数据量，灵活性和性能这三个方面做到完美，用户需要基于自己的需求进行取舍和选型。</p>
-<h2 id="Impala"><a href="#Impala" class="headerlink" title="Impala"></a>Impala</h2><p>​        Impala是Cloudera公司推出，提供对HDFS、Hbase数据的高性能、低延迟的交互式SQL查询功能。基于Hive使用内存计算，兼顾数据仓库、具有实时、批处理、多并发等优点，是CDH平台首选的PB级大数据实时查询分析引擎。</p>
-<p>​        Impala是Cloudera在受到Google的Dremel启发下开发的实时交互SQL大数据查询工具，它可以看成是Google Dremel 架构和MPP (Massively Parallel Processing ) 结构的结合体。Impala没有再使用缓慢的Hive&amp;Map-Reduce批处理，而是通过使用与商用并行关系数据库中 类似的分布式查询引擎（由Query Planner、Query Coordinator和Query Exec Engine三部分组成），可以直接从HDFS或HBase中用SELECT、JOIN和统计函数查询数据，从而大大降低了延迟。</p>
-<p>​        Impala主要由Impalad，State Store和CLI组成。Impalad与DataNode运行在同一节点上，由Impalad进程表示，它接收客户端的查询请求（接收查询请求的 Impalad为Coordinator，Coordinator通过JNI调用java前端解释SQL查询语句，生成查询计划树，再通过调度器把执行计 划分发给具有相应数据的其它Impalad进行执行），读写数据，并行执行查询，并把结果通过网络流式的传送回给Coordinator，由 Coordinator返回给客户端。同时Impalad也与State Store保持连接，用于确定哪个Impalad是健康和可以接受新的工作。Impala State Store跟踪集群中的Impalad的健康状态及位置信息，由state-stored进程表示，它通过创建多个线程来处理Impalad的注册订阅和 与各Impalad保持心跳连接，各Impalad都会缓存一份State Store中的信息，当State Store离线后，因为Impalad有State Store的缓存仍然可以工作，但会因为有些Impalad失效了，而已缓存数据无法更新，导致把执行计划分配给了失效的Impalad，导致查询失败。 CLI提供给用户查询使用的命令行工具，同时Impala还提供了Hue，JDBC，ODBC，Thrift使用接口。</p>
-<p><img src="/2021/11/23/OLAP%E6%9F%A5%E8%AF%A2%E5%BC%95%E6%93%8E%E9%80%89%E5%9E%8B/dba40b3c-6fc7-3530-8908-c35ced7073ae.jpg" alt="img"></p>
-<p>​                                                                                                                            Impala架构</p>
+<h2 id="Impala"><a href="#Impala" class="headerlink" title="Impala"></a>Impala</h2><h3 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h3><p>​    Cloudera公司推出，提供对HDFS、Hbase数据的高性能、低延迟的交互式SQL查询功能。基于Hive，使用内存计算，兼顾数据仓库、具有实时、批处理、多并发等优点。</p>
+<h3 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h3><p><img src="/2021/11/23/OLAP%E6%9F%A5%E8%AF%A2%E5%BC%95%E6%93%8E%E9%80%89%E5%9E%8B/v2-233fffbd488d5cb0658d44cf6e3a5aeb_720w.jpg" alt="img">Impala架构</p>
+<p>从上图可以看出，Impala自身包含三个模块：Impalad、Statestore和Catalog,除此之外它还依赖hive Metastore和HDFS</p>
+<blockquote>
+<p>1) Impalad：<br>   接收client的请求、Query执行并返回给中心协调节点。<br>   子节点上的守护进程，负责向statestore保持通信，汇报工作。</p>
+<p>2) Catalog：<br>   分发表的元数据信息到各个impalad中；<br>   接收来自statestore的所有请求。</p>
+<p>3) Statestore：<br>   负责收集分布在集群中各个impalad进程的资源信息、各节点健康状况，同步节点信息；<br>   负责query的协调调度。</p>
+</blockquote>
+<h3 id="存储和架构"><a href="#存储和架构" class="headerlink" title="存储和架构"></a>存储和架构</h3><p><img src="/2021/11/23/OLAP%E6%9F%A5%E8%AF%A2%E5%BC%95%E6%93%8E%E9%80%89%E5%9E%8B/v2-331f1f5c75a51ca1a2efda701483cb5e_720w.jpg" alt="img"></p>
+<p>注：impala不支持ORC格式</p>
+<h3 id="Impala的查询"><a href="#Impala的查询" class="headerlink" title="Impala的查询"></a>Impala的查询</h3><ol>
+<li><p>基本的语法跟hive的查询语句大体一样</p>
+</li>
+<li><p>Impala不支持CLUSTER BY, DISTRIBUTE BY, SORT BY</p>
+</li>
+<li><p>Impala中不支持分桶表</p>
+</li>
+<li><p>Impala不支持COLLECT_SET(col)和explode（col）函数</p>
+</li>
+<li><p>Impala支持开窗函数</p>
+</li>
+</ol>
+<h3 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h3><blockquote>
+<p>1、 尽量将StateStore和Catalog单独部署到同一个节点，保证他们正常通信。<br>2、 通过对Impala Daemon内存限制（默认256M）及StateStore工作线程数，来提高Impala的执行效率。<br>3、 SQL优化，使用之前调用执行计划<br>4、 选择合适的文件格式进行存储，提高查询效率。<br>5、 避免产生很多小文件（如果有其他程序产生的小文件，可以使用中间表，将小文件数据存放到中间表。然后通过insert…select…方式中间表的数据插入到最终表中）<br>6、 使用合适的分区技术，根据分区粒度测算<br>7、 使用compute stats进行表信息搜集，当一个内容表或分区明显变化，重新计算统计相关数据表或分区。因为行和不同值的数量差异可能导致impala选择不同的连接顺序时进行查询。<br>8、 网络io的优化：<br>–a.避免把整个数据发送到客户端<br>–b.尽可能的做条件过滤<br>–c.使用limit字句<br>–d.输出文件时，避免使用美化输出<br>–e.尽量少用全量元数据的刷新<br>9、 使用profile输出底层信息计划，在做相应环境优化</p>
+</blockquote>
 <h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a><strong>优点</strong></h3><p>1）基于内存运算，不需要把中间结果写入磁盘，省掉了大量的I/O开销。</p>
 <p>2）无需转换为Mapreduce，直接访问存储在HDFS，HBase中的数据进行作业调度，速度快。</p>
 <p>3）使用了支持Data locality的I/O调度机制，尽可能地将数据和计算分配在同一台机器上进行，减少了网络开销。</p>
@@ -340,19 +366,28 @@
 <li><p>但是presto是取代不了hive的，因为p全部的数据都是在内存中，限制了在内存中的数据集大小，比如多个大表的join，这些大表是不能完全放进内存的，实际应用中，对于在presto的查询是有一定规定条件的，比比如说一个查询在presto查询超过30分钟，那就kill掉吧，说明不适合在presto上使用，主要原因是，查询过大的话，会占用整个集群的资源，这会导致你后续的查询是没有资源进行查询的，这跟presto的设计理念是冲突的，就像是你进行一个查询，但是要等个5分钟才有资源继续查询，这是很不合理的，交互式就变得弱了很多</p>
 </li>
 </ul>
-<h3 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h3><p><img src="/2021/11/23/OLAP%E6%9F%A5%E8%AF%A2%E5%BC%95%E6%93%8E%E9%80%89%E5%9E%8B/image-20211125095023640.png" alt="image-20211125095023640"></p>
+<h3 id="架构-1"><a href="#架构-1" class="headerlink" title="架构"></a>架构</h3><p><img src="/2021/11/23/OLAP%E6%9F%A5%E8%AF%A2%E5%BC%95%E6%93%8E%E9%80%89%E5%9E%8B/image-20211125095023640.png" alt="image-20211125095023640"></p>
 <p>这里面三个服务：</p>
-<p>Coordinator（考第内ter），是一个中心的查询角色，它主要的一个作用是接受查询请求，将他们转换成各种各样的任务，将任务拆解后分发到多个worker去执行各种任务的节点</p>
+<p>Coordinator，是一个中心的查询角色，它主要的一个作用是接受查询请求，将他们转换成各种各样的任务，将任务拆解后分发到多个worker去执行各种任务的节点</p>
 <p>1、解析SQL语句</p>
 <p>2、⽣成执⾏计划</p>
 <p>3、分发执⾏任务给Worker节点执⾏</p>
 <p>Worker，是一个真正的计算的节点，执行任务的节点，它接收到task后，就会到对应的数据源里面，去把数据提取出来，提取方式是通过各种各样的connector：</p>
-<p>1、负责实际执⾏查询任务</p>
+<ol>
+<li>负责实际执⾏查询任务</li>
+</ol>
 <p>Discovery service，是将coordinator和woker结合到一起的服务：</p>
-<p>1、Worker节点启动后向Discovery Server服务注册</p>
-<p>2、Coordinator从Discovery Server获得Worker节点</p>
+<ol>
+<li><p>Worker节点启动后向Discovery Server服务注册</p>
+</li>
+<li><p>Coordinator从Discovery Server获得Worker节点</p>
+</li>
+</ol>
 <p>coordinator和woker之间的关系是怎么维护的呢？是通过Discovery Server，所有的worker都把自己注册到Discovery Server上，Discovery Server是一个发现服务的service，Discovery Server发现服务之后，coordinator便知道在我的集群中有多少个worker能够给我工作，然后我分配工作到worker时便有了根据</p>
 <p>最后，presto是通过connector plugin获取数据和元信息的，它不是⼀个数据存储引擎，不需要有数据，presto为其他数据存储系统提供了SQL能⼒，客户端协议是HTTP+JSON</p>
+<h3 id="Coordinator和Worker"><a href="#Coordinator和Worker" class="headerlink" title="Coordinator和Worker"></a>Coordinator和Worker</h3><blockquote>
+<p>1）Coordinator<br>Coordinator服务器是用来解析语句，执行计划分析和管理Presto的Worker结点。Presto安装必须有一个Coordinator和多个Worker。如果用于开发环境和测试，则一个Presto实例可以同时担任这两个角色。<br>Coordinator跟踪每个Work的活动情况并协调查询语句的执行。Coordinator为每个查询建立模型，模型包含多个Stage，每个Stage再转为Task分发到不同的Worker上执行。<br>Coordinator与Worker、Client通信是通过REST API。<br>2）Worker<br>Worker是负责执行任务和处理数据。Worker从Connector获取数据。Worker之间会交换中间数据。Coordinator是负责从Worker获取结果并返回最终结果给Client。<br>当Worker启动时，会广播自己去发现 Coordinator，并告知 Coordinator它是可用，随时可以接受Task。<br>Worker与Coordinator、Worker通信是通过REST API。<br>3）数据源<br>贯穿全文，你会看到一些术语：Connector、Catelog、Schema和Table。这些是Presto特定的数据源<br>（1）Connector<br>Connector是适配器，用于Presto和数据源（如Hive、RDBMS）的连接。你可以认为类似JDBC那样，但却是Presto的SPI的实现，使用标准的API来与不同的数据源交互。<br>Presto有几个内建Connector：JMX的Connector、System Connector（用于访问内建的System table）、Hive的Connector、TPCH（用于TPC-H基准数据）。还有很多第三方的Connector，所以Presto可以访问不同数据源的数据。<br>每个Catalog都有一个特定的Connector。如果你使用catelog配置文件，你会发现每个文件都必须包含connector.name属性，用于指定catelog管理器（创建特定的Connector使用）。一个或多个catelog用同样的connector是访问同样的数据库。例如，你有两个Hive集群。你可以在一个Presto集群上配置两个catelog，两个catelog都是用Hive Connector，从而达到可以查询两个Hive集群。<br>（2）Catelog<br>一个Catelog包含Schema和Connector。例如，你配置JMX的catelog，通过JXM Connector访问JXM信息。当你执行一条SQL语句时，可以同时运行在多个catelog。<br>Presto处理table时，是通过表的完全限定（fully-qualified）名来找到catelog。例如，一个表的权限定名是hive.test_data.test，则test是表名，test_data是schema，hive是catelog。<br>Catelog的定义文件是在Presto的配置目录中。<br>（3）Schema<br>Schema是用于组织table。把catelog好schema结合在一起来包含一组的表。当通过Presto访问hive或Mysq时，一个schema会同时转为hive和mysql的同等概念。<br>（4）Table<br>Table跟关系型的表定义一样，但数据和表的映射是交给Connector。</p>
+</blockquote>
 <h3 id="支持的数据源和存储格式"><a href="#支持的数据源和存储格式" class="headerlink" title="支持的数据源和存储格式"></a>支持的数据源和存储格式</h3><p> Presto需要从其他数据源获取数据来进行运算分析，它可以连接多种数据源，包括Hive、RDBMS（Mysql、Oracle、Tidb等）、Kafka、MongoDB、Redis等</p>
 <p>一条Presto查询可以将多个数据源的数据进行合并分析。</p>
 <p> 比如：select * from a join b where a.id=b.id;，其中表a可以来自Hive，表b可以来自Mysql。</p>
@@ -368,6 +403,9 @@
 <li>其他：</li>
 </ul>
 <p>​        MongoDB，ElasticSearch，HBase</p>
+<h3 id="数据模型"><a href="#数据模型" class="headerlink" title="数据模型"></a>数据模型</h3><blockquote>
+<p> 1）Presto采取三层表结构：<br>        Catalog：对应某一类数据源，例如Hive的数据，或MySql的数据<br>        Schema：对应MySql中的数据库<br>        Table：对应MySql中的表<br>2）Presto的存储单元包括：<br>        Page：多行数据的集合，包含多个列的数据，内部仅提供逻辑行，实际以列式存储。<br>        Block：一列数据，根据不同类型的数据，通常采取不同的编码方式，了解这些编码方式，有助于自己的存储系统对接presto。<br>3）不同类型的Block：<br>    （1）Array类型Block，应用于固定宽度的类型，例如int，long，double。block由两部分组成：<br>              boolean valueIsNull[]表示每一行是否有值。<br>              T values[] 每一行的具体值。<br>    （2）可变宽度的Block，应用于String类数据，由三部分信息组成<br>              Slice：所有行的数据拼接起来的字符串。<br>              int offsets[]：每一行数据的起始便宜位置。每一行的长度等于下一行的起始便宜减去当前行的起始便宜。<br>              boolean valueIsNull[] 表示某一行是否有值。如果有某一行无值，那么这一行的便宜量等于上一行的偏移量。<br>    （3）固定宽度的String类型的block，所有行的数据拼接成一长串Slice，每一行的长度固定。<br>    （4）字典block：对于某些列，distinct值较少，适合使用字典保存。主要有两部分组成：<br>              字典，可以是任意一种类型的block(甚至可以嵌套一个字典block)，block中的每一行按照顺序排序编号。<br>              int ids[]表示每一行数据对应的value在字典中的编号。在查找时，首先找到某一行的id，然后到字典中获取真实的值。</p>
+</blockquote>
 <h3 id="SQL运行过程：整体流程"><a href="#SQL运行过程：整体流程" class="headerlink" title="SQL运行过程：整体流程"></a>SQL运行过程：整体流程</h3><p><img src="/2021/11/23/OLAP%E6%9F%A5%E8%AF%A2%E5%BC%95%E6%93%8E%E9%80%89%E5%9E%8B/image-20211125095212022.png" alt="image-20211125095212022"></p>
 <p>1、当我们执行一条sql查询，coordinator接收到这条sql语句以后，它会有一个sql的语法解析器去把sql语法解析变成一个抽象的语法树AST，这抽象的语法书它里面只是进行一些语法解析，如果你的sql语句里面，比如说关键字你用的是int而不是Integer，就会在语法解析这里给暴露出来</p>
 <p>2、如果语法是符合sql语法规范，之后会经过一个逻辑查询计划器的组件，他的主要作用是，比如说你sql里面出现的表，他会通过connector的方式去meta里面把表的schema，列名，列的类型等，全部给找出来，将这些信息，跟语法树给对应起来，之后会生成一个物理的语法树节点，这个语法树节点里面，不仅拥有了它的查询关系，还拥有类型的关系，如果在这一步，数据库表里某一列的类型，跟你sql的类型不一致，就会在这里报错</p>
@@ -443,6 +481,88 @@
 </ul>
 <h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>Kylin通过预计算，把计算结果集保存在HBase中，原有的基于行的关系模型被转换成基于键值对的列式存储；通过维度组合作为HBase的Rowkey，在查询访问时不再需要昂贵的表扫描，这为高速高并发分析带来了可能；Kylin提供了标准SQL查询接口，支持大多数的SQL函数，同时也支持ODBC/JDBC的方式和主流的BI产品无缝集成。</p>
 <p>本文介绍了Apache Kylin的历史背景和技术特点。尤其是它基于预计算的大数据查询原理，<br>理论上可以在任意大的数据规模上达到O（1）常数级别的查询速度，这一点也是Apache Kylin与传统查询技术的关键区别，如图1-6所示。<br><img src="/2021/11/23/OLAP%E6%9F%A5%E8%AF%A2%E5%BC%95%E6%93%8E%E9%80%89%E5%9E%8B/852983-20191014134726707-272794413.jpg" alt="img"><br>传统技术，如大规模并行计算和列式存储的查询速度都在 O（N）级别，与数据规模增线性关系。如果数据规模增长10倍，那么O（N) 的查询速度就会下降到十分之一，无法满足日益增长的数据需求。依靠 Apache Kylin，我们不用再担心查询速度会随着数据量的增长而减慢，面对未来的数据挑战时也能更有信心。</p>
+<h2 id="Druid"><a href="#Druid" class="headerlink" title="Druid"></a>Druid</h2><h3 id="定义-1"><a href="#定义-1" class="headerlink" title="定义"></a>定义</h3><p>Druid 是一个分布式的支持实时分析的数据存储系统，具有以下几个特点</p>
+<ul>
+<li>亚秒级 OLAP 查询，包括多维过滤、Ad-hoc 的属性分组、快速聚合数据等等。</li>
+<li>实时的数据消费，真正做到数据摄入实时、查询结果实时。</li>
+<li>高效的多租户能力，最高可以做到几千用户同时在线查询。</li>
+<li>扩展性强，支持 PB 级数据、千亿级事件快速处理，支持每秒数千查询并发。</li>
+<li>极高的高可用保障，支持滚动升级。</li>
+</ul>
+<p>实时数据分析是 Apache Druid 最典型的使用场景。该场景涵盖的面很广，例如：</p>
+<ul>
+<li>实时指标监控</li>
+<li>推荐模型</li>
+<li>广告平台</li>
+<li>搜索模型</li>
+</ul>
+<p>这些场景的特点都是拥有大量的数据，且对数据查询的时延要求非常高。在实时指标监控中，系统问题需要在出现的一刻被检测到并被及时给出报警。在推荐模型中，用户行为数据需要实时采集，并及时反馈到推荐系统中。用户几次点击之后系统就能够识别其搜索意图，并在之后的搜索中推荐更合理的结果</p>
+<p>（注意：阿里巴巴也曾创建过一个开源项目叫作Druid（简称阿里Druid），它是一个数据库连接池的项目。阿里Druid 和本问讨论的Druid 没有任何关系，它们解决完全不同的问题。）</p>
+<h3 id="架构和原理"><a href="#架构和原理" class="headerlink" title="架构和原理"></a>架构和原理</h3><p><img src="/2021/11/23/OLAP%E6%9F%A5%E8%AF%A2%E5%BC%95%E6%93%8E%E9%80%89%E5%9E%8B/v2-235aead7b92db39688a7865b35c67bba_720w.jpg" alt="img">Druid架构</p>
+<p>Druid总体包含以下5类节点：</p>
+<ol>
+<li><p>中间管理节点（middleManager node）：及时摄入实时数据，已生成Segment数据文件。</p>
+</li>
+<li><p>历史节点（historical node）：加载已生成好的数据文件，以供数据查询。historical 节点是整个集群查询性能的核心所在，因为historical会承担绝大部分的segment查询。</p>
+</li>
+<li><p>查询节点（broker node）：接收客户端查询请求，并将这些查询转发给Historicals和MiddleManagers。当Brokers从这些子查询中收到结果时，它们会合并这些结果并将它们返回给调用者。</p>
+</li>
+<li><p>协调节点（coordinator node）：主要负责历史节点的数据负载均衡，以及通过规则（Rule）管理数据的生命周期。协调节点告诉历史节点加载新数据、卸载过期数据、复制数据、和为了负载均衡移动数据。</p>
+</li>
+<li><p>统治者(overlord node） ：进程监视MiddleManager进程，并且是数据摄入Druid的控制器。他们负责将提取任务分配给MiddleManagers并协调Segement发布。</p>
+</li>
+</ol>
+<p>同时，Druid还包含3类外部依赖：</p>
+<ol>
+<li><p>数据文件存储库（DeepStorage）：存放生成的Segment数据文件，并供历史服务器下载，对于单节点集群可以是本地磁盘，而对于分布式集群一般是HDFS。</p>
+</li>
+<li><p>元数据库（Metastore），存储Druid集群的元数据信息，比如Segment的相关信息，一般用MySQL或PostgreSQL。</p>
+</li>
+<li><p>Zookeeper：为Druid集群提供以执行协调服务。如内部服务的监控，协调和领导者选举。</p>
+</li>
+</ol>
+<h3 id="Druid的数据结构"><a href="#Druid的数据结构" class="headerlink" title="Druid的数据结构"></a>Druid的数据结构</h3><p>与Druid架构相辅相成的是其基于DataSource与Segment的数据结构，它们共同成就了 Druid的高性能优势。</p>
+<h4 id="DataSource结构"><a href="#DataSource结构" class="headerlink" title="DataSource结构"></a>DataSource结构</h4><p>若与传统的关系型数据库管理系统（ RDBMS）做比较，Druid的DataSource可以理解为 RDBMS中的表（Table）。DataSource的结构包含以下几个方面。</p>
+<ol>
+<li><p>时间列（ TimeStamp）：表明每行数据的时间值，默认使用 UTC时间格式且精确到毫秒级别。这个列是数据聚合与范围查询的重要维度。</p>
+</li>
+<li><p>维度列（Dimension）：维度来自于 OLAP的概念，用来标识数据行的各个类别信息。</p>
+</li>
+<li><p>指标列（ Metric）：指标对应于 OLAP概念中的 Fact，是用于聚合和计算的列。这些指标列通常是一些数字，计算操作通常包括 Count、Sum和 Mean等。</p>
+</li>
+</ol>
+<p><img src="/2021/11/23/OLAP%E6%9F%A5%E8%AF%A2%E5%BC%95%E6%93%8E%E9%80%89%E5%9E%8B/v2-523207f700ab9a3b357c5595574abfd5_720w.jpg" alt="img"></p>
+<p>​                                                                                                                            DataSource结构</p>
+<p>无论是实时数据消费还是批量数据处理， Druid在基于DataSource结构存储数据时即可选择对任意的指标列进行聚合（ RollUp）操作。该聚合操作主要基于维度列与时间范围两方面的情况。</p>
+<p>下图显示的是执行聚合操作后 DataSource的数据情况。</p>
+<p><img src="/2021/11/23/OLAP%E6%9F%A5%E8%AF%A2%E5%BC%95%E6%93%8E%E9%80%89%E5%9E%8B/v2-1f6a877ef3fc3310ba679939c3c62687_720w.jpg" alt="img"></p>
+<p>​                                                                                                                    DataSource聚合后的数</p>
+<p>相对于其他时序数据库， Druid在数据存储时便可对数据进行聚合操作是其一大特点，该特点使得 Druid不仅能够节省存储空间，而且能够提高聚合查询的效率。</p>
+<h4 id="Segment结构"><a href="#Segment结构" class="headerlink" title="Segment结构"></a>Segment结构</h4><p>DataSource是一个逻辑概念， Segment却是数据的实际物理存储格式， Druid正是通过 Segment实现了对数据的横纵向切割（ Slice and Dice）操作。从数据按时间分布的角度来看，通过参数 segmentGranularity的设置，Druid将不同时间范围内的数据存储在不同的 Segment数据块中，这便是所谓的数据横向切割。</p>
+<p>这种设计为 Druid带来一个显而易见的优点：按时间范围查询数据时，仅需要访问对应时间段内的这些 Segment数据块，而不需要进行全表数据范围查询，这使效率得到了极大的提高。</p>
+<p><img src="/2021/11/23/OLAP%E6%9F%A5%E8%AF%A2%E5%BC%95%E6%93%8E%E9%80%89%E5%9E%8B/v2-28cbdc2aac8faec57cca4e9010423276_720w.jpg" alt="img"></p>
+<p>通过 Segment将数据按时间范围存储，同时，在 Segment中也面向列进行数据压缩存储，这便是所谓的数据纵向切割。而且在 Segment中使用了 Bitmap等技术对数据的访问进行了优化。</p>
+<h2 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a>总结</h2><p><img src="/2021/11/23/OLAP%E6%9F%A5%E8%AF%A2%E5%BC%95%E6%93%8E%E9%80%89%E5%9E%8B/v2-36cf90f473888cea9c6c826e3c8ef700_720w.jpg" alt="img"></p>
+<ul>
+<li><p>Druid:是一个实时处理时序数据的OLAP数据库，因为它的索引首先按照时间分片，查询的时候也是按照时间线去路由索引。</p>
+</li>
+<li><p>Kylin:核心是Cube，Cube是一种预计算技术，基本思路是预先对数据作多维索引，查询时只扫描索引而不访问原始数据从而提速。</p>
+</li>
+<li><p>Presto:它没有使用Mapreduce，大部分场景下比HIVE块一个数量级，其中的关键是所有的处理都在内存中完成。</p>
+</li>
+</ul>
+<ul>
+<li><p>Impala:基于内存计算，速度快，支持的数据源没有Presto多。</p>
+</li>
+<li><p>SparkSQL：是spark用来处理结构化的一个模块，它提供一个抽象的数据集DataFrame,并且是作为分布式SQL查询引擎的应用。它还可以实现Hive on Spark,hive里的数据用sparksql查询。</p>
+</li>
+<li><p>框架选型：</p>
+<p>1）从超大数据的查询效率来看：</p>
+<p>Druid&gt;Kylin&gt;Presto&gt;SparkSQL</p>
+<p>2）从支持的数据源种类来讲：</p>
+<p>Presto&gt;SparkSQL&gt;Kylin&gt;Druid</p>
+</li>
+</ul>
 
     </div>
 
@@ -544,7 +664,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#大数据OLAP查询引擎分析总结"><span class="nav-number">1.</span> <span class="nav-text">大数据OLAP查询引擎分析总结</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#OLAP的历史与基本概念"><span class="nav-number">1.1.1.</span> <span class="nav-text">OLAP的历史与基本概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ROLAP和MOLAP"><span class="nav-number">1.1.2.</span> <span class="nav-text">ROLAP和MOLAP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#大数据时代OLAP的挑战"><span class="nav-number">1.1.3.</span> <span class="nav-text">大数据时代OLAP的挑战</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#按照技术分类"><span class="nav-number">1.1.4.</span> <span class="nav-text">按照技术分类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#按照系统架构分类"><span class="nav-number">1.1.5.</span> <span class="nav-text">按照系统架构分类</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Impala"><span class="nav-number">1.2.</span> <span class="nav-text">Impala</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#优点"><span class="nav-number">1.2.1.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缺点"><span class="nav-number">1.2.2.</span> <span class="nav-text">缺点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Dremio"><span class="nav-number">1.3.</span> <span class="nav-text">Dremio</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#特点"><span class="nav-number">1.3.1.</span> <span class="nav-text">特点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Presto"><span class="nav-number">1.4.</span> <span class="nav-text">Presto</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#架构"><span class="nav-number">1.4.1.</span> <span class="nav-text">架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#支持的数据源和存储格式"><span class="nav-number">1.4.2.</span> <span class="nav-text">支持的数据源和存储格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL运行过程：整体流程"><span class="nav-number">1.4.3.</span> <span class="nav-text">SQL运行过程：整体流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MapReduce-vs-Presto"><span class="nav-number">1.4.4.</span> <span class="nav-text">MapReduce vs Presto</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">1.4.5.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Kylin"><span class="nav-number">1.5.</span> <span class="nav-text">Kylin</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#简介"><span class="nav-number">1.5.1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么要用Kylin"><span class="nav-number">1.5.2.</span> <span class="nav-text">为什么要用Kylin</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Kylin怎样解决关键问题"><span class="nav-number">1.5.3.</span> <span class="nav-text">Kylin怎样解决关键问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Kylin的工作原理"><span class="nav-number">1.5.4.</span> <span class="nav-text">Kylin的工作原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#维度和度量简介"><span class="nav-number">1.5.5.</span> <span class="nav-text">维度和度量简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cube和Cuboid"><span class="nav-number">1.5.6.</span> <span class="nav-text">Cube和Cuboid</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#工作原理"><span class="nav-number">1.5.7.</span> <span class="nav-text">工作原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Kylin的技术架构"><span class="nav-number">1.5.8.</span> <span class="nav-text">Kylin的技术架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Kylin的主要特点"><span class="nav-number">1.5.9.</span> <span class="nav-text">Kylin的主要特点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#标准SQL接口"><span class="nav-number">1.5.10.</span> <span class="nav-text">标准SQL接口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#支持超大数据集"><span class="nav-number">1.5.11.</span> <span class="nav-text">支持超大数据集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#亚秒级响应"><span class="nav-number">1.5.12.</span> <span class="nav-text">亚秒级响应</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#可伸缩性和高吞吐率"><span class="nav-number">1.5.13.</span> <span class="nav-text">可伸缩性和高吞吐率</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BI及可视化工具集成"><span class="nav-number">1.5.14.</span> <span class="nav-text">BI及可视化工具集成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#与其他开源产品比较"><span class="nav-number">1.5.15.</span> <span class="nav-text">与其他开源产品比较</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#小结"><span class="nav-number">1.5.16.</span> <span class="nav-text">小结</span></a></li></ol></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#大数据OLAP查询引擎分析总结"><span class="nav-number">1.</span> <span class="nav-text">大数据OLAP查询引擎分析总结</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#OLAP的历史与基本概念"><span class="nav-number">1.1.1.</span> <span class="nav-text">OLAP的历史与基本概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ROLAP和MOLAP"><span class="nav-number">1.1.2.</span> <span class="nav-text">ROLAP和MOLAP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#大数据时代OLAP的挑战"><span class="nav-number">1.1.3.</span> <span class="nav-text">大数据时代OLAP的挑战</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#按照技术分类"><span class="nav-number">1.1.4.</span> <span class="nav-text">按照技术分类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#按照系统架构分类"><span class="nav-number">1.1.5.</span> <span class="nav-text">按照系统架构分类</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Impala"><span class="nav-number">1.2.</span> <span class="nav-text">Impala</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#定义"><span class="nav-number">1.2.1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#架构"><span class="nav-number">1.2.2.</span> <span class="nav-text">架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#存储和架构"><span class="nav-number">1.2.3.</span> <span class="nav-text">存储和架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Impala的查询"><span class="nav-number">1.2.4.</span> <span class="nav-text">Impala的查询</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#优化"><span class="nav-number">1.2.5.</span> <span class="nav-text">优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#优点"><span class="nav-number">1.2.6.</span> <span class="nav-text">优点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缺点"><span class="nav-number">1.2.7.</span> <span class="nav-text">缺点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Dremio"><span class="nav-number">1.3.</span> <span class="nav-text">Dremio</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#特点"><span class="nav-number">1.3.1.</span> <span class="nav-text">特点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Presto"><span class="nav-number">1.4.</span> <span class="nav-text">Presto</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#架构-1"><span class="nav-number">1.4.1.</span> <span class="nav-text">架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Coordinator和Worker"><span class="nav-number">1.4.2.</span> <span class="nav-text">Coordinator和Worker</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#支持的数据源和存储格式"><span class="nav-number">1.4.3.</span> <span class="nav-text">支持的数据源和存储格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据模型"><span class="nav-number">1.4.4.</span> <span class="nav-text">数据模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL运行过程：整体流程"><span class="nav-number">1.4.5.</span> <span class="nav-text">SQL运行过程：整体流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MapReduce-vs-Presto"><span class="nav-number">1.4.6.</span> <span class="nav-text">MapReduce vs Presto</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">1.4.7.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Kylin"><span class="nav-number">1.5.</span> <span class="nav-text">Kylin</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#简介"><span class="nav-number">1.5.1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么要用Kylin"><span class="nav-number">1.5.2.</span> <span class="nav-text">为什么要用Kylin</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Kylin怎样解决关键问题"><span class="nav-number">1.5.3.</span> <span class="nav-text">Kylin怎样解决关键问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Kylin的工作原理"><span class="nav-number">1.5.4.</span> <span class="nav-text">Kylin的工作原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#维度和度量简介"><span class="nav-number">1.5.5.</span> <span class="nav-text">维度和度量简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cube和Cuboid"><span class="nav-number">1.5.6.</span> <span class="nav-text">Cube和Cuboid</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#工作原理"><span class="nav-number">1.5.7.</span> <span class="nav-text">工作原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Kylin的技术架构"><span class="nav-number">1.5.8.</span> <span class="nav-text">Kylin的技术架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Kylin的主要特点"><span class="nav-number">1.5.9.</span> <span class="nav-text">Kylin的主要特点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#标准SQL接口"><span class="nav-number">1.5.10.</span> <span class="nav-text">标准SQL接口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#支持超大数据集"><span class="nav-number">1.5.11.</span> <span class="nav-text">支持超大数据集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#亚秒级响应"><span class="nav-number">1.5.12.</span> <span class="nav-text">亚秒级响应</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#可伸缩性和高吞吐率"><span class="nav-number">1.5.13.</span> <span class="nav-text">可伸缩性和高吞吐率</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BI及可视化工具集成"><span class="nav-number">1.5.14.</span> <span class="nav-text">BI及可视化工具集成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#与其他开源产品比较"><span class="nav-number">1.5.15.</span> <span class="nav-text">与其他开源产品比较</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#小结"><span class="nav-number">1.5.16.</span> <span class="nav-text">小结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Druid"><span class="nav-number">1.6.</span> <span class="nav-text">Druid</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#定义-1"><span class="nav-number">1.6.1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#架构和原理"><span class="nav-number">1.6.2.</span> <span class="nav-text">架构和原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Druid的数据结构"><span class="nav-number">1.6.3.</span> <span class="nav-text">Druid的数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#DataSource结构"><span class="nav-number">1.6.3.1.</span> <span class="nav-text">DataSource结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Segment结构"><span class="nav-number">1.6.3.2.</span> <span class="nav-text">Segment结构</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结-1"><span class="nav-number">1.7.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -611,13 +731,13 @@
       <i class="fa fa-area-chart"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">89k</span>
+    <span title="站点总字数">93k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">1:20</span>
+    <span title="站点阅读时长">1:25</span>
 </div>
 
 
