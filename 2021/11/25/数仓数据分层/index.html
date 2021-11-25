@@ -28,12 +28,12 @@
 <meta property="og:description" content="数仓数据分层简介  背景1、数仓是什么, 其实就是存储数据,体现历史变化的一个数据仓库. 因为互联网时代到来,基于数据量的大小,分为了传统数仓和现代数仓. 2、传统数仓,使用传统的关系型数据库进行数据存储,因为关系型数据库本身可以使用SQL以及函数等做数据分析.所以把数据存储和数据分析功能集合为一体,加上一个可视化界面,就能从数据存储,数据分析,数据展示完整方案.">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://yoursite.com/2021/11/25/%E6%95%B0%E4%BB%93%E6%95%B0%E6%8D%AE%E5%88%86%E5%B1%82/webp.webp">
-<meta property="og:image" content="http://yoursite.com/2021/11/25/%E6%95%B0%E4%BB%93%E6%95%B0%E6%8D%AE%E5%88%86%E5%B1%82/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9odTIx,size_16,color_FFFFFF,t_70#pic_center.png">
-<meta property="og:image" content="http://yoursite.com/2021/11/25/%E6%95%B0%E4%BB%93%E6%95%B0%E6%8D%AE%E5%88%86%E5%B1%82/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9odTIx,size_16,color_FFFFFF,t_70#pic_center-16378309891554.png">
-<meta property="og:image" content="http://yoursite.com/2021/11/25/%E6%95%B0%E4%BB%93%E6%95%B0%E6%8D%AE%E5%88%86%E5%B1%82/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9odTIx,size_16,color_FFFFFF,t_70#pic_center-16378310026826.png">
-<meta property="og:image" content="http://yoursite.com/2021/11/25/%E6%95%B0%E4%BB%93%E6%95%B0%E6%8D%AE%E5%88%86%E5%B1%82/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9odTIx,size_16,color_FFFFFF,t_70#pic_center-16378310576828.png">
+<meta property="og:image" content="http://yoursite.com/2021/11/25/%E6%95%B0%E4%BB%93%E6%95%B0%E6%8D%AE%E5%88%86%E5%B1%82/1.png">
+<meta property="og:image" content="http://yoursite.com/2021/11/25/%E6%95%B0%E4%BB%93%E6%95%B0%E6%8D%AE%E5%88%86%E5%B1%82/2.png">
+<meta property="og:image" content="http://yoursite.com/2021/11/25/%E6%95%B0%E4%BB%93%E6%95%B0%E6%8D%AE%E5%88%86%E5%B1%82/3.png">
+<meta property="og:image" content="http://yoursite.com/2021/11/25/%E6%95%B0%E4%BB%93%E6%95%B0%E6%8D%AE%E5%88%86%E5%B1%82/4.png">
 <meta property="article:published_time" content="2021-11-25T07:50:15.000Z">
-<meta property="article:modified_time" content="2021-11-25T09:10:38.102Z">
+<meta property="article:modified_time" content="2021-11-25T09:36:05.291Z">
 <meta property="article:author" content="Rui Zhang">
 <meta property="article:tag" content="数仓">
 <meta name="twitter:card" content="summary">
@@ -195,7 +195,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2021-11-25 15:50:15 / 修改时间：17:10:38" itemprop="dateCreated datePublished" datetime="2021-11-25T15:50:15+08:00">2021-11-25</time>
+              <time title="创建时间：2021-11-25 15:50:15 / 修改时间：17:36:05" itemprop="dateCreated datePublished" datetime="2021-11-25T15:50:15+08:00">2021-11-25</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -238,7 +238,7 @@
 <p>2、传统数仓,使用传统的关系型数据库进行数据存储,因为关系型数据库本身可以使用SQL以及函数等做数据分析.所以把数据存储和数据分析功能集合为一体,加上一个可视化界面,就能从数据存储,数据分析,数据展示完整方案.</p>
 <p>3、到了互联网时代,由于上网用户剧增,特别是移动互联网时代,海量的网络设备,导致了海量的数据产生,企业需要也希望从这些海量数据中挖掘有效信息,如行为日志数据,业务数据,爬虫数据等等中提炼出有价值信息.但传统的关系型数据库由于本身技术限制,无法很好承担这么大数据量存储和分析的任务,现代大数据技术应运而生.而数仓就是做这些海量数据存储的地方.</p>
 <h2 id="经典数仓分层架构"><a href="#经典数仓分层架构" class="headerlink" title="经典数仓分层架构"></a>经典数仓分层架构</h2><p>1、</p>
-<p><img src="/2021/11/25/%E6%95%B0%E4%BB%93%E6%95%B0%E6%8D%AE%E5%88%86%E5%B1%82/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9odTIx,size_16,color_FFFFFF,t_70#pic_center.png" alt="在这里插入图片描述"></p>
+<p><img src="/2021/11/25/%E6%95%B0%E4%BB%93%E6%95%B0%E6%8D%AE%E5%88%86%E5%B1%82/1.png" alt="在这里插入图片描述"></p>
 <p>2、其实数仓数据分层,就跟代码分层一样.如果所有数据都放在一层,就跟代码都放在一个文件,肯定是可以运行的,但带来的问题就是阅读性差,复用性和维护性降低.</p>
 <blockquote>
 <p> 数仓的分层也是一样,每一层都有自己的职责,同时都是基于下一层或者下面多层做数据处理之后的结果.<br>这样一来,最上层就是ADS,数据应用层,当更上层需要数据时,不需要再从最底层进行数据计算,可以复用中间层级的现有结果,可以提升数据处理速度.<br>同样的,因为更上层数据都是从下一层或者下面多层数据处理而来,这样就算下层数据丢失,也不会造成企业所有数据毁灭性灾难,算是一种数据冗余机制,不过更上层数据一般做了数据处理,提升了维度信息.</p>
@@ -354,17 +354,17 @@
 <blockquote>
 <p>只使用设备 ID<br>适合没有用户注册体系，或者极少数用户会进行多设备登录的产品，如工具类产品、搜索引擎、部分小型电商等。<br>这也是绝大多数数据分析产品唯一提供的方案。<br>不足点：<br>    同一用户在不同设备使用会被认为不同的用户，对后续的分析统计有影响。<br>    不同用户在相同设备使用会被认为是一个用户，也对后续的分析统计有影响。<br>    但如果用户跨设备使用或者多用户共用设备不是产品的常见场景的话，可以忽略上述问题</p>
 </blockquote>
-<p><img src="/2021/11/25/%E6%95%B0%E4%BB%93%E6%95%B0%E6%8D%AE%E5%88%86%E5%B1%82/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9odTIx,size_16,color_FFFFFF,t_70#pic_center-16378309891554.png" alt="在这里插入图片描述"></p>
+<p><img src="/2021/11/25/%E6%95%B0%E4%BB%93%E6%95%B0%E6%8D%AE%E5%88%86%E5%B1%82/2.png" alt="在这里插入图片描述"></p>
 <p>方案2:</p>
 <blockquote>
 <p>关联设备 ID 和登录 ID（一对一）<br>适合场景,成功关联设备 ID 和登录 ID 之后，用户在该设备 ID 上或该登录 ID 下的行为就会贯通，被认为是一个 全局 ID 发生的。在进行事件、漏斗、留存等用户相关分析时也会算作一个用户。<br>关联设备 ID 和登录 ID 的方法虽然实现了更准确的用户追踪，但是也会增加复杂度。<br>所以一般来说，我们建议只有当同时满足以下条件时，才考虑进行 ID 关联：<br>    需要贯通一个用户在一个设备上注册前后的行为。<br>    需要贯通一个注册用户在不同设备上登录之后的行为<br>不足点:<br>    一个设备 ID 只能和一个登录 ID 关联，而事实上一台设备可能有多个用户使用。<br>    一个登录 ID 只能和一个设备 ID 关联，而事实上一个用户可能用一个登录 ID 在多台设备上登录</p>
 </blockquote>
-<p><img src="/2021/11/25/%E6%95%B0%E4%BB%93%E6%95%B0%E6%8D%AE%E5%88%86%E5%B1%82/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9odTIx,size_16,color_FFFFFF,t_70#pic_center-16378310026826.png" alt="在这里插入图片描述"></p>
+<p><img src="/2021/11/25/%E6%95%B0%E4%BB%93%E6%95%B0%E6%8D%AE%E5%88%86%E5%B1%82/3.png" alt="在这里插入图片描述"></p>
 <p>方案3:</p>
 <blockquote>
 <p>一个用户在多个设备上进行登录是一种比较常见的场景，比如 Web 端和 App 端可能都需要进行登录。支持一个登录 ID 下关联多设备 ID 之后，用户在多设备下的行为就会贯通，被认为是一个ID 发生的。<br>不足点：<br>    一个设备 ID 只能和一个登录 ID 关联，而事实上一台设备可能有多个用户使用。<br>    一个设备 ID 一旦跟某个登录 ID 关联或者一个登录 ID 和一个设备 ID 关联，就不能解除（自动解除）。<br>而事实上，设备 ID 和登录 ID 的动态关联才应该是更合理的</p>
 </blockquote>
-<p><img src="/2021/11/25/%E6%95%B0%E4%BB%93%E6%95%B0%E6%8D%AE%E5%88%86%E5%B1%82/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3hpYW9odTIx,size_16,color_FFFFFF,t_70#pic_center-16378310576828.png" alt="在这里插入图片描述"></p>
+<p><img src="/2021/11/25/%E6%95%B0%E4%BB%93%E6%95%B0%E6%8D%AE%E5%88%86%E5%B1%82/4.png" alt="在这里插入图片描述"></p>
 <p>方案4:</p>
 <blockquote>
 <p>关联设备 ID 和登录 ID（动态修正）<br>基本原则，与方案3相同<br>修正之处，一个设备ID被绑定到某个登陆ID（A）之后，如果该设备在后续一段时间（比如一个月内）被一个新的登陆ID（B）更频繁使用，则该设备ID会被调整至绑定登陆ID（B）<br>核心点在于同一台设备不同登录账号,根据一定规则打分,设备关联哪个账号根据得分最高者来决定.<br>一般是登陆次数多的得分高,但如果此前登录次数多,但类似卖出手机场景,新用户新账号登录次数变多,则旧帐号会持续扣分,新账号会持续加分,最后新账号得分高出.<br>扣分规则一般是乘以一个负数,这样降低梯度对比减法会更快.</p>
