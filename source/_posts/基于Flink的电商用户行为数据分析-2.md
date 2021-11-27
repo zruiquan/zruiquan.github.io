@@ -9,6 +9,8 @@ categories:
 
 ## 基于Flink的电商用户行为数据分析（2）
 
+## 实时热门商品统计
+
 ### 创建Maven项目
 
 * 打开IDEA，创建一个maven项目，命名为UserBehaviorAnalysis。由于包含了多个模块，我们可以以UserBehaviorAnalysis作为父项目，并在其下建一个名为HotItemsAnalysis的子项目，用于实时统计热门top N商品

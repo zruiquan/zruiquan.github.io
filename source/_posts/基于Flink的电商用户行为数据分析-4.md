@@ -9,17 +9,13 @@ categories:
 
 ## 基于Flink的电商用户行为数据分析（4）
 
+## 市场营销商业指标统计分析  
 
-
-### 市场营销商业指标统计分析  
-
-
-
-#### 模块创建和数据准备  
+### 模块创建和数据准备  
 
 继续在 UserBehaviorAnalysis 下新建一个 maven module 作为子项目，命名为MarketAnalysis。这个模块中我们没有现成的数据，所以会用自定义的测试源来产生测试数据流，或者直接用生成测试数据文件。
 
-
+### APP市场推广统计
 
 #### APP 市场分渠道推广统计  
 
@@ -476,7 +472,7 @@ public class AdStatisticsByProvince {
                 if( !isSentState.value() ){
                     isSentState.update(true);    // 更新状态
                     ctx.output( new OutputTag<BlackListUserWarning>("blacklist"){},
-                            new BlackListUserWarning(value.getUserId(), value.getAdId(), "click over " + countUpperBound +                                       "times."));
+                            new BlackListUserWarning(value.getUserId(), value.getAdId(), "click over " + 												countUpperBound + "times."));
                 }
                 return;    // 不再执行下面操作
             }
@@ -495,4 +491,3 @@ public class AdStatisticsByProvince {
     }
 }
 ```
-
