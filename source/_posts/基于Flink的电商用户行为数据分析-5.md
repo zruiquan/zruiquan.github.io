@@ -17,9 +17,9 @@ categories:
 
 ```xml
 <dependency>
-        <groupId>org.apache.flink</groupId>
-				<artifactId>flink-cep-scala_${scala.binary.version}</artifactId>
-				<version>${flink.version}</version>
+	<groupId>org.apache.flink</groupId>
+	<artifactId>flink-cep-scala_${scala.binary.version}</artifactId>
+	<version>${flink.version}</version>
 </dependency>
 ```
 

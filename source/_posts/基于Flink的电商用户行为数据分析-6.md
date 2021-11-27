@@ -19,7 +19,7 @@ categories:
 
 ```xml
 <dependency> 
-	<groupId>org.apache.flink</groupId> 
+	<groupId>org.apache.flink</groupId>
 	<artifactId>flink-cep _${scala.binary.version}</artifactId>
 	<version>${flink.version}</version>
 </dependency>
