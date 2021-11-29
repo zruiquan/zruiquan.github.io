@@ -20,15 +20,15 @@
     var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="基于Flink的电商用户行为数据分析（2）创建Maven项目 打开IDEA，创建一个maven项目，命名为UserBehaviorAnalysis。由于包含了多个模块，我们可以以UserBehaviorAnalysis作为父项目，并在其下建一个名为HotItemsAnalysis的子项目，用于实时统计热门top N商品 在UserBehaviorAnalysis下新建一个maven module作">
+  <meta name="description" content="基于Flink的电商用户行为数据分析（2）实时热门商品统计创建Maven项目 打开IDEA，创建一个maven项目，命名为UserBehaviorAnalysis。由于包含了多个模块，我们可以以UserBehaviorAnalysis作为父项目，并在其下建一个名为HotItemsAnalysis的子项目，用于实时统计热门top N商品 在UserBehaviorAnalysis下新建一个maven">
 <meta property="og:type" content="article">
 <meta property="og:title" content="基于Flink的电商用户行为数据分析（2）">
 <meta property="og:url" content="http://yoursite.com/2021/09/09/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-2/index.html">
 <meta property="og:site_name" content="没有尾巴的小驴">
-<meta property="og:description" content="基于Flink的电商用户行为数据分析（2）创建Maven项目 打开IDEA，创建一个maven项目，命名为UserBehaviorAnalysis。由于包含了多个模块，我们可以以UserBehaviorAnalysis作为父项目，并在其下建一个名为HotItemsAnalysis的子项目，用于实时统计热门top N商品 在UserBehaviorAnalysis下新建一个maven module作">
+<meta property="og:description" content="基于Flink的电商用户行为数据分析（2）实时热门商品统计创建Maven项目 打开IDEA，创建一个maven项目，命名为UserBehaviorAnalysis。由于包含了多个模块，我们可以以UserBehaviorAnalysis作为父项目，并在其下建一个名为HotItemsAnalysis的子项目，用于实时统计热门top N商品 在UserBehaviorAnalysis下新建一个maven">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-09-09T02:08:35.000Z">
-<meta property="article:modified_time" content="2021-10-18T07:13:21.441Z">
+<meta property="article:modified_time" content="2021-11-29T02:31:56.495Z">
 <meta property="article:author" content="Rui Zhang">
 <meta property="article:tag" content="Flink">
 <meta name="twitter:card" content="summary">
@@ -136,7 +136,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">13</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">15</span></a>
 
   </li>
   </ul>
@@ -195,7 +195,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-10-18 15:13:21" itemprop="dateModified" datetime="2021-10-18T15:13:21+08:00">2021-10-18</time>
+                <time title="修改时间：2021-11-29 10:31:56" itemprop="dateModified" datetime="2021-11-29T10:31:56+08:00">2021-11-29</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -232,7 +232,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h2 id="基于Flink的电商用户行为数据分析（2）"><a href="#基于Flink的电商用户行为数据分析（2）" class="headerlink" title="基于Flink的电商用户行为数据分析（2）"></a>基于Flink的电商用户行为数据分析（2）</h2><h3 id="创建Maven项目"><a href="#创建Maven项目" class="headerlink" title="创建Maven项目"></a>创建Maven项目</h3><ul>
+        <h2 id="基于Flink的电商用户行为数据分析（2）"><a href="#基于Flink的电商用户行为数据分析（2）" class="headerlink" title="基于Flink的电商用户行为数据分析（2）"></a>基于Flink的电商用户行为数据分析（2）</h2><h2 id="实时热门商品统计"><a href="#实时热门商品统计" class="headerlink" title="实时热门商品统计"></a>实时热门商品统计</h2><h3 id="创建Maven项目"><a href="#创建Maven项目" class="headerlink" title="创建Maven项目"></a>创建Maven项目</h3><ul>
 <li>打开IDEA，创建一个maven项目，命名为UserBehaviorAnalysis。由于包含了多个模块，我们可以以UserBehaviorAnalysis作为父项目，并在其下建一个名为HotItemsAnalysis的子项目，用于实时统计热门top N商品</li>
 <li>在UserBehaviorAnalysis下新建一个maven module作为子项目，命名为HotItemsAnalysis</li>
 <li>父项目只是为了规范化项目结构，方便依赖管理，本身是不需要代码实现的，所以UserBehaviorAnalysis下的src 文件夹可以删掉</li>
@@ -386,7 +386,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#基于Flink的电商用户行为数据分析（2）"><span class="nav-number">1.</span> <span class="nav-text">基于Flink的电商用户行为数据分析（2）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#创建Maven项目"><span class="nav-number">1.1.</span> <span class="nav-text">创建Maven项目</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据准备"><span class="nav-number">1.2.</span> <span class="nav-text">数据准备</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实时热门商品实现"><span class="nav-number">1.3.</span> <span class="nav-text">实时热门商品实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#程序主体"><span class="nav-number">1.3.1.</span> <span class="nav-text">程序主体</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#过滤出点击事件"><span class="nav-number">1.3.2.</span> <span class="nav-text">过滤出点击事件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#设置滑动窗口，统计点击量"><span class="nav-number">1.3.3.</span> <span class="nav-text">设置滑动窗口，统计点击量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#计算最热门-Top-N-商品"><span class="nav-number">1.3.4.</span> <span class="nav-text">计算最热门 Top N 商品</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#完整代码"><span class="nav-number">1.3.5.</span> <span class="nav-text">完整代码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#更换Kafka数据源"><span class="nav-number">1.3.6.</span> <span class="nav-text">更换Kafka数据源</span></a></li></ol></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#基于Flink的电商用户行为数据分析（2）"><span class="nav-number">1.</span> <span class="nav-text">基于Flink的电商用户行为数据分析（2）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实时热门商品统计"><span class="nav-number">2.</span> <span class="nav-text">实时热门商品统计</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#创建Maven项目"><span class="nav-number">2.1.</span> <span class="nav-text">创建Maven项目</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数据准备"><span class="nav-number">2.2.</span> <span class="nav-text">数据准备</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实时热门商品实现"><span class="nav-number">2.3.</span> <span class="nav-text">实时热门商品实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#程序主体"><span class="nav-number">2.3.1.</span> <span class="nav-text">程序主体</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#过滤出点击事件"><span class="nav-number">2.3.2.</span> <span class="nav-text">过滤出点击事件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#设置滑动窗口，统计点击量"><span class="nav-number">2.3.3.</span> <span class="nav-text">设置滑动窗口，统计点击量</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#计算最热门-Top-N-商品"><span class="nav-number">2.3.4.</span> <span class="nav-text">计算最热门 Top N 商品</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#完整代码"><span class="nav-number">2.3.5.</span> <span class="nav-text">完整代码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#更换Kafka数据源"><span class="nav-number">2.3.6.</span> <span class="nav-text">更换Kafka数据源</span></a></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -402,7 +402,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-count">15</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -453,13 +453,13 @@
       <i class="fa fa-area-chart"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">93k</span>
+    <span title="站点总字数">121k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">1:25</span>
+    <span title="站点阅读时长">1:50</span>
 </div>
 
 
