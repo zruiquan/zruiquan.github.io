@@ -414,23 +414,23 @@ JOIN 分为窗口连接和区间连接
 
 ###### 窗口连接
 
-![image-20211128041316279](/Users/zhangruiquan/blog/zruiquan.github.io/source/_posts/基于Flink的电商用户行为数据分析-6/image-20211128041316279.png)
+![image-20211128041316279](./基于Flink的电商用户行为数据分析-6/image-20211128041316279.png)
 
-![image-20211128041450268](/Users/zhangruiquan/blog/zruiquan.github.io/source/_posts/基于Flink的电商用户行为数据分析-6/image-20211128041450268.png)
+![image-20211128041450268](./基于Flink的电商用户行为数据分析-6/image-20211128041450268.png)
 
-![image-20211128041531909](/Users/zhangruiquan/blog/zruiquan.github.io/source/_posts/基于Flink的电商用户行为数据分析-6/image-20211128041531909.png)
+![image-20211128041531909](./基于Flink的电商用户行为数据分析-6/image-20211128041531909.png)
 
-![image-20211128041607527](/Users/zhangruiquan/blog/zruiquan.github.io/source/_posts/基于Flink的电商用户行为数据分析-6/image-20211128041607527.png)
+![image-20211128041607527](./基于Flink的电商用户行为数据分析-6/image-20211128041607527.png)
 
-![image-20211128041650155](/Users/zhangruiquan/blog/zruiquan.github.io/source/_posts/基于Flink的电商用户行为数据分析-6/image-20211128041650155.png)
+![image-20211128041650155](./基于Flink的电商用户行为数据分析-6/image-20211128041650155.png)
 
 ###### 区间连接
 
 区间连接需要先keyby
 
-![image-20211128041906873](/Users/zhangruiquan/blog/zruiquan.github.io/source/_posts/基于Flink的电商用户行为数据分析-6/image-20211128041906873.png)
+![image-20211128041906873](./基于Flink的电商用户行为数据分析-6/image-20211128041906873.png)
 
-![image-20211128041932599](/Users/zhangruiquan/blog/zruiquan.github.io/source/_posts/基于Flink的电商用户行为数据分析-6/image-20211128041932599.png)
+![image-20211128041932599](./基于Flink的电商用户行为数据分析-6/image-20211128041932599.png)
 
 
 
