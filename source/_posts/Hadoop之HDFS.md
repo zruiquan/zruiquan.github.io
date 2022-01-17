@@ -218,7 +218,7 @@ liubei
 
 `[atguigu@hadoop102 hadoop-3.1.3]$ hadoop fs -setrep 10 /jinguo/shuguo.txt`
 
-![img](Hadoop之HDFS/wps1E5C.tmp.jpg) 
+![image-20220117104332970](Hadoop之HDFS/image-20220117104332970.png)
 
 这里设置的副本数只是记录在NameNode的元数据中，是否真的会有这么多副本，还得看DataNode的数量。因为目前只有3台设备，最多也就3个副本，只有节点数的增加到10台时，副本数才能达到10。
 
