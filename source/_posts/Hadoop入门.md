@@ -1629,3 +1629,6 @@ at javax.security.auth.Subject.doAs(Subject.java:415)
 #::1     hadoop102
 ```
 
+# 面试重点
+
+![27a573d90eac7cbabd2384b162d3eb3](Hadoop入门/27a573d90eac7cbabd2384b162d3eb3.jpg)
