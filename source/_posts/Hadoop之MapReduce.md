@@ -1326,7 +1326,7 @@ public class FlowDriver {
 
 ​	基于前一个需求，增加自定义分区类，分区按照省份手机号设置。
 
-![img](Hadoop之MapReduce/wps8EF.tmp.png
+![img](Hadoop之MapReduce/wps8EF.tmp.png)
 
 3）案例实操
 
