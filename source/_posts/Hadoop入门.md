@@ -13,13 +13,13 @@ categories:
 
 ## 1.1 Hadoop是什么
 
-![image-20211229191045147](Hadoop入门/image-20211229191045147.png)
+![image-20220125111626122](Hadoop入门/image-20220125111626122.png)
 
 ## 1.2 Hadoop发展历史（了解）
 
-![image-20211229191105914](Hadoop入门/image-20211229191105914.png)
+![image-20220125111633253](Hadoop入门/image-20220125111633253.png)
 
-![image-20211229191110925](Hadoop入门/image-20211229191110925.png)
+![image-20220125111643700](Hadoop入门/image-20220125111643700.png)
 
 
 
@@ -73,27 +73,25 @@ Hadoop三大发行版本：Apache、Cloudera、Hortonworks。
 
 ## 1.4 Hadoop优势（4高）
 
-![image-20211229191307657](Hadoop入门/image-20211229191307657.png)
+![image-20220125111732209](Hadoop入门/image-20220125111732209.png)
 
-![image-20211229191316904](Hadoop入门/image-20211229191316904.png)
+![image-20220125111740524](Hadoop入门/image-20220125111740524.png)
 
 ## 1.5 Hadoop组成（面试重点）
 
-
-
-![image-20211229191415084](Hadoop入门/image-20211229191415084.png)
+![image-20220125111747873](Hadoop入门/image-20220125111747873.png)
 
 ### 1.5.1 HDFS架构概述
 
 Hadoop Distributed File System，简称HDFS，是一个分布式文件系统。
 
-![image-20211229191445609](Hadoop入门/image-20211229191445609.png)
+![image-20220125111803845](Hadoop入门/image-20220125111803845.png)
 
 ### 1.5.2 YARN架构概述
 
 Yet Another Resource Negotiator简称YARN ，另一种资源协调者，是Hadoop的资源管理器。
 
-![image-20211229191916825](Hadoop入门/image-20211229191916825.png)
+![image-20220125111846915](Hadoop入门/image-20220125111846915.png)
 
 ### 1.5.3 MapReduce架构概述
 
@@ -103,15 +101,15 @@ MapReduce将计算过程分为两个阶段：Map和Reduce
 
 2）Reduce阶段对Map结果进行汇总
 
-![image-20211229191950584](Hadoop入门/image-20211229191950584.png)
+![image-20220125111858689](Hadoop入门/image-20220125111858689.png)
 
 ### 1.5.4 HDFS、YARN、MapReduce三者关系
 
-![image-20211229192007674](Hadoop入门/image-20211229192007674.png)
+![image-20220125111906909](Hadoop入门/image-20220125111906909.png)
 
 ## 1.6 大数据技术生态体系
 
-![image-20211229194302841](Hadoop入门/image-20211229194302841.png)
+![image-20220125111924744](Hadoop入门/image-20220125111924744.png)
 
 图中涉及的技术名词解释如下：
 
@@ -135,7 +133,7 @@ MapReduce将计算过程分为两个阶段：Map和Reduce
 
 ## 1.7 推荐系统框架图
 
-![image-20211229194314584](Hadoop入门/image-20211229194314584.png)
+![image-20220125111951907](Hadoop入门/image-20220125111951907.png)
 
 # 第2章 Hadoop运行环境搭建（开发重点）
 
@@ -862,7 +860,7 @@ Are you sure you want to continue connecting (yes/no)?
 
 （1）免密登录原理 
 
-![image-20211229202420601](Hadoop入门/image-20211229202420601.png)
+![image-20220125112103197](Hadoop入门/image-20220125112103197.png)
 
 （2）生成公钥和私钥
 

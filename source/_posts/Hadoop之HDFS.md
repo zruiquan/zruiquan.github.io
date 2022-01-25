@@ -29,19 +29,15 @@ HDFS的使用场景：适合一次写入，多次读出的场景。一个文件�
 
 ## 1.3 HDFS组成架构
 
-![image-20220108151814089](Hadoop之HDFS/image-20220108151814089.png)
+![image-20220125112341753](Hadoop之HDFS/image-20220125112341753.png)
 
-![image-20220108151821299](Hadoop之HDFS/image-20220108151821299.png)
-
-
+![image-20220125112349448](Hadoop之HDFS/image-20220125112349448.png)
 
 ## 1.4 HDFS文件块大小（面试重点）
 
-![image-20220108151841176](Hadoop之HDFS/image-20220108151841176.png)
+![image-20220125112423738](Hadoop之HDFS/image-20220125112423738.png)
 
-
-
-![image-20220108151901641](Hadoop之HDFS/image-20220108151901641.png)
+![image-20220125112431351](Hadoop之HDFS/image-20220125112431351.png)
 
 # 第2章 HDFS的Shell操作（开发重点）
 
@@ -277,8 +273,6 @@ log4j.appender.logfile.layout=org.apache.log4j.PatternLayout
 log4j.appender.logfile.layout.ConversionPattern=%d %p [%c] - %m%n
 ```
 
-
-
 5）创建包名：com.atguigu.hdfs
 
 6）创建HdfsClient类
@@ -311,8 +305,6 @@ public class HdfsClient {
 ```java
 org.apache.hadoop.security.AccessControlException: Permission denied: user=56576, access=WRITE, inode="/xiyou/huaguoshan":atguigu:supergroup:drwxr-xr-x
 ```
-
-
 
 ## 3.2 HDFS的API案例实操
 
@@ -486,7 +478,7 @@ public void testListStatus() throws IOException, InterruptedException, URISyntax
 
 ### 4.1.1 剖析文件写入
 
-![image-20220108154449170](Hadoop之HDFS/image-20220108154449170.png)
+![image-20220125112529571](Hadoop之HDFS/image-20220125112529571.png)
 
 （1）客户端通过Distributed FileSystem模块向NameNode请求上传文件，NameNode检查目标文件是否已存在，父目录是否存在。
 
@@ -510,7 +502,7 @@ public void testListStatus() throws IOException, InterruptedException, URISyntax
 
 节点距离：两个节点到达最近的共同祖先的距离总和。
 
-![image-20220108154507846](Hadoop之HDFS/image-20220108154507846.png) 
+![image-20220125112549187](Hadoop之HDFS/image-20220125112549187.png)
 
 例如，假设有数据中心d1机架r1中的节点n1。该节点可以表示为/d1/r1/n1。利用这种标记，这里给出四种距离描述。
 
@@ -534,11 +526,11 @@ Crtl + n 查找BlockPlacementPolicyDefault，在该类中查找chooseTargetInOrd
 
 2）Hadoop3.1.3副本节点选择
 
-![image-20220108154611706](Hadoop之HDFS/image-20220108154611706.png)
+![image-20220125112618149](Hadoop之HDFS/image-20220125112618149.png)
 
 ## 4.2 HDFS读数据流程
 
-![image-20220108154623738](Hadoop之HDFS/image-20220108154623738.png)
+![image-20220125112636580](Hadoop之HDFS/image-20220125112636580.png)
 
 （1）客户端通过DistributedFileSystem向NameNode请求下载文件，NameNode通过查询元数据，找到文件块所在的DataNode地址。
 
@@ -560,7 +552,7 @@ Crtl + n 查找BlockPlacementPolicyDefault，在该类中查找chooseTargetInOrd
 
 但是，如果长时间添加数据到Edits中，会导致该文件数据过大，效率降低，而且一旦断电，恢复元数据需要的时间过长。因此，需要定期进行FsImage和Edits的合并，如果这个操作由NameNode节点完成，又会效率过低。因此，引入一个新的节点SecondaryNamenode，专门用于FsImage和Edits的合并。
 
-![image-20220108154637435](Hadoop之HDFS/image-20220108154637435.png)
+![image-20220125112700468](Hadoop之HDFS/image-20220125112700468.png)
 
 1）第一阶段：NameNode启动
 
@@ -592,7 +584,7 @@ Crtl + n 查找BlockPlacementPolicyDefault，在该类中查找chooseTargetInOrd
 
 ## 5.2 Fsimage和Edits解析
 
-![image-20220108154705962](Hadoop之HDFS/image-20220108154705962.png)
+![image-20220125112737148](Hadoop之HDFS/image-20220125112737148.png)
 
 1）oiv查看Fsimage文件
 
@@ -799,7 +791,7 @@ hdfs oev -p 文件类型 -i编辑日志 -o 转换后文件输出路径
 
 ## 6.1 DataNode工作机制
 
-![image-20220108154927788](Hadoop之HDFS/image-20220108154927788.png)
+![image-20220125112802677](Hadoop之HDFS/image-20220125112802677.png)
 
 （1）一个数据块在DataNode上以文件形式存储在磁盘上，包括两个文件，一个是数据本身，一个是元数据包括数据块的长度，块数据的校验和，以及时间戳。
 
@@ -848,11 +840,11 @@ DN扫描自己节点块信息列表的时间，默认6小时
 
 （5）DataNode在其文件创建后周期验证CheckSum。
 
-![image-20220108155007725](Hadoop之HDFS/image-20220108155007725.png)
+![image-20220125112815629](Hadoop之HDFS/image-20220125112815629.png)
 
 ## 6.3 掉线时限参数设置
 
-![image-20220108155020363](Hadoop之HDFS/image-20220108155020363.png)
+![image-20220125112852051](Hadoop之HDFS/image-20220125112852051.png)
 
 ​	需要注意的是hdfs-site.xml 配置文件中的heartbeat.recheck.interval的单位为毫秒，dfs.heartbeat.interval的单位为秒。
 
