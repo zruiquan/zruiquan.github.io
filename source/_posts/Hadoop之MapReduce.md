@@ -1,9 +1,11 @@
+---
 title: Hadoop之MapReduce
 date: 2022-01-25 15:06:05
 tags:
 - Hadoop
 categories:
 - Hadoop
+---
 
 # 第1章 MapReduce概述
 
