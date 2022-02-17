@@ -10,11 +10,7 @@ categories:
 
  ![image-20220217100218352](Spring-Security技术/image-20220217100218352.png)
 
- 
-
 ## 1.1 概要
-
- 
 
 Spring 是非常流行和成功的 Java 应用开发框架，Spring Security 正是 Spring 家族中的成员。Spring Security 基于 Spring 框架，提供了一套 Web 应用安全性的完整解决方案。
 
@@ -833,17 +829,17 @@ https://docs.spring.io/springsecurity/site/docs/5.3.4.RELEASE/reference/html5/#e
 
 ![image-20220217131819633](Spring-Security技术/image-20220217131819633.png)  
 
-### （1）DefaultPasswordEncoder：密码处理的方法
+#### （1）DefaultPasswordEncoder：密码处理的方法
 
 ![image-20220217131842705](Spring-Security技术/image-20220217131842705.png)
 
 ![image-20220217131850783](Spring-Security技术/image-20220217131850783.png)
 
-### （2） TokenManager：token 操作的工具类
+#### （2） TokenManager：token 操作的工具类
 
 ![image-20220217131927011](Spring-Security技术/image-20220217131927011.png)
 
-### （3） TokenLogoutHandler：退出实现  
+#### （3） TokenLogoutHandler：退出实现  
 
 ![image-20220217132001826](Spring-Security技术/image-20220217132001826.png)
 
@@ -851,7 +847,7 @@ https://docs.spring.io/springsecurity/site/docs/5.3.4.RELEASE/reference/html5/#e
 
  
 
-### （4）UnauthorizedEntryPoint：未授权统一处理
+#### （4）UnauthorizedEntryPoint：未授权统一处理
 
 ![image-20220217132045792](Spring-Security技术/image-20220217132045792.png)
 
@@ -875,7 +871,7 @@ https://docs.spring.io/springsecurity/site/docs/5.3.4.RELEASE/reference/html5/#e
 
 ![image-20220217132556052](Spring-Security技术/image-20220217132556052.png)
 
-### （1)TokenLoginFilter：认证的 filter
+#### （1)TokenLoginFilter：认证的 filter
 
 ![image-20220217132623922](Spring-Security技术/image-20220217132623922.png)
 
@@ -883,7 +879,7 @@ https://docs.spring.io/springsecurity/site/docs/5.3.4.RELEASE/reference/html5/#e
 
 ![image-20220217132636463](Spring-Security技术/image-20220217132636463.png)
 
-###  （2） TokenAuthenticationFilter： 授权 filter  
+####  （2） TokenAuthenticationFilter： 授权 filter  
 
 ![image-20220217132709408](Spring-Security技术/image-20220217132709408.png)
 
