@@ -1,11 +1,9 @@
----
 title: Hadoop之MapReduce
 date: 2022-01-25 15:06:05
 tags:
 - Hadoop
 categories:
 - Hadoop
----
 
 # 第1章 MapReduce概述
 
@@ -685,13 +683,13 @@ public class FlowDriver {
 
 ### 3.1.1 切片与MapTask并行度决定机制
 
-**1）问题引出**
+1）问题引出
 
 MapTask的并行度决定Map阶段的任务处理并发度，进而影响到整个Job的处理速度。
 
 思考：1G的数据，启动8个MapTask，可以提高集群的并发处理能力。那么1K的数据，也启动8个MapTask，会提高集群性能吗？MapTask并行任务是否越多越好呢？哪些因素影响了MapTask并行度？
 
-**2）MapTask并行度决定机制**
+2）MapTask并行度决定机制
 
 数据块：Block是HDFS物理上把数据分成一块一块。数据块是HDFS存储数据单位。
 
@@ -701,7 +699,7 @@ MapTask的并行度决定Map阶段的任务处理并发度，进而影响到整�
 
 ### 3.1.2 Job提交流程源码和切片源码详解
 
-**1）Job提交流程源码详解**
+1）Job提交流程源码详解
 
 ```java
 waitForCompletion()
@@ -743,7 +741,7 @@ status = submitClient.submitJob(jobId, submitJobDir.toString(), job.getCredentia
 
 ![image-20220125105728214](Hadoop之MapReduce/image-20220125105728214.png)
 
-**2）FileInputFormat切片源码解析（input.getSplits(job)）**
+2）FileInputFormat切片源码解析（input.getSplits(job)）
 
 ![image-20220125105739989](Hadoop之MapReduce/image-20220125105739989.png)
 
@@ -755,13 +753,13 @@ status = submitClient.submitJob(jobId, submitJobDir.toString(), job.getCredentia
 
 ### 3.1.4 TextInputFormat
 
-**1）FileInputFormat实现类**
+1）FileInputFormat实现类
 
 思考：在运行MapReduce程序时，输入的文件格式包括：基于行的日志文件、二进制格式文件、数据库表等。那么，针对不同的数据类型，MapReduce是如何读取这些数据的呢？
 
 > FileInputFormat常见的接口实现类包括：TextInputFormat、KeyValueTextInputFormat、NLineInputFormat、CombineTextInputFormat和自定义InputFormat等。
 
-**2）TextInputFormat**
+2）TextInputFormat
 
 > TextInputFormat是默认的FileInputFormat实现类。按行读取每条记录。键是存储该行在整个文件中的起始字节偏移量， LongWritable类型。值是这行的内容，不包括任何行终止符（换行符和回车符），Text类型。
 
@@ -787,17 +785,17 @@ From the real demand for more close to the enterprise
 
 框架默认的TextInputFormat切片机制是对任务按文件规划切片，不管文件多小，都会是一个单独的切片，都会交给一个MapTask，这样如果有大量小文件，就会产生大量的MapTask，处理效率极其低下。
 
-**1）应用场景：**
+1）应用场景：
 
 CombineTextInputFormat用于小文件过多的场景，它可以将多个小文件从逻辑上规划到一个切片中，这样，多个小文件就可以交给一个MapTask处理。
 
-**2）虚拟存储切片最大值设置**
+2）虚拟存储切片最大值设置
 
 `CombineTextInputFormat.setMaxInputSplitSize(job, 4194304);// 4m`
 
 注意：虚拟存储切片最大值设置最好根据实际的小文件大小情况来设置具体的值。
 
-**3）切片机制**
+3）切片机制
 
 生成切片过程包括：虚拟存储过程和切片过程二部分。
 
@@ -825,7 +823,7 @@ CombineTextInputFormat用于小文件过多的场景，它可以将多个小文�
 
 ### 3.1.6 CombineTextInputFormat案例实操
 
-**1）需求**
+1）需求
 
 将输入的大量小文件合并成一个切片统一处理。
 
@@ -841,7 +839,7 @@ CombineTextInputFormat用于小文件过多的场景，它可以将多个小文�
 
 期望一个切片处理4个文件
 
-**2）实现过程**
+2）实现过程
 
 （1）不做任何处理，运行1.8节的WordCount案例程序，观察切片个数为4。
 
@@ -885,19 +883,19 @@ CombineTextInputFormat.setMaxInputSplitSize(job, 20971520);
 
 上面的流程是整个MapReduce最全工作流程，但是Shuffle过程只是从第7步开始到第16步结束，具体Shuffle过程详解，如下：
 
-**（1）MapTask收集我们的map()方法输出的kv对，放到内存缓冲区中**
+（1）MapTask收集我们的map()方法输出的kv对，放到内存缓冲区中
 
-**（2）从内存缓冲区不断溢出本地磁盘文件，可能会溢出多个文件**
+（2）从内存缓冲区不断溢出本地磁盘文件，可能会溢出多个文件
 
-**（3）多个溢出文件会被合并成大的溢出文件**
+（3）多个溢出文件会被合并成大的溢出文件
 
-**（4）在溢出过程及合并的过程中，都要调用Partitioner进行分区和针对key进行排序**
+（4）在溢出过程及合并的过程中，都要调用Partitioner进行分区和针对key进行排序
 
-**（5）ReduceTask根据自己的分区号，去各个MapTask机器上取相应的结果分区数据**
+（5）ReduceTask根据自己的分区号，去各个MapTask机器上取相应的结果分区数据
 
-**（6）ReduceTask会抓取到同一个分区的来自不同MapTask的结果文件，ReduceTask会将这些文件再进行合并（归并排序）**
+（6）ReduceTask会抓取到同一个分区的来自不同MapTask的结果文件，ReduceTask会将这些文件再进行合并（归并排序）
 
-**（7）合并成大文件后，Shuffle的过程也就结束了，后面进入ReduceTask的逻辑运算过程（从文件中取出一个一个的键值对Group，调用用户自定义的reduce()方法）**
+（7）合并成大文件后，Shuffle的过程也就结束了，后面进入ReduceTask的逻辑运算过程（从文件中取出一个一个的键值对Group，调用用户自定义的reduce()方法）
 
 > 注意：
 >
@@ -923,7 +921,7 @@ Map方法之后，Reduce方法之前的数据处理过程称之为Shuffle。
 
 ### 3.3.3 Partition分区案例实操
 
-**1）需求**
+1）需求
 
 将统计结果按照手机归属地不同省份输出到不同文件中（分区）
 
@@ -960,11 +958,11 @@ phone_data.txt
 
 ​	手机号136、137、138、139开头都分别放到一个独立的4个文件中，其他开头的放到一个文件中。
 
-**2）需求分析**
+2）需求分析
 
 ![image-20220125110132875](Hadoop之MapReduce/image-20220125110132875.png)
 
-**3）在案例2.3的基础上，增加一个分区类**
+3）在案例2.3的基础上，增加一个分区类
 
 ```java
 package com.atguigu.mapreduce.partitioner;
@@ -1000,7 +998,7 @@ public class ProvincePartitioner extends Partitioner<Text, FlowBean> {
 }
 ```
 
-**4）在驱动函数中增加自定义数据分区设置和ReduceTask设置**
+4）在驱动函数中增加自定义数据分区设置和ReduceTask设置
 
 ```java
 package com.atguigu.mapreduce.partitioner;
@@ -1060,7 +1058,7 @@ public class FlowDriver {
 
 ![image-20220125110218427](Hadoop之MapReduce/image-20220125110218427.png)
 
-**自定义排序WritableComparable原理分析**
+自定义排序WritableComparable原理分析
 
 bean对象做为key传输，需要实现WritableComparable接口重写compareTo方法，就可以实现排序。
 
@@ -1085,7 +1083,7 @@ public int compareTo(FlowBean bean) {
 
 ### 3.3.5 WritableComparable排序案例实操（全排序）
 
-**1）需求**
+1）需求
 
 根据案例2.3序列化案例产生的结果再次对总流量进行倒序排序。
 
@@ -1130,11 +1128,11 @@ phone_data.txt
 。。。 。。。
 ```
 
-**2）需求分析**
+2）需求分析
 
 ![image-20220125105258164](Hadoop之MapReduce/image-20220125105258164.png)
 
-**3）代码实现**
+3）代码实现
 
 （1）FlowBean对象在在需求1基础上增加了比较功能
 
@@ -1328,17 +1326,17 @@ public class FlowDriver {
 
 ### 3.3.6 WritableComparable排序案例实操（区内排序）
 
-**1）需求**
+1）需求
 
 要求每个省份手机号输出的文件中按照总流量内部排序。
 
-**2）需求分析**
+2）需求分析
 
 ​	基于前一个需求，增加自定义分区类，分区按照省份手机号设置。
 
 ![image-20220210170437750](Hadoop之MapReduce/image-20220210170437750.png)
 
-**3）案例实操**
+3）案例实操
 
 （1）增加自定义分区类
 
@@ -1392,7 +1390,7 @@ job.setNumReduceTasks(5);
 
 ![image-20220210170624271](Hadoop之MapReduce/image-20220210170624271.png)
 
-**（6）自定义Combiner实现步骤**
+（6）自定义Combiner实现步骤
 
 ​		（a）自定义一个Combiner继承Reducer，重写Reduce方法
 
@@ -1424,7 +1422,7 @@ job.setCombinerClass(WordCountCombiner.class);
 
 ### 3.3.8 Combiner合并案例实操
 
-**1）需求**
+1）需求
 
 统计过程中对每一个MapTask的输出进行局部汇总，以减小网络传输量即采用Combiner功能。	
 
@@ -1443,11 +1441,11 @@ xihuan hadoop banzhang
 
 期望：Combine输入数据多，输出时经过合并，输出数据降低。
 
-**2）需求分析**
+2）需求分析
 
 ![image-20220210170827438](Hadoop之MapReduce/image-20220210170827438.png)
 
-**3）案例实操-方案一**
+3）案例实操-方案一
 
 （1）增加一个WordCountCombiner类继承Reducer
 
@@ -1487,7 +1485,7 @@ private IntWritable outV = new IntWritable();
 job.setCombinerClass(WordCountCombiner.class);
 ```
 
-**4）案例实操-方案二**
+4）案例实操-方案二
 
 （1）将WordcountReducer作为Combiner在WordcountDriver驱动类中指定
 
@@ -1508,7 +1506,7 @@ job.setCombinerClass(WordCountReducer.class);
 
 ### 3.4.2 自定义OutputFormat案例实操
 
-**1）需求**
+1）需求
 
 ​	过滤输入的log日志，包含atguigu的网站输出到e:/atguigu.log，不包含atguigu的网站输出到e:/other.log。
 
@@ -1549,11 +1547,11 @@ http://www.sindsafa.com
 http://www.sohu.com
 ```
 
-**2）需求分析**
+2）需求分析
 
 ![image-20220210171237730](Hadoop之MapReduce/image-20220210171237730.png)
 
-**3）案例实操**
+3）案例实操
 
 （1）编写LogMapper类
 
@@ -1753,11 +1751,11 @@ public class LogDriver {
 
 ![image-20220210171600177](Hadoop之MapReduce/image-20220210171600177.png)
 
-​	**（1）Copy阶段**：ReduceTask从各个MapTask上远程拷贝一片数据，并针对某一片数据，如果其大小超过一定阈值，则写到磁盘上，否则直接放到内存中。
+​	（1）Copy阶段：ReduceTask从各个MapTask上远程拷贝一片数据，并针对某一片数据，如果其大小超过一定阈值，则写到磁盘上，否则直接放到内存中。
 
-​	**（2）Sort阶段**：在远程拷贝数据的同时，ReduceTask启动了两个后台线程对内存和磁盘上的文件进行合并，以防止内存使用过多或磁盘上文件过多。按照MapReduce语义，用户编写reduce()函数输入数据是按key进行聚集的一组数据。为了将key相同的数据聚在一起，Hadoop采用了基于排序的策略。由于各个MapTask已经实现对自己的处理结果进行了局部排序，因此，ReduceTask只需对所有数据进行一次归并排序即可。
+​	（2）Sort阶段：在远程拷贝数据的同时，ReduceTask启动了两个后台线程对内存和磁盘上的文件进行合并，以防止内存使用过多或磁盘上文件过多。按照MapReduce语义，用户编写reduce()函数输入数据是按key进行聚集的一组数据。为了将key相同的数据聚在一起，Hadoop采用了基于排序的策略。由于各个MapTask已经实现对自己的处理结果进行了局部排序，因此，ReduceTask只需对所有数据进行一次归并排序即可。
 
-​	**（3）Reduce阶段**：reduce()函数将计算结果写到HDFS上。
+​	（3）Reduce阶段：reduce()函数将计算结果写到HDFS上。
 
 ### 3.5.3 ReduceTask并行度决定机制
 
@@ -1765,7 +1763,7 @@ public class LogDriver {
 
 思考：ReduceTask并行度由谁决定？
 
-**1）设置ReduceTask并行度（个数）**
+1）设置ReduceTask并行度（个数）
 
 ReduceTask的并行度同样影响整个Job的执行并发度和执行效率，但与MapTask的并发数由切片数决定不同，ReduceTask数量的决定是可以直接手动设置：
 
@@ -1773,7 +1771,7 @@ ReduceTask的并行度同样影响整个Job的执行并发度和执行效率，�
 
 job.setNumReduceTasks(4);
 
-**2）实验：测试ReduceTask多少合适**
+2）实验：测试ReduceTask多少合适
 
 （1）实验环境：1个Master节点，16个Slave节点：CPU:8GHZ，内存: 2G
 
@@ -1810,7 +1808,7 @@ Reduce端的主要工作：在Reduce端以连接字段作为key的分组已经�
 
 ### 3.6.2 Reduce Join案例实操
 
-**1）需求**
+1）需求
 
 ​																							表4-4 订单数据表t_order
 
@@ -1863,15 +1861,15 @@ pd.txt
 | 1003 | 格力  | 3      |
 | 1006 | 格力  | 6      |
 
-**2）需求分析**
+2）需求分析
 
 通过将关联条件作为Map输出的key，将两表满足Join条件的数据并携带数据所来源的文件信息，发往同一个ReduceTask，在Reduce中进行数据的串联。
 
 ![image-20220210172734207](Hadoop之MapReduce/image-20220210172734207.png)
 
-**3）代码实现**
+3）代码实现
 
-**（1）创建商品和订单合并后的TableBean类**
+（1）创建商品和订单合并后的TableBean类
 
 ```java
 package com.atguigu.mapreduce.reducejoin;
@@ -1958,7 +1956,7 @@ public class TableBean implements Writable {
 }
 ```
 
-**（2）编写TableMapper类**
+（2）编写TableMapper类
 
 ```java
 package com.atguigu.mapreduce.reducejoin;
@@ -2020,7 +2018,7 @@ public class TableMapper extends Mapper<LongWritable,Text,Text,TableBean> {
 }
 ```
 
-**（3）编写TableReducer类**
+（3）编写TableReducer类
 
 ```java
 package com.atguigu.mapreduce.reducejoin;
@@ -2083,7 +2081,7 @@ public class TableReducer extends Reducer<Text,TableBean,TableBean, NullWritable
 }
 ```
 
-**（4）编写TableDriver类**
+（4）编写TableDriver类
 
 ```java
 package com.atguigu.mapreduce.reducejoin;
@@ -2121,7 +2119,7 @@ public class TableDriver {
 }
 ```
 
-**4）测试**
+4）测试
 
 运行程序查看结果
 
@@ -2134,7 +2132,7 @@ public class TableDriver {
 1003	格力	3
 ```
 
-**5）总结**
+5）总结
 
 缺点：这种方式中，合并的操作是在Reduce阶段完成，Reduce端的处理压力太大，Map节点的运算负载则很低，资源利用率不高，且在Reduce阶段极易产生数据倾斜。
 
@@ -2142,17 +2140,17 @@ public class TableDriver {
 
 ### 3.6.3 Map Join
 
-**1）使用场景**
+1）使用场景
 
 Map Join适用于一张表十分小、一张表很大的场景。
 
-**2）优点**
+2）优点
 
 思考：在Reduce端处理过多的表，非常容易产生数据倾斜。怎么办？
 
 在Map端缓存多张表，提前处理业务逻辑，这样增加Map端业务，减少Reduce端数据的压力，尽可能的减少数据倾斜。
 
-**3）具体办法：采用DistributedCache**
+3）具体办法：采用DistributedCache
 
 ​	（1）在Mapper的setup阶段，将文件读取到缓存集合中。
 
@@ -2167,7 +2165,7 @@ job.addCacheFile(new URI("hdfs://hadoop102:8020/cache/pd.txt"));
 
 ### 3.6.4 Map Join案例实操
 
-**1）需求**
+1）需求
 
 ​																								表 订单数据表t_order
 
@@ -2220,13 +2218,13 @@ pd.txt
 | 1003 | 格力  | 3      |
 | 1006 | 格力  | 6      |
 
-**2）需求分析**
+2）需求分析
 
 MapJoin适用于关联表中有小表的情形。
 
 ![image-20220210173150624](Hadoop之MapReduce/image-20220210173150624.png)
 
-**3）实现代码**
+3）实现代码
 
 （1）先在MapJoinDriver驱动类中添加缓存文件
 
@@ -2358,7 +2356,7 @@ public class MapJoinMapper extends Mapper<LongWritable, Text, Text, NullWritable
 
 在运行核心业务MapReduce程序之前，往往要先对数据进行清洗，清理掉不符合用户要求的数据。清理的过程往往只需要运行Mapper程序，不需要运行Reduce程序。
 
-**1）需求**
+1）需求
 
 去除日志中字段个数小于等于11的日志。
 
@@ -2388,11 +2386,11 @@ web.log
 
 每行字段长度都大于11。
 
-**2）需求分析**
+2）需求分析
 
 需要在Map阶段对输入的数据根据规则进行过滤清洗。
 
-**3）实现代码**
+3）实现代码
 
 （1）编写WebLogMapper类
 
@@ -2486,9 +2484,9 @@ public class WebLogDriver {
 }
 ```
 
-## 3.8 MapReduce开发总结
+## 3.8 MapReduce开发总结（面试）
 
-**1）输入数据接口：InputFormat**
+1）输入数据接口：InputFormat
 
 （1）默认使用的实现类是：TextInputFormat
 
@@ -2496,17 +2494,17 @@ public class WebLogDriver {
 
 （3）CombineTextInputFormat可以把多个小文件合并成一个切片处理，提高处理效率。
 
-**2）逻辑处理接口：Mapper** 
+2）逻辑处理接口：Mapper 
 
 用户根据业务需求实现其中三个方法：map()  setup()  cleanup () 
 
-**3）Partitioner分区**
+3）Partitioner分区
 
 （1）有默认实现 HashPartitioner，逻辑是根据key的哈希值和numReduces来返回一个分区号；key.hashCode()&Integer.MAXVALUE % numReduces
 
 （2）如果业务上有特别的需求，可以自定义分区。
 
-**4）Comparable排序**
+4）Comparable排序
 
 （1）当我们用自定义的对象作为key来输出时，就必须要实现WritableComparable接口，重写其中的compareTo()方法。
 
@@ -2516,16 +2514,375 @@ public class WebLogDriver {
 
 （4）二次排序：排序的条件有两个。
 
-**5）Combiner合并**
+5）Combiner合并
 
 Combiner合并可以提高程序执行效率，减少IO传输。但是使用时必须不能影响原有的业务处理结果。
 
-**6）逻辑处理接口：Reducer**
+6）逻辑处理接口：Reducer
 
 用户根据业务需求实现其中三个方法：reduce()  setup()  cleanup () 
 
-**7）输出数据接口：OutputFormat**
+7）输出数据接口：OutputFormat
 
 （1）默认实现类是TextOutputFormat，功能逻辑是：将每一个KV对，向目标文本文件输出一行。
 
 （2）用户还可以自定义OutputFormat。
+
+
+
+# 第4章 Hadoop数据压缩
+
+## 4.1 概述
+
+**1）压缩的好处和坏处**
+
+压缩的优点：以减少磁盘IO、减少磁盘存储空间。
+
+压缩的缺点：增加CPU开销。
+
+**2）压缩原则**
+
+（1）运算密集型的Job，少用压缩
+
+（2）IO密集型的Job，多用压缩
+
+## 4.2 MR支持的压缩编码
+
+**1）压缩算法对比介绍**
+
+| 压缩格式 | Hadoop自带？ | 算法    | 文件扩展名 | 是否可切片 | 换成压缩格式后，原来的程序是否需要修改 |
+| -------- | ------------ | ------- | ---------- | ---------- | -------------------------------------- |
+| DEFLATE  | 是，直接使用 | DEFLATE | .deflate   | 否         | 和文本处理一样，不需要修改             |
+| Gzip     | 是，直接使用 | DEFLATE | .gz        | 否         | 和文本处理一样，不需要修改             |
+| bzip2    | 是，直接使用 | bzip2   | .bz2       | 是         | 和文本处理一样，不需要修改             |
+| LZO      | 否，需要安装 | LZO     | .lzo       | 是         | 需要建索引，还需要指定输入格式         |
+| Snappy   | 是，直接使用 | Snappy  | .snappy    | 否         | 和文本处理一样，不需要修改             |
+
+**2）压缩性能的比较**
+
+| 压缩算法 | 原始文件大小 | 压缩文件大小 | 压缩速度 | 解压速度 |
+| -------- | ------------ | ------------ | -------- | -------- |
+| gzip     | 8.3GB        | 1.8GB        | 17.5MB/s | 58MB/s   |
+| bzip2    | 8.3GB        | 1.1GB        | 2.4MB/s  | 9.5MB/s  |
+| LZO      | 8.3GB        | 2.9GB        | 49.3MB/s | 74.6MB/s |
+
+http://google.github.io/snappy/
+
+Snappy is a compression/decompression library. It does not aim for maximum compression, or compatibility with any other compression library; instead, it aims for very high speeds and reasonable compression. For instance, compared to the fastest mode of zlib, Snappy is an order of magnitude faster for most inputs, but the resulting compressed files are anywhere from 20% to 100% bigger.On a single core of a Core i7 processor in 64-bit mode, Snappy compresses at about 250 MB/sec or more and decompresses at about 500 MB/sec or more.
+
+## 4.3 压缩方式选择
+
+压缩方式选择时重点考虑：压缩/解压缩速度、压缩率（压缩后存储大小）、压缩后是否可以支持切片。
+
+### 4.3.1 Gzip压缩
+
+优点：压缩率比较高； 
+
+缺点：不支持Split；压缩/解压速度一般；
+
+### 4.3.2 Bzip2压缩
+
+优点：压缩率高；支持Split； 
+
+缺点：压缩/解压速度慢。
+
+### 4.3.3 Lzo压缩
+
+优点：压缩/解压速度比较快；支持Split；
+
+缺点：压缩率一般；想支持切片需要额外创建索引。
+
+### 4.3.4 Snappy压缩
+
+优点：压缩和解压缩速度快； 
+
+缺点：不支持Split；压缩率一般； 
+
+### 4.3.5 压缩位置选择
+
+压缩可以在MapReduce作用的任意阶段启用。
+
+![image-20220322142452869](Hadoop之MapReduce/image-20220322142452869.png)
+
+## 4.4 压缩参数配置
+
+**1）为了支持多种压缩/解压缩算法，Hadoop引入了编码/解码器**
+
+| 压缩格式 | 对应的编码/解码器                          |
+| -------- | ------------------------------------------ |
+| DEFLATE  | org.apache.hadoop.io.compress.DefaultCodec |
+| gzip     | org.apache.hadoop.io.compress.GzipCodec    |
+| bzip2    | org.apache.hadoop.io.compress.BZip2Codec   |
+| LZO      | com.hadoop.compression.lzo.LzopCodec       |
+| Snappy   | org.apache.hadoop.io.compress.SnappyCodec  |
+
+**2）要在Hadoop中启用压缩，可以配置如下参数**
+
+| 参数                                                         | 默认值                                         | 阶段        | 建议                                          |
+| ------------------------------------------------------------ | ---------------------------------------------- | ----------- | --------------------------------------------- |
+| io.compression.codecs  （在core-site.xml中配置）             | 无，这个需要在命令行输入hadoop checknative查看 | 输入压缩    | Hadoop使用文件扩展名判断是否支持某种编解码器  |
+| mapreduce.map.output.compress（在mapred-site.xml中配置）     | false                                          | mapper输出  | 这个参数设为true启用压缩                      |
+| mapreduce.map.output.compress.codec（在mapred-site.xml中配置） | org.apache.hadoop.io.compress.DefaultCodec     | mapper输出  | 企业多使用LZO或Snappy编解码器在此阶段压缩数据 |
+| mapreduce.output.fileoutputformat.compress（在mapred-site.xml中配置） | false                                          | reducer输出 | 这个参数设为true启用压缩                      |
+| mapreduce.output.fileoutputformat.compress.codec（在mapred-site.xml中配置） | org.apache.hadoop.io.compress.DefaultCodec     | reducer输出 | 使用标准工具或者编解码器，如gzip和bzip2       |
+
+## 4.5 压缩实操案例
+
+### 4.5.1 Map输出端采用压缩
+
+即使你的MapReduce的输入输出文件都是未压缩的文件，你仍然可以对Map任务的中间结果输出做压缩，因为它要写在硬盘并且通过网络传输到Reduce节点，对其压缩可以提高很多性能，这些工作只要设置两个属性即可，我们来看下代码怎么设置。
+
+**1）给大家\\提供的Hadoop源码支持的压缩格式有：BZip2Codec、DefaultCodec**
+
+```java
+package com.atguigu.mapreduce.compress;
+import java.io.IOException;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.compress.BZip2Codec;	
+import org.apache.hadoop.io.compress.CompressionCodec;
+import org.apache.hadoop.io.compress.GzipCodec;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+
+public class WordCountDriver {
+
+	public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException {
+
+		Configuration conf = new Configuration();
+
+		// 开启map端输出压缩
+		conf.setBoolean("mapreduce.map.output.compress", true);
+
+		// 设置map端输出压缩方式
+		conf.setClass("mapreduce.map.output.compress.codec", BZip2Codec.class,CompressionCodec.class);
+
+		Job job = Job.getInstance(conf);
+
+		job.setJarByClass(WordCountDriver.class);
+
+		job.setMapperClass(WordCountMapper.class);
+		job.setReducerClass(WordCountReducer.class);
+
+		job.setMapOutputKeyClass(Text.class);
+		job.setMapOutputValueClass(IntWritable.class);
+
+		job.setOutputKeyClass(Text.class);
+		job.setOutputValueClass(IntWritable.class);
+
+		FileInputFormat.setInputPaths(job, new Path(args[0]));
+		FileOutputFormat.setOutputPath(job, new Path(args[1]));
+
+		boolean result = job.waitForCompletion(true);
+
+		System.exit(result ? 0 : 1);
+	}
+}
+```
+
+**2）Mapper保持不变**
+
+```java
+package com.atguigu.mapreduce.compress;
+import java.io.IOException;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Mapper;
+
+public class WordCountMapper extends Mapper<LongWritable, Text, Text, IntWritable>{
+
+	Text k = new Text();
+	IntWritable v = new IntWritable(1);
+
+	@Override
+	protected void map(LongWritable key, Text value, Context context)throws IOException, InterruptedException {
+
+		// 1 获取一行
+		String line = value.toString();
+
+		// 2 切割
+		String[] words = line.split(" ");
+
+		// 3 循环写出
+		for(String word:words){
+			k.set(word);
+			context.write(k, v);
+		}
+	}
+}
+```
+
+**3）Reducer保持不变**
+
+```java
+package com.atguigu.mapreduce.compress;
+import java.io.IOException;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Reducer;
+
+public class WordCountReducer extends Reducer<Text, IntWritable, Text, IntWritable>{
+
+	IntWritable v = new IntWritable();
+
+	@Override
+	protected void reduce(Text key, Iterable<IntWritable> values,
+			Context context) throws IOException, InterruptedException {
+		
+		int sum = 0;
+
+		// 1 汇总
+		for(IntWritable value:values){
+			sum += value.get();
+		}
+		
+         v.set(sum);
+
+         // 2 输出
+		context.write(key, v);
+	}
+}
+```
+
+
+
+### 4.5.2 Reduce输出端采用压缩
+
+基于WordCount案例处理。
+
+**1）修改驱动**
+
+```java
+package com.atguigu.mapreduce.compress;
+import java.io.IOException;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.compress.BZip2Codec;
+import org.apache.hadoop.io.compress.DefaultCodec;
+import org.apache.hadoop.io.compress.GzipCodec;
+import org.apache.hadoop.io.compress.Lz4Codec;
+import org.apache.hadoop.io.compress.SnappyCodec;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+
+public class WordCountDriver {
+
+	public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException {
+		
+		Configuration conf = new Configuration();
+		
+		Job job = Job.getInstance(conf);
+		
+		job.setJarByClass(WordCountDriver.class);
+		
+		job.setMapperClass(WordCountMapper.class);
+		job.setReducerClass(WordCountReducer.class);
+		
+		job.setMapOutputKeyClass(Text.class);
+		job.setMapOutputValueClass(IntWritable.class);
+		
+		job.setOutputKeyClass(Text.class);
+		job.setOutputValueClass(IntWritable.class);
+		
+		FileInputFormat.setInputPaths(job, new Path(args[0]));
+		FileOutputFormat.setOutputPath(job, new Path(args[1]));
+		
+		// 设置reduce端输出压缩开启
+		FileOutputFormat.setCompressOutput(job, true);
+
+		// 设置压缩的方式
+	    FileOutputFormat.setOutputCompressorClass(job, BZip2Codec.class); 
+//	    FileOutputFormat.setOutputCompressorClass(job, GzipCodec.class); 
+//	    FileOutputFormat.setOutputCompressorClass(job, DefaultCodec.class); 
+	    
+		boolean result = job.waitForCompletion(true);
+		
+		System.exit(result?0:1);
+	}
+}
+```
+
+
+
+**2）Mapper和Reducer保持不变（详见4\.5.1）**
+
+# 第5章 常见错误及解决方案
+
+1）导包容易出错。尤其Text和CombineTextInputFormat。
+
+2）Mapper中第一个输入的参数必须是LongWritable或者NullWritable，不可以是IntWritable.  报的错误是类型转换异常。
+
+3）java.lang.Exception: java.io.IOException: Illegal partition for 13926435656 (4)，说明Partition和ReduceTask个数没对上，调整ReduceTask个数。
+
+4）如果分区数不是1，但是reducetask为1，是否执行分区过程。答案是：不执行分区过程。因为在MapTask的源码中，执行分区的前提是先判断ReduceNum个数是否大于1。不大于1肯定不执行。
+
+5）在Windows环境编译的jar包导入到Linux环境中运行，
+
+hadoop jar wc.jar com.atguigu.mapreduce.wordcount.WordCountDriver /user/atguigu/ /user/atguigu/output
+
+报如下错误：
+
+Exception in thread "main" java.lang.UnsupportedClassVersionError: com/atguigu/mapreduce/wordcount/WordCountDriver : Unsupported major.minor version 52.0
+
+原因是Windows环境用的jdk1.7，Linux环境用的jdk1.8。
+
+解决方案：统一jdk版本。
+
+6）缓存pd.txt小文件案例中，报找不到pd.txt文件
+
+原因：大部分为路径书写错误。还有就是要检查pd.txt.txt的问题。还有个别电脑写相对路径找不到pd.txt，可以修改为绝对路径。
+
+7）报类型转换异常。
+
+通常都是在驱动函数中设置Map输出和最终输出时编写错误。
+
+Map输出的key如果没有排序，也会报类型转换异常。
+
+8）集群中运行wc.jar时出现了无法获得输入文件。
+
+原因：WordCount案例的输入文件不能放用HDFS集群的根目录。
+
+9）出现了如下相关异常
+
+Exception in thread "main" java.lang.UnsatisfiedLinkError: org.apache.hadoop.io.nativeio.NativeIO$Windows.access0(Ljava/lang/String;I)Z
+
+​	at org.apache.hadoop.io.nativeio.NativeIO$Windows.access0(Native Method)
+
+​	at org.apache.hadoop.io.nativeio.NativeIO$Windows.access(NativeIO.java:609)
+
+​	at org.apache.hadoop.fs.FileUtil.canRead(FileUtil.java:977)
+
+java.io.IOException: Could not locate executable null\bin\winutils.exe in the Hadoop binaries.
+
+​	at org.apache.hadoop.util.Shell.getQualifiedBinPath(Shell.java:356)
+
+​	at org.apache.hadoop.util.Shell.getWinUtilsPath(Shell.java:371)
+
+​	at org.apache.hadoop.util.Shell.<clinit>(Shell.java:364)
+
+解决方案：拷贝hadoop.dll文件到Windows目录C:\Windows\System32。个别同学电脑还需要修改Hadoop源码。
+
+方案二：创建如下包名，并将NativeIO.java拷贝到该包名下
+
+![image-20220322142810389](Hadoop之MapReduce/image-20220322142810389.png)
+
+10）自定义Outputformat时，注意在RecordWirter中的close方法必须关闭流资源。否则输出的文件内容中数据为空。
+
+```java
+@Override
+public void close(TaskAttemptContext context) throws IOException, InterruptedException {
+		if (atguigufos != null) {
+			atguigufos.close();
+		}
+		if (otherfos != null) {
+			otherfos.close();
+		}
+}
+```
