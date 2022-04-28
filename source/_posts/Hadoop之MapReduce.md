@@ -2888,3 +2888,7 @@ public void close(TaskAttemptContext context) throws IOException, InterruptedExc
 		}
 }
 ```
+
+# 面试重点
+
+![image-20220428142851272](Hadoop之MapReduce/image-20220428142851272.png)
