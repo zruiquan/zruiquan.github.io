@@ -1,9 +1,10 @@
+---
 title: Hexo 多环境部署
+date: 2021-11-16 16:10:51
 tags:
-  - 博客
+- Hexo
 categories:
-  - Hexo
-date: 2021-08-18 15:55:00
+- Hexo
 ---
 
 ## 1、安装git

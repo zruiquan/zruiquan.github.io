@@ -2,9 +2,9 @@
 title: Spring Security技术
 date: 2022-02-16 14:20:18
 tags:
-- 微服务生态
+- SpringSecurity
 categories:
-- 微服务生态
+- SpringSecurity
 ---
 # 1. SpringSecurity 框架简介
 
