@@ -181,7 +181,7 @@ export REGISTRY_ZOOKEEPER_CONNECT_STRING=${REGISTRY_ZOOKEEPER_CONNECT_STRING:-bi
 
 ### 修改application.properties文件
 
-**修改所有配置文件**在 alert-server|api-server|master-server|worker-server ->application.properties
+**修改所有配置文件**在 alert-server|api-server|master-server|worker-server|tools ->application.properties
 
 ```yaml
 ## mysql配置修改
@@ -211,7 +211,7 @@ registry:
 
 ### 修改配置开启资源存储
 
-**修改所有配置文件**在 alert-server|api-server|bin->env|master-server|worker-server   -->  common.properties
+**修改所有配置文件**在 alert-server|api-server|bin->env|master-server|worker-server|tools   -->  common.properties
 
 ```properties
 # resource storage type: HDFS, S3, NONE
@@ -243,7 +243,7 @@ fs.defaultFS=hdfs://bigdata1:8020
 
 ## 初始化数据库
 
-DolphinScheduler 元数据存储在关系型数据库中，目前支持 PostgreSQL 和 MySQL，如果使用 MySQL 则需要手动下载 [mysql-connector-java 驱动](https://downloads.mysql.com/archives/c-j/) (8.0.16) 并移动到 DolphinScheduler 的 lib目录下（`tools/libs/`）。下面以 MySQL 为例，说明如何初始化数据库
+DolphinScheduler 元数据存储在关系型数据库中，目前支持 PostgreSQL 和 MySQL，如果使用 MySQL 则需要手动下载 [mysql-connector-java 驱动](https://downloads.mysql.com/archives/c-j/) (8.0.16) 并移动到 DolphinScheduler 的 lib目录下（`tools/libs/`）。注意为了更好操作请将 mysql驱动放到alert-server|api-server|master-server|worker-server|tools下面的libs里面下面以 MySQL 为例，说明如何初始化数据库
 
 对于mysql 5.6 / 5.7：
 
@@ -334,5 +334,5 @@ sh ./bin/dolphinscheduler-daemon.sh start alert-server
 sh ./bin/dolphinscheduler-daemon.sh stop alert-server
 ```
 
-> ***注意:\***：Python gateway service 默认与 api-server 一起启动，如果您不想启动 Python gateway service 请通过更改 api-server 配置文件 `api-server/conf/application.yaml` 中的 `python-gateway.enabled : false` 来禁用它。
+> **注意：**Python gateway service 默认与 api-server 一起启动，如果您不想启动 Python gateway service 请通过更改 api-server 配置文件 `api-server/conf/application.yaml` 中的 `python-gateway.enabled : false` 来禁用它。
 
