@@ -185,10 +185,16 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2022-06-10 17:51:52 / 修改时间：18:04:11" itemprop="dateCreated datePublished" datetime="2022-06-10T17:51:52+08:00">2022-06-10</time>
+              <time title="创建时间：2022-06-10 17:51:52" itemprop="dateCreated datePublished" datetime="2022-06-10T17:51:52+08:00">2022-06-10</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-06-13 17:35:49" itemprop="dateModified" datetime="2022-06-13T17:35:49+08:00">2022-06-13</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="fa fa-folder-o"></i>
@@ -205,14 +211,14 @@
                 <i class="fa fa-file-word-o"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.4k</span>
+              <span>3.1k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="fa fa-clock-o"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
+              <span>3 分钟</span>
             </span>
 
         </div>
@@ -224,13 +230,12 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>yum install python3 -y</p>
-<p>yum install libffi-devel -y<br>yum install zlib* -y</p>
-<p>pip3 install toml</p>
-<ul>
-<li>安装依赖包</li>
-</ul>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum install -y yum-utils device-mapper-persistent-<span class="keyword">data</span> lvm2</span><br></pre></td></tr></table></figure>
+          <p>1、环境安装</p>
+<p>要求：最小化安装的CentOS7 ，内存不小于3.8G</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# sudo yum -y install gcc</span><br><span class="line">[root@localhost ~]# sudo yum install gcc-c++</span><br><span class="line">[root@localhost ~]# sudo yum install libffi-devel -y</span><br><span class="line">[root@localhost ~]# sudo yum install zlib* -</span><br><span class="line">[root@localhost ~]# sudo yum install sqlite-devel</span><br><span class="line">[root@localhost ~]# sudo yum install openssl-devel  </span><br><span class="line">[root@localhost ~]# sudo yum install bzip2-devel</span><br><span class="line">[root@localhost ~]# sudo yum install -y python-devel</span><br><span class="line">[root@localhost ~]# sudo yum install cyrus-sasl-devel</span><br><span class="line">[root@localhost ~]# more /etc/hosts</span><br><span class="line">127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4</span><br><span class="line">::1         localhost localhost.localdomain localhost6 localhost6.localdomain6</span><br><span class="line">185.199.110.133 raw.githubusercontent.com #添加地址映射，下载datahub的时候会用到，因为国内地址被封锁</span><br></pre></td></tr></table></figure>
+
+<p>2、安装docker 和 dockerCompose</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@localhost ~]# sudo yum -y install docker</span><br><span class="line">[root@localhost ~]# sudo systemctl start docker</span><br><span class="line">[root@localhost ~]# sudo docker run hello-world</span><br><span class="line">[root@localhost ~]# curl -L "https://github.com/docker/compose/releases/download/1.27.4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose</span><br><span class="line">[root@localhost ~]# chmod +x /usr/local/bin/docker-compose</span><br></pre></td></tr></table></figure>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/06/10/Datahub%E5%85%83%E6%95%B0%E6%8D%AE%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F%E9%83%A8%E7%BD%B2%E6%AD%A5%E9%AA%A4/#more" rel="contents">
@@ -1328,13 +1333,13 @@
       <i class="fa fa-area-chart"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">282k</span>
+    <span title="站点总字数">284k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">4:16</span>
+    <span title="站点阅读时长">4:18</span>
 </div>
 
 
