@@ -7,122 +7,153 @@ categories:
 - Datahub
 ---
 
-yum install python3 -y
+1、环境安装
 
-yum install libffi-devel -y
-yum install zlib* -y
+要求：最小化安装的CentOS7 ，内存不小于3.8G
 
-pip3 install toml
-
-- 安装依赖包
-
-```kotlin
-sudo yum install -y yum-utils device-mapper-persistent-data lvm2 
+```shell
+[root@localhost ~]# sudo yum -y install gcc
+[root@localhost ~]# sudo yum install gcc-c++
+[root@localhost ~]# sudo yum install libffi-devel -y
+[root@localhost ~]# sudo yum install zlib* -
+[root@localhost ~]# sudo yum install sqlite-devel
+[root@localhost ~]# sudo yum install openssl-devel  
+[root@localhost ~]# sudo yum install bzip2-devel
+[root@localhost ~]# sudo yum install -y python-devel
+[root@localhost ~]# sudo yum install cyrus-sasl-devel
+[root@localhost ~]# more /etc/hosts
+127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+185.199.110.133 raw.githubusercontent.com #添加地址映射，下载datahub的时候会用到，因为国内地址被封锁 
 ```
 
-- 设置阿里云镜像源
+2、安装docker 和 dockerCompose
 
-
-
-```csharp
-sudo yum-config-manager --add-repo https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+```shell
+[root@localhost ~]# sudo yum -y install docker
+[root@localhost ~]# sudo systemctl start docker
+[root@localhost ~]# sudo docker run hello-world
+[root@localhost ~]# curl -L "https://github.com/docker/compose/releases/download/1.27.4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+[root@localhost ~]# chmod +x /usr/local/bin/docker-compose
 ```
 
+3、启动docker
 
-
-- 安装 Docker-CE
-
-```undefined
-sudo yum install docker-ce
+```shell
+守护进程重启
+[root@localhost ~]# sudo systemctl daemon-reload
+重启docker服务
+[root@localhost ~]# sudo systemctl restart docker
+// 然后检查启动
+[root@localhost ~]# docker container ls
+CONTAINER ID        IMAGE                                   COMMAND                  CREATED             STATUS                  PORTS  
 ```
 
-```bash
-# 开机自启
-sudo systemctl enable docker 
-# 启动docker服务  
-sudo systemctl start docker
+4、安装python3
+
+去如下地址下载python3
+
+[https://www.python.org/ftp/python/3.8.0/](https://www.python.org/ftp/python/3.8.0/)
+
+```shell
+[root@localhost ~]# tar -zxvf Python-3.8.0.tgz
+[root@localhost ~]# cd /opt/module/Python-3.8.0
+[root@localhost Python-3.8.0]# vi /usr/local/python3/Python-3.6.8/Modules/Setup 、
+#去掉如下四行注释
+SSL=/usr/local/ssl
+_ssl _ssl.c \
+        -DUSE_SSL -I$(SSL)/include -I$(SSL)/include/openssl \
+        -L$(SSL)/lib -lssl -lcrypto
+#编译安装
+[root@localhost Python-3.8.0]#  ./configure --prefix=/usr/local/python3
+[root@localhost Python-3.8.0]# sudo make 
+[root@localhost Python-3.8.0]# sudo make install
+#创建软连接
+[root@localhost Python-3.8.0]# ln -s /usr/local/python3/bin/python3 /usr/local/bin/python3
+[root@localhost Python-3.8.0]# ln -s /usr/local/python3/bin/pip3 /usr/local/bin/pip3
+
+然后可以检查是否成功，成功了可以看到以下内容
+[root@localhost Python-3.8.0]# python3 -V
+Python 3.8.0
+[root@localhost Python-3.8.0]# pip3 -V
+pip 19.2.3 from /usr/local/python3/lib/python3.8/site-packages/pip (python 3.8)
 ```
 
-- 添加docker用户组（可选）
+5、环境再次安装
 
-
-
-```bash
-# 1. 建立 Docker 用户组
-sudo groupadd docker
-# 2.添加当前用户到 docker 组
-sudo usermod -aG docker $USER
+```shell
+[root@localhost ~]# pip3 install toml
+[root@localhost ~]# pip3 install psycopg2
 ```
 
-- 镜像加速配置
+6、安装datahub
 
-
-
-```bash
-# 加速器地址 ：
-# 阿里云控制台搜索容器镜像服务
-# 进入容器镜像服务， 左侧最下方容器镜像服务中复制加速器地址
-sudo mkdir -p /etc/docker
-sudo tee /etc/docker/daemon.json <<-'EOF'
-{
-  "registry-mirrors": ["你的加速器地址"]
-}
-EOF
-# 重启docker
-sudo systemctl daemon-reload
-sudo systemctl restart docker
+```shell
+[root@localhost ~]# python3 -m pip install --upgrade pip wheel setuptools
+[root@localhost ~]# python3 -m pip uninstall datahub acryl-datahub || true  # sanity check - ok if it fails
+[root@localhost ~]# python3 -m pip install --upgrade acryl-datahub
+[root@localhost ~]# python3 -m datahub version
 ```
 
+7、启动datahub
 
-
-
-
-
-
-```
-pip3 install docker-compose
+```shell
+python3 -m datahub docker quickstart
 ```
 
-```
-python3 -m pip install --upgrade pip wheel setuptools
-python3 -m pip uninstall datahub acryl-datahub || true  # sanity check - ok if it fails
-python3 -m pip install --upgrade acryl-datahub
-datahub version
+8、访问datahub
+
+访问地址 http://loclhost:9002 账号：datahub 密码：datahub
+
+8、检查插件
+
+```shell
+python3 -m datahub check plugins --verbose
 ```
 
-```
-datahub docker quickstart
+![image-20220613103802453](Datahub元数据管理系统部署步骤/image-20220613103802453.png)
+
+如图，mysql和hive插件正常，如果需要安装其他模块，则根据缺少的模块，安装对应的python库即可。
+
+9、摄入MYSQL数据
+
+```shell
+[root@localhost ~]#  pip install 'acryl-datahub[mysql]'
 ```
 
-```
-datahub docker ingest-sample-data
-```
-
-```
-datahub docker nuke
-```
-
-```
-datahub docker nuke --keep-data
-datahub docker quickstart
+```shell
+[root@localhost ~]# vi mysql.yml 
+source:
+  type: mysql
+  config:
+    host_port: 10.8.106.102:3306
+    username: root
+    password: Nucleus0755!
+    database: domp
 ```
 
-使用 datahub docker quickstart 是会报错的，如下图所示，我去问了官方大佬，原因是因为他会去这个网站找个文件，这个网站在中国被锁了，访问不了，所以只能克隆下来整个项目，然后进入目录里执行。 执行完就起来了
-
-```
-datahub docker quickstart --quickstart-compose-file ./docker/quickstart/docker-compose-without-neo4j.quickstart.yml
+```shell
+[root@localhost ~]# python3 -m datahub ingest -c mysql.yml 
 ```
 
-注意：
+10、摄入HIVE数据
 
-pip install 'acryl-datahub[hive]' 报错
-
-```
-yum -y install gcc-g++
-// 然后再装这个，不然执行摄入会报错，装就完事了，反正也占不了多少空间
-yum install python3-devel
-// 装完别急  还有这个
-yum install cyrus-sasl-devel
-// 别问，问就是摄入失败我花了一两个小时找的解决办法。或者你先直接摄入试试，没有报错你当我放了个屁
+```shell
+[root@localhost ~]# pip install 'acryl-datahub[hive]'
 ```
 
+```shell
+[root@localhost ~]# vi hive.yml 
+source:
+  type: hive
+  config:
+    host_port: 10.8.106.103:10000
+```
+
+```shell
+[root@localhost ~]# python3 -m datahub ingest -c hive.yml 
+```
+
+11、界面展示
+
+![image-20220613105131906](Datahub元数据管理系统部署步骤/image-20220613105131906.png)
