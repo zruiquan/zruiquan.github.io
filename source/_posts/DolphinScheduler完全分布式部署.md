@@ -19,7 +19,7 @@ categories:
   - macOS安装`pstree`
   - Fedora/Red/Hat/CentOS/Ubuntu/Debian安装`psmisc`
 
-> ***注意:\*** DolphinScheduler 本身不依赖 Hadoop、Hive、Spark，但如果你运行的任务需要依赖他们，就需要有对应的环境支持
+> **注意:** DolphinScheduler 本身不依赖 Hadoop、Hive、Spark，但如果你运行的任务需要依赖他们，就需要有对应的环境支持
 
 ## 准备 DolphinScheduler 启动环境
 
@@ -52,12 +52,12 @@ sed -i 's/Defaults    requirett/#Defaults    requirett/g' /etc/sudoers
 ```shell
 # 登陆bigdata1
 [root@bigdata1 dolphinscheduler]# su dolphinscheduler
-[root@bigdata1 dolphinscheduler]# cd /home/dolphinscheduler/.ssh
-[root@bigdata1 dolphinscheduler]# ssh-keygen -t rsa
+[dolphinscheduler@bigdata1 dolphinscheduler]# cd /home/dolphinscheduler/.ssh
+[dolphinscheduler@bigdata1 dolphinscheduler]# ssh-keygen -t rsa
 # 然后敲（三个回车），就会生成两个文件id_rsa（私钥）、id_rsa.pub（公钥）
-[root@bigdata1 dolphinscheduler]# ssh-copy-id bigdata1
-[root@bigdata1 dolphinscheduler]# ssh-copy-id bigdata2
-[root@bigdata1 dolphinscheduler]# ssh-copy-id bigdata3
+[dolphinscheduler@bigdata1 dolphinscheduler]# ssh-copy-id bigdata1
+[dolphinscheduler@bigdata1 dolphinscheduler]# ssh-copy-id bigdata2
+[dolphinscheduler@bigdata1 dolphinscheduler]# ssh-copy-id bigdata3
 ```
 
 > **注意：** 三台服务器都要进行同样的上述操作
