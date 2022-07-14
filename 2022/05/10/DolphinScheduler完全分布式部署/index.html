@@ -28,7 +28,7 @@
 <meta property="og:description" content="DolphinScheduler-3.0.0-alpha完全分布式部署前置环境准备 JDK：下载JDK (1.8+)，并将 JAVA_HOME 配置到以及 PATH 变量中。如果你的环境中已存在，可以跳过这步。 二进制包：在下载页面下载 DolphinScheduler 二进制包 数据库：PostgreSQL (8.2.15+) 或者 MySQL (5.7+)，两者任选其一即可，如 MySQL 则">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-05-10T01:43:06.000Z">
-<meta property="article:modified_time" content="2022-05-12T08:24:12.266Z">
+<meta property="article:modified_time" content="2022-07-11T08:20:44.546Z">
 <meta property="article:author" content="Rui Zhang">
 <meta property="article:tag" content="DolphinScheduler">
 <meta name="twitter:card" content="summary">
@@ -126,17 +126,17 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">12</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">13</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">12</span></a>
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">13</span></a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">24</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">25</span></a>
 
   </li>
   </ul>
@@ -195,7 +195,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-05-12 16:24:12" itemprop="dateModified" datetime="2022-05-12T16:24:12+08:00">2022-05-12</time>
+                <time title="修改时间：2022-07-11 16:20:44" itemprop="dateModified" datetime="2022-07-11T16:20:44+08:00">2022-07-11</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -244,7 +244,7 @@
 </li>
 </ul>
 <blockquote>
-<p><strong><em>注意:\</em></strong> DolphinScheduler 本身不依赖 Hadoop、Hive、Spark，但如果你运行的任务需要依赖他们，就需要有对应的环境支持</p>
+<p><strong>注意:</strong> DolphinScheduler 本身不依赖 Hadoop、Hive、Spark，但如果你运行的任务需要依赖他们，就需要有对应的环境支持</p>
 </blockquote>
 <h2 id="准备-DolphinScheduler-启动环境"><a href="#准备-DolphinScheduler-启动环境" class="headerlink" title="准备 DolphinScheduler 启动环境"></a>准备 DolphinScheduler 启动环境</h2><h3 id="配置用户免密及权限"><a href="#配置用户免密及权限" class="headerlink" title="配置用户免密及权限"></a>配置用户免密及权限</h3><p>创建部署用户，并且一定要配置 <code>sudo</code> 免密。以创建 dolphinscheduler 用户为例</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 创建用户需使用 root 登录</span></span><br><span class="line">useradd dolphinscheduler</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 添加密码</span></span><br><span class="line">echo "dolphinscheduler" | passwd --stdin dolphinscheduler</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 配置 sudo 免密</span></span><br><span class="line">sed -i '$adolphinscheduler  ALL=(ALL)  NOPASSWD: NOPASSWD: ALL' /etc/sudoers</span><br><span class="line">sed -i 's/Defaults    requirett/#Defaults    requirett/g' /etc/sudoers</span><br></pre></td></tr></table></figure>
@@ -258,7 +258,7 @@
 </ul>
 </blockquote>
 <h3 id="配置机器SSH免密登陆"><a href="#配置机器SSH免密登陆" class="headerlink" title="配置机器SSH免密登陆"></a>配置机器SSH免密登陆</h3><p>由于安装的时候需要向不同机器发送资源，所以要求<strong>各台机器间能实现SSH免密登陆</strong>。配置免密登陆的步骤如下</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 登陆bigdata1</span></span><br><span class="line">[root@bigdata1 dolphinscheduler]# su dolphinscheduler</span><br><span class="line">[root@bigdata1 dolphinscheduler]# cd /home/dolphinscheduler/.ssh</span><br><span class="line">[root@bigdata1 dolphinscheduler]# ssh-keygen -t rsa</span><br><span class="line"><span class="meta">#</span><span class="bash"> 然后敲（三个回车），就会生成两个文件id_rsa（私钥）、id_rsa.pub（公钥）</span></span><br><span class="line">[root@bigdata1 dolphinscheduler]# ssh-copy-id bigdata1</span><br><span class="line">[root@bigdata1 dolphinscheduler]# ssh-copy-id bigdata2</span><br><span class="line">[root@bigdata1 dolphinscheduler]# ssh-copy-id bigdata3</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 登陆bigdata1</span></span><br><span class="line">[root@bigdata1 dolphinscheduler]# su dolphinscheduler</span><br><span class="line">[dolphinscheduler@bigdata1 dolphinscheduler]# cd /home/dolphinscheduler/.ssh</span><br><span class="line">[dolphinscheduler@bigdata1 dolphinscheduler]# ssh-keygen -t rsa</span><br><span class="line"><span class="meta">#</span><span class="bash"> 然后敲（三个回车），就会生成两个文件id_rsa（私钥）、id_rsa.pub（公钥）</span></span><br><span class="line">[dolphinscheduler@bigdata1 dolphinscheduler]# ssh-copy-id bigdata1</span><br><span class="line">[dolphinscheduler@bigdata1 dolphinscheduler]# ssh-copy-id bigdata2</span><br><span class="line">[dolphinscheduler@bigdata1 dolphinscheduler]# ssh-copy-id bigdata3</span><br></pre></td></tr></table></figure>
 
 <blockquote>
 <p><strong>注意：</strong> 三台服务器都要进行同样的上述操作</p>
@@ -437,20 +437,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-count">25</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-count">13</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-count">13</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -488,13 +488,13 @@
       <i class="fa fa-area-chart"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">284k</span>
+    <span title="站点总字数">325k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">4:18</span>
+    <span title="站点阅读时长">4:55</span>
 </div>
 
 
