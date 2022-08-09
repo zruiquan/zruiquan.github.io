@@ -248,7 +248,7 @@ sudo systemctl restart docker
 
 ### 容器命令
 
-#### docker run [OPTIONS]  容器ID/容器名  [COMMAND] [ARG...]
+#### docker run [OPTIONS]  镜像ID/容器名  [COMMAND] [ARG...]
 
 新建+启动容器
 
@@ -628,8 +628,7 @@ docker run -d -p 3306:3306 --privileged=true
 -v /zrq/mysql/data:/var/lib/mysql 
 -v /zrq/mysql/conf:/etc/mysql/conf.d 
 -e MYSQL_ROOT_PASSWORD=123456 
---name mysql 
-mysql:5.7
+--name mysql mysql:5.7
 ## 解决中文乱码问题
 [root@localhost conf]# cd /zrq/mysql/conf/
 [root@localhost conf]# vim my.cnf
@@ -1471,7 +1470,7 @@ RUN mkdir /usr/local/java
 #ADD是相对路径jar,把jdk-8u291-linux-x64.tar.gz添加到容器中,安装包必须要和Dockerfile文件在同一位置
 ADD jdk-8u291-linux-x64.tar.gz /usr/local/java/
 #配置java环境变量
-ENV JAVA_HOME /usr/local/java/ jdk1.8.0_291
+ENV JAVA_HOME /usr/local/java/jdk1.8.0_291
 ENV JRE_HOME $JAVA_HOME/jre
 ENV CLASSPATH $JAVA_HONE/lib/dt.jar:$JAVA_HONE/lib/tools.jar:$JRE_HOME/lib:$CLASSPATH
 ENV PATH $JAVA_HOME/bin:$PATH
