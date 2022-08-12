@@ -9,13 +9,13 @@ categories:
 
 # HA概述
 
-**1）所谓HA（High Available），即高可用（7*24小时不中断服务）。**
+1）所谓HA（High Available），即高可用（7*24小时不中断服务）。
 
-**2）实现高可用最关键的策略是消除单点故障。HA严格来说应该分成各个组件的HA机制：HDFS的HA和YARN的HA。**
+2）实现高可用最关键的策略是消除单点故障。HA严格来说应该分成各个组件的HA机制：HDFS的HA和YARN的HA。
 
-**3）Hadoop2.0之前，在HDFS集群中NameNode存在单点故障（SPOF）。**
+3）Hadoop2.0之前，在HDFS集群中NameNode存在单点故障（SPOF）。
 
-**4）NameNode主要在以下两个方面影响HDFS集群**
+4）NameNode主要在以下两个方面影响HDFS集群
 
 ​	NameNode机器发生意外，如宕机，集群将无法使用，直到管理员重启
 
@@ -355,7 +355,7 @@ HA 的主要目的是消除 namenode 的单点故障,需要将 hdfs 集群规划
 
    ![image-20220812101937092](Hadoop之HA高可用/image-20220812101937092.png)
 
-   ![image-20220812102022159](Hadoop之HA高可用/image-20220812102022159.png)
+   ![image-20220812120144955](Hadoop之HA高可用/image-20220812120144955.png)
 
 7. **在所有节点上，启动 datanode**
 
@@ -460,7 +460,7 @@ HA 的主要目的是消除 namenode 的单点故障,需要将 hdfs 集群规划
    ```shell
    [zk: localhost:2181(CONNECTED) 7] get -s
    /hadoop-ha/mycluster/ActiveStandbyElectorLock
-   myclusternn2 hadoop103 �>(�>
+   myclusternn2 hadoop103 >
    cZxid = 0x10000000b
    ctime = Tue Jul 14 17:00:13 CST 2020
    mZxid = 0x10000000b
