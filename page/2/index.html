@@ -133,7 +133,7 @@
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">27</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">28</span></a>
 
   </li>
   </ul>
@@ -158,6 +158,178 @@
             
 
   <div class="posts-expand">
+        
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/12/31/%E6%BC%AB%E8%B0%88%E6%8B%89%E9%93%BE%E8%A1%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/head.jpg">
+      <meta itemprop="name" content="Rui Zhang">
+      <meta itemprop="description" content="不在沉默中爆发，就在沉默中灭亡">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="没有尾巴的小驴">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/12/31/%E6%BC%AB%E8%B0%88%E6%8B%89%E9%93%BE%E8%A1%A8/" class="post-title-link" itemprop="url">漫谈拉链表</a>
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-12-31 14:43:08 / 修改时间：16:47:15" itemprop="dateCreated datePublished" datetime="2021-12-31T14:43:08+08:00">2021-12-31</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%B0%E4%BB%93/" itemprop="url" rel="index"><span itemprop="name">数仓</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="什么是拉链表？"><a href="#什么是拉链表？" class="headerlink" title="什么是拉链表？"></a>什么是拉链表？</h2><p>拉链表是针对数据仓库设计中表存储数据的方式而定义的，顾名思义，所谓拉链，就是记录历史。记录一个事物从开始，一直到当前状态的所有变化的信息。</p>
+<p>我们先看一个示例，这就是一张拉链表，存储的是用户的最基本信息以及每条记录的生命周期。我们可以使用这张表拿到最新的当天的最新数据以及之前的历史数据。</p>
+<table>
+<thead>
+<tr>
+<th align="center">注册日期</th>
+<th align="center">用户编号</th>
+<th align="center">手机号码</th>
+<th align="center">t_start_date</th>
+<th align="center">t_end_date</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">2017-01-01</td>
+<td align="center">001</td>
+<td align="center">111111</td>
+<td align="center">2017-01-01</td>
+<td align="center">9999-12-31</td>
+</tr>
+<tr>
+<td align="center">2017-01-01</td>
+<td align="center">002</td>
+<td align="center">222222</td>
+<td align="center">2017-01-01</td>
+<td align="center">2017-01-01</td>
+</tr>
+<tr>
+<td align="center">2017-01-01</td>
+<td align="center">002</td>
+<td align="center">222222</td>
+<td align="center">2017-01-01</td>
+<td align="center">2017-01-01</td>
+</tr>
+<tr>
+<td align="center">2017-01-01</td>
+<td align="center">003</td>
+<td align="center">333333</td>
+<td align="center">2017-01-01</td>
+<td align="center">9999-12-31</td>
+</tr>
+<tr>
+<td align="center">2017-01-01</td>
+<td align="center">004</td>
+<td align="center">444444</td>
+<td align="center">2017-01-01</td>
+<td align="center">2017-01-01</td>
+</tr>
+<tr>
+<td align="center">2017-01-01</td>
+<td align="center">004</td>
+<td align="center">432432</td>
+<td align="center">2017-01-02</td>
+<td align="center">2017-01-02</td>
+</tr>
+<tr>
+<td align="center">2017-01-01</td>
+<td align="center">004</td>
+<td align="center">432432</td>
+<td align="center">2017-01-03</td>
+<td align="center">9999-12-31</td>
+</tr>
+<tr>
+<td align="center">2017-01-02</td>
+<td align="center">005</td>
+<td align="center">555555</td>
+<td align="center">2017-01-02</td>
+<td align="center">2017-01-02</td>
+</tr>
+<tr>
+<td align="center">2017-01-02</td>
+<td align="center">005</td>
+<td align="center">115115</td>
+<td align="center">2017-01-03</td>
+<td align="center">9999-12-31</td>
+</tr>
+<tr>
+<td align="center">2017-01-03</td>
+<td align="center">006</td>
+<td align="center">666666</td>
+<td align="center">2017-01-03</td>
+<td align="center">9999-12-31</td>
+</tr>
+</tbody></table>
+<p>我们暂且不对这张表做细致的讲解，后文会专门来阐述怎么来设计、实现和使用它。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/12/31/%E6%BC%AB%E8%B0%88%E6%8B%89%E9%93%BE%E8%A1%A8/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
         
   
   
@@ -934,110 +1106,6 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/11/16/Kafka%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/head.jpg">
-      <meta itemprop="name" content="Rui Zhang">
-      <meta itemprop="description" content="不在沉默中爆发，就在沉默中灭亡">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="没有尾巴的小驴">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/11/16/Kafka%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" class="post-title-link" itemprop="url">Kafka常用命令</a>
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2021-11-16 16:10:51 / 修改时间：16:17:11" itemprop="dateCreated datePublished" datetime="2021-11-16T16:10:51+08:00">2021-11-16</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Kafka/" itemprop="url" rel="index"><span itemprop="name">Kafka</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-file-word-o"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>515</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-clock-o"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <ul>
-<li><p>创建Topic</p>
-<p><code>./kafka-topics.sh --zookeeper bigdata1:2181 --create --topic test--partitions 3 --replication-factor 3</code></p>
-</li>
-<li><p>发送数据</p>
-<p><code>./kafka-console-producer.sh --broker-list bigdata1:6667 --topic test</code> </p>
-</li>
-<li><p>消费数据</p>
-<p><code>./kafka-console-consumer.sh --bootstrap-server bigdata1:6667 --topic test</code></p>
-</li>
-<li><p>查看Topic列表</p>
-<p><code>./kafka-topics.sh --zookeeper bigdata1:2181 --list</code></p>
-</li>
-<li><p>删除Topic</p>
-<p><code>./kafka-topics.sh --delete --zookeeper bigdata1:2181 --topic test</code></p>
-</li>
-<li><p>查看Topic描述</p>
-<p><code>./kafka-topics.sh --zookeeper bigdata1:2181 --topic test --describe</code></p>
-</li>
-<li><p>修改Topic</p>
-<p><code>./kafka-topics.sh --alter --zookeeper bigdata1:2181 --topic test--partitions 3</code></p>
-</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-        
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block home" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/11/16/Hexo-%E5%A4%9A%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1205,7 +1273,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">27</span>
+          <span class="site-state-item-count">28</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1256,13 +1324,13 @@
       <i class="fa fa-area-chart"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">480k</span>
+    <span title="站点总字数">498k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">7:16</span>
+    <span title="站点阅读时长">7:33</span>
 </div>
 
 
