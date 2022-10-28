@@ -770,13 +770,15 @@ core-default.xml 里面有两个参数如下：
 
 将整个 HA 搭建完成后,集群将形成以下模样
 
-| hadoop102   | hadoop103   | hadoop104   |
-| ----------- | ----------- | ----------- |
-| NameNode    | NameNode    | NameNode    |
-| JournalNode | JournalNode | JournalNode |
-| DataNode    | DataNode    | DataNode    |
-| Zookeeper   | Zookeeper   | Zookeeper   |
-| ZKFC        | ZKFC        | ZKFC        |
+| hadoop102       | hadoop103       | hadoop104       |
+| --------------- | --------------- | --------------- |
+| NameNode        | NameNode        | NameNode        |
+| JournalNode     | JournalNode     | JournalNode     |
+| DataNode        | DataNode        | DataNode        |
+| Zookeeper       | Zookeeper       | Zookeeper       |
+| ZKFC            | ZKFC            | ZKFC            |
+| ResourceManager | ResourceManager | ResourceManager |
+| NodeManager     | NodeManager     | NodeManager     |
 
 # **HDFS** Federation架构设计
 

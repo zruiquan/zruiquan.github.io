@@ -205,9 +205,7 @@ UsernamePasswordAuthenticationFilter ：对/login 的 POST 请求做拦截，校
 
 ![image-20220217101051441](Spring-Security技术/image-20220217101051441.png)
 
-|      |                                             |
-| ---- | ------------------------------------------- |
-|      | ![img](Spring-Security技术/wps18FF.tmp.png) |
+
 
 ##  2.6 UserDetailsService 接口讲解  
 
@@ -241,26 +239,23 @@ boolean isEnabled();
 
  ![image-20220217101230159](Spring-Security技术/image-20220217101230159.png)
 
-以后我们只需要使用 User 这个实体类即可！![img](Spring-Security技术/wps1901.tmp.png) 
+以后我们只需要使用 User 这个实体类即可！
 
 ![image-20220217101241855](Spring-Security技术/image-20220217101241855.png)
 
 ### 方法参数 username  
 
- 表示用户名。此值是客户端表单传递过来的数据。默认情况下必须叫 username，否则无
-法接收。  
+ 表示用户名。此值是客户端表单传递过来的数据。默认情况下必须叫 username，否则无法接收。  
 
 ## 2.7 PasswordEncoder 接口讲解  
 
 ```java
 // 表示把参数按照特定的解析规则进行解析
 String encode(CharSequence rawPassword);
-// 表示验证从存储中获取的编码密码与编码后提交的原始密码是否匹配。如果密码匹
-配，则返回 true；如果不匹配，则返回 false。第一个参数表示需要被解析的密码。第二个
-参数表示存储的密码。
+// 表示验证从存储中获取的编码密码与编码后提交的原始密码是否匹配。如果密码匹配，则返回 true；如果不匹配，则返回 false。第一个参数表示需要被解析的密码。第二个
+// 参数表示存储的密码。
 boolean matches(CharSequence rawPassword, String encodedPassword);
-// 表示如果解析的密码能够再次进行解析且达到更安全的结果则返回 true，否则返回
-false。默认返回 false。
+// 表示如果解析的密码能够再次进行解析且达到更安全的结果则返回 true，否则返回false。默认返回 false。
 default boolean upgradeEncoding(String encodedPassword) {
 	return false;
 }
@@ -335,11 +330,9 @@ UsernameNotFoundException {
 	if (!"admin".equals(username)){
 	throw new UsernameNotFoundException("用户名不存在！ ");}
 	// 从数据库中获取的密码 atguigu 的密文
-	String pwd =
-	"$2a$10$2R/M6iU3mCZt3ByG7kwYTeeW0w7/UqdeXrb27zkBIizBvAven0/na";
+	String pwd ="$2a$10$2R/M6iU3mCZt3ByG7kwYTeeW0w7/UqdeXrb27zkBIizBvAven0/na";
 	// 第三个参数表示权限
-	return new User(username,pwd,
-	AuthorityUtils.commaSeparatedStringToAuthorityList("admin,"));
+	return new User(username,pwd,AuthorityUtils.commaSeparatedStringToAuthorityList("admin,"));
 	}
 }
 ```
@@ -350,42 +343,40 @@ UsernameNotFoundException {
 
 ### 3.2.1 准备 sql
 
- ```java
+ ```sql
  create table users(
- id bigint primary key auto_increment,
- username varchar(20) unique not null,
- password varchar(100)
+     id bigint primary key auto_increment,
+     username varchar(20) unique not null,
+     password varchar(100)
  );
  -- 密码 atguigu
- insert into users values(1,'张
- san','$2a$10$2R/M6iU3mCZt3ByG7kwYTeeW0w7/UqdeXrb27zkBIizBvAven0/na');
+ insert into users values(1,'张san','$2a$10$2R/M6iU3mCZt3ByG7kwYTeeW0w7/UqdeXrb27zkBIizBvAven0/na');
  -- 密码 atguigu
- insert into users values(2,'李
- si','$2a$10$2R/M6iU3mCZt3ByG7kwYTeeW0w7/UqdeXrb27zkBIizBvAven0/na');
+ insert into users values(2,'李si','$2a$10$2R/M6iU3mCZt3ByG7kwYTeeW0w7/UqdeXrb27zkBIizBvAven0/na');
  create table role(
- id bigint primary key auto_increment,
- name varchar(20)
+     id bigint primary key auto_increment,
+     name varchar(20)
  );
  insert into role values(1,'管理员');
  insert into role values(2,'普通用户');
  create table role_user(
- uid bigint,
- rid bigint
+     uid bigint,
+     rid bigint
  );
  insert into role_user values(1,1);
  insert into role_user values(2,2);
  create table menu(
- id bigint primary key auto_increment,
- name varchar(20),
- url varchar(100),
- parentid bigint,
- permission varchar(20)
+     id bigint primary key auto_increment,
+     name varchar(20),
+     url varchar(100),
+     parentid bigint,
+     permission varchar(20)
  );
  insert into menu values(1,'系统管理','',0,'menu:system');
  insert into menu values(2,'用户管理','',0,'menu:user');
  create table role_menu(
- mid bigint,
- rid bigint
+     mid bigint,
+     rid bigint
  );
  insert into role_menu values(1,1);
  insert into role_menu values(2,1);
@@ -432,7 +423,8 @@ UsernameNotFoundException {
 
 ```java
 @Data
-public class Users {private Integer id;
+public class Users {
+    private Integer id;
 	private String username;
 	private String password;
 }
@@ -806,10 +798,6 @@ https://docs.spring.io/springsecurity/site/docs/5.3.4.RELEASE/reference/html5/#e
 #### 签名哈希
 
  ![image-20220217131358256](Spring-Security技术/image-20220217131358256.png)
-
-#### Base64URL 算法
-
- ![image-20220217131425567](Spring-Security技术/image-20220217131425567.png)
 
 
 
