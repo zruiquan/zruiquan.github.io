@@ -43,3 +43,65 @@ Acegi Security 最终被并入 Spring Security 项目中，并于 2008 年 4 月
 
 ### 1.2.1 认证  
 
+Spring Security 支持多种不同的认证方式， 这些认证方式有的是 Spring Security 自己提供的认证功能， 有的是第三方标准组织制订的。 Spring Security 集成的主流认证机制主要有如下几种：
+
+* 表单认证。
+* OAutli2.0 认证。
+* SAML2.0 认证。
+* CAS 认证。
+* RemembeiMe 自动认证。
+* JAAS 认证。
+* OpenID 去中心化认证。
+* Pre-Authentication Scenarios 认证
+* X509 认证。
+* HTTP Basic 认证。
+* HTTP Digest 认证。
+
+作为一个开放的平台， Spring Security 提供的认证机制不仅仅包括上而这些， 我们还可以通过引入第三方依赖来支持更多的认证方式， 同时， 如果这些认证方式无法满足我们的需求，我们也可以自定义认证逻辑， 特别是当我们和一些“老破旧” 的系统进行集成时， 自定义认证逻辑就显得非常重要了。  
+
+### 1.2.2 授权  
+
+无论釆用了上而哪种认证方式，都不影响在 Spring Security 中使用授权功能。SpringSecurity 支持基于 URL 的请求授权、支持方法访问授权、支持 SpELt方问控制、 支持域对象安全（ACL) ，同时也支持动态权限配置、支持 RBAC 权限模型等，总之，我们常见的权限管理需求，Spring Security 基本上都是支持的。  
+
+### 1.2.3 其他  
+
+在认证和授权这两个核心功能之外， Spring Security 还提供了很多安全管理的”周边功能“，这也是一个非常重要的特色。
+
+大部分 Java 工程师都不是专业的 Web 安全工程师， 自己开发的安全管理框架可能会存在大大小小的安全漏洞。 而Spring Security 的强大之处在于， 即使你不了解很多网络攻击， 只要使用了 Spring Security， 它会帮助我们自动防御很多网络攻击， 例如 CSRF 攻击、 会话固定攻击等， 同时 Spring Security 还提供了HTTP 防火墙来拦截大量的非法请求。 由此可见， 研究  Spring Security, 也是研究常见的网络攻击以及防御策略。
+
+对于大部分的 Java 项目无论是从经济性还是安全性来考虑， 使用 Spring Security 无疑是最佳方案。  
+
+## 1.3 Spring Security 整体架构  
+
+在具体学习 Spring Security 各种用法之前， 我们先介绍一下 Spring Security 中常见的概念，以及认证、 授权思路， 方便读者从整体上把握 Spring Security 架构， 这里涉及的所有组件， 在后而的章节中还会做详细介绍。  
+
+### 1.3.1 认证和授权  
+
+#### 1.3.1.1 认证
+
+在 Spring Security 的架构设计中， 认证（ Authenticatiou ) 和授权（Authorization) 是分开的， 在本书后而的章节中读者可以看到， 无论使用什么样的认证方式， 都不会影响授权， 这是两个独立的存在， 这种独立带来的好处之一， 就是 Spring Security 可以非常方便地整合一些外部的认证方案.  
+
+在 Spring Security 中 ， 用 户 的 认 证 信 息 主 要 由 Authentication 的 实 现 类 来 保 存 ，Authentication 接口定义如下：  
+
+```java
+public interface Authentication extends Principal, Serializable {
+    Collection<? extends GrantedAuthority> getAothorities();
+    Object getCredentials();
+    Object getDetails();
+    Object getPrincipal();
+    boolean isAuthenticated();
+    void setAuthenticated(boolean isAuthenticated);
+}
+```
+
+这里接n中定义的方法如下：
+
+* getAutliorities 方法： 用来获取用户的权限。
+* getCredentials 方法： 用来荻取用户凭证， 一般来说就是密码。
+* getDetails 方法： 用来获取用户携带的详细信息， 可能是当前请求之类等。
+* getPiincipal 方法： 用来获取当前用户， 例如是一个用户名或者一个用户对象
+* isAuthenticated: 当前用户是否认证成功。
+
+当用户使用用户名/密 码登录或使用 Remember-me 登录时 ， 都 会 对 应 一 个 不 同 的Authentication 实例。  
+
+ {% pdf pdf/深入浅出Spring Security.pdf %}
