@@ -43,4 +43,3 @@ Acegi Security 最终被并入 Spring Security 项目中，并于 2008 年 4 月
 
 ### 1.2.1 认证  
 
-{% pdf/深入浅出Spring Security.pdf %}
