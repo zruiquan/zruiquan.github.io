@@ -23,37 +23,38 @@
   <meta name="description" content="OAuth2.0OAuth2.0介绍OAuth（Open Authorization）是一个关于授权（authorization）的开放网络标准，允许用户授权第三方 应用访问他们存储在另外的服务提供者上的信息，而不需要将用户名和密码提供给第三方移动应用或分享他 们数据的所有内容。OAuth在全世界得到广泛应用，目前的版本是2.0版。 OAuth协议：https:&#x2F;&#x2F;tools.ietf.org&#x2F;h">
 <meta property="og:type" content="article">
 <meta property="og:title" content="SSO统一认证协议">
-<meta property="og:url" content="http://yoursite.com/2022/11/09/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/index.html">
+<meta property="og:url" content="http://yoursite.com/2022/02/16/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/index.html">
 <meta property="og:site_name" content="没有尾巴的小驴">
 <meta property="og:description" content="OAuth2.0OAuth2.0介绍OAuth（Open Authorization）是一个关于授权（authorization）的开放网络标准，允许用户授权第三方 应用访问他们存储在另外的服务提供者上的信息，而不需要将用户名和密码提供给第三方移动应用或分享他 们数据的所有内容。OAuth在全世界得到广泛应用，目前的版本是2.0版。 OAuth协议：https:&#x2F;&#x2F;tools.ietf.org&#x2F;h">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://yoursite.com/2022/11/09/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-67306ed5439e40a969ac00acf90a4dc6_720w.webp">
-<meta property="og:image" content="http://yoursite.com/2022/11/09/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-64f9510b46b6b3b9a0f41296db3f3f70_720w.webp">
-<meta property="og:image" content="http://yoursite.com/2022/11/09/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-d0ea85d5a25c5bfb82ae0decdfd8a4a4_720w.webp">
-<meta property="og:image" content="http://yoursite.com/2022/11/09/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-fccac16d440911894f2ff356064563e9_720w.webp">
-<meta property="og:image" content="http://yoursite.com/2022/11/09/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-2c1e8a6347274092c0c455a0d1130a5f_720w.webp">
-<meta property="og:image" content="http://yoursite.com/2022/11/09/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-8d48abd15e424900ea6a6d780607cf63_720w.webp">
-<meta property="og:image" content="http://yoursite.com/2022/11/09/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-771b132d02c42ba3eccfad00fcdea176_720w.webp">
-<meta property="og:image" content="http://yoursite.com/2022/11/09/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-e465f211c92d93890334ed2ad1e1d337_720w.webp">
-<meta property="og:image" content="http://yoursite.com/2022/11/09/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-8443ed6dfe341142d0104ebf9d0d4378_720w.webp">
-<meta property="og:image" content="http://yoursite.com/2022/11/09/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-295117bf22b768f44623556f66ddec7a_720w.webp">
-<meta property="og:image" content="http://yoursite.com/2022/11/09/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-9f26138da24bba989525e73cb59589bb_720w.webp">
-<meta property="og:image" content="http://yoursite.com/2022/11/09/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-7ddf3b5a046a6328ccd4f877b271d591_720w.webp">
-<meta property="og:image" content="http://yoursite.com/2022/11/09/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-4e3a76b4df3cc5c699ee1e6c79fd7be9_720w.webp">
-<meta property="og:image" content="http://yoursite.com/2022/11/09/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-23f4d7129d2701d105fe82fdb1fcb4e5_720w.webp">
-<meta property="og:image" content="http://yoursite.com/2022/11/09/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-e70efba7781be74052111a207a03f5e3_720w.webp">
-<meta property="og:image" content="http://yoursite.com/2022/11/09/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-057af015eeab9ddf884e51fe929efbee_720w.webp">
-<meta property="og:image" content="http://yoursite.com/2022/11/09/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-3b210a561d39ac8193b40d04179c6f37_720w.webp">
-<meta property="og:image" content="http://yoursite.com/2022/11/09/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-4d6567cf4b86fd1236483e50062eae0a_720w.webp">
-<meta property="og:image" content="http://yoursite.com/2022/11/09/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-221564197e4555ad4f753962c075aedb_720w.webp">
-<meta property="og:image" content="http://yoursite.com/2022/11/09/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-c4e70729b0b1bf4baacf0ec13b6b4927_720w.webp">
-<meta property="article:published_time" content="2022-11-09T07:53:08.872Z">
-<meta property="article:modified_time" content="2022-11-09T10:52:42.425Z">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-67306ed5439e40a969ac00acf90a4dc6_720w.webp">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-64f9510b46b6b3b9a0f41296db3f3f70_720w.webp">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-d0ea85d5a25c5bfb82ae0decdfd8a4a4_720w.webp">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-fccac16d440911894f2ff356064563e9_720w.webp">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-2c1e8a6347274092c0c455a0d1130a5f_720w.webp">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-8d48abd15e424900ea6a6d780607cf63_720w.webp">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-771b132d02c42ba3eccfad00fcdea176_720w.webp">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-e465f211c92d93890334ed2ad1e1d337_720w.webp">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-8443ed6dfe341142d0104ebf9d0d4378_720w.webp">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-295117bf22b768f44623556f66ddec7a_720w.webp">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-9f26138da24bba989525e73cb59589bb_720w.webp">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-7ddf3b5a046a6328ccd4f877b271d591_720w.webp">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-4e3a76b4df3cc5c699ee1e6c79fd7be9_720w.webp">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-23f4d7129d2701d105fe82fdb1fcb4e5_720w.webp">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-e70efba7781be74052111a207a03f5e3_720w.webp">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-057af015eeab9ddf884e51fe929efbee_720w.webp">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-3b210a561d39ac8193b40d04179c6f37_720w.webp">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-4d6567cf4b86fd1236483e50062eae0a_720w.webp">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-221564197e4555ad4f753962c075aedb_720w.webp">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-c4e70729b0b1bf4baacf0ec13b6b4927_720w.webp">
+<meta property="article:published_time" content="2022-02-16T06:21:18.000Z">
+<meta property="article:modified_time" content="2022-11-10T07:41:36.277Z">
 <meta property="article:author" content="Rui Zhang">
+<meta property="article:tag" content="SpringSecurity">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://yoursite.com/2022/11/09/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-67306ed5439e40a969ac00acf90a4dc6_720w.webp">
+<meta name="twitter:image" content="http://yoursite.com/2022/02/16/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-67306ed5439e40a969ac00acf90a4dc6_720w.webp">
 
-<link rel="canonical" href="http://yoursite.com/2022/11/09/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/">
+<link rel="canonical" href="http://yoursite.com/2022/02/16/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/">
 
 
 <script id="page-configurations">
@@ -185,7 +186,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2022/11/09/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2022/02/16/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/head.jpg">
@@ -207,9 +208,24 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2022-11-09 15:53:08 / 修改时间：18:52:42" itemprop="dateCreated datePublished" datetime="2022-11-09T15:53:08+08:00">2022-11-09</time>
+              <time title="创建时间：2022-02-16 14:21:18" itemprop="dateCreated datePublished" datetime="2022-02-16T14:21:18+08:00">2022-02-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-11-10 15:41:36" itemprop="dateModified" datetime="2022-11-10T15:41:36+08:00">2022-11-10</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/SpringSecurity/" itemprop="url" rel="index"><span itemprop="name">SpringSecurity</span></a>
+                </span>
             </span>
 
           <br>
@@ -250,7 +266,7 @@
 <li>前后端分离单页面应用：前后端分离框架，前端请求后台数据，需要进行oauth2安全认证</li>
 <li>第三方应用授权登录，比如QQ，微博，微信的授权登录。</li>
 </ul>
-<p><img src="/2022/11/09/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-67306ed5439e40a969ac00acf90a4dc6_720w.webp" alt="img"></p>
+<p><img src="/2022/02/16/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-67306ed5439e40a969ac00acf90a4dc6_720w.webp" alt="img"></p>
 <h3 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h3><ul>
 <li><strong>Third-party application</strong>：第三方应用程序，又称”客户端”（client），即例子中的”豆瓣”。</li>
 <li><strong>HTTP service</strong>：HTTP服务提供商，简称”服务提供商”，即例子中的qq。</li>
@@ -280,14 +296,14 @@
 <p><strong>认证（Authentication）</strong> ：用户认证就是判断一个用户的身份是否合法的过程，用户去访问系统资源时系统要求验证用户的身份信息，身份合法方可继续访问，不合法则拒绝访问。常见的用户身份认证方式有：用户名密码登录，二维码登录，手机短信登录，指纹认证等方式。</p>
 <p><strong>授权（Authorization）</strong>： 授权是用户认证通过根据用户的权限来控制用户访问资源的过程，拥有资源的访问权限则正常访问，没有权限则拒绝访问。</p>
 <p>将OAuth2和Spring Security集成，就可以得到一套完整的安全解决方案。我们可以通过Spring Security OAuth2构建一个授权服务器来验证用户身份以提供access_token，并使用这个access_token来从资源服务器请求数据。</p>
-<h3 id="Spring-Security-Oauth2-0整体架构"><a href="#Spring-Security-Oauth2-0整体架构" class="headerlink" title="Spring Security + Oauth2.0整体架构"></a>Spring Security + Oauth2.0<strong>整体架构</strong></h3><p><img src="/2022/11/09/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-64f9510b46b6b3b9a0f41296db3f3f70_720w.webp" alt="img"></p>
+<h3 id="Spring-Security-Oauth2-0整体架构"><a href="#Spring-Security-Oauth2-0整体架构" class="headerlink" title="Spring Security + Oauth2.0整体架构"></a>Spring Security + Oauth2.0<strong>整体架构</strong></h3><p><img src="/2022/02/16/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-64f9510b46b6b3b9a0f41296db3f3f70_720w.webp" alt="img"></p>
 <ul>
 <li>Authorize Endpoint ：授权端点，进行授权</li>
 <li>Token Endpoint ：令牌端点，经过授权拿到对应的Token</li>
 <li>Introspection Endpoint ：校验端点，校验Token的合法性</li>
 <li>Revocation Endpoint ：撤销端点，撤销授权</li>
 </ul>
-<p><img src="/2022/11/09/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-d0ea85d5a25c5bfb82ae0decdfd8a4a4_720w.webp" alt="img"></p>
+<p><img src="/2022/02/16/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-d0ea85d5a25c5bfb82ae0decdfd8a4a4_720w.webp" alt="img"></p>
 <ol>
 <li>用户访问,此时没有Token。Oauth2RestTemplate会报错，这个报错信息会被Oauth2ClientContextFilter捕获并重定向到授权服务器。</li>
 <li>授权服务器通过Authorization Endpoint进行授权，并通过AuthorizationServerTokenServices生成授权码并返回给客户端。</li>
@@ -295,7 +311,7 @@
 <li>客户端拿到Token去资源服务器访问资源，一般会通过Oauth2AuthenticationManager调用ResourceServerTokenServices进行校验。校验通过可以获取资源。</li>
 </ol>
 <h3 id="OAuth2-0模式"><a href="#OAuth2-0模式" class="headerlink" title="OAuth2.0模式"></a>OAuth2.0模式</h3><h3 id="运行流程"><a href="#运行流程" class="headerlink" title="运行流程"></a>运行流程</h3><p>OAuth 2.0的运行流程如下图，摘自RFC 6749。</p>
-<p><img src="/2022/11/09/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-fccac16d440911894f2ff356064563e9_720w.webp" alt="img"></p>
+<p><img src="/2022/02/16/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-fccac16d440911894f2ff356064563e9_720w.webp" alt="img"></p>
 <p>（A）用户打开客户端以后，客户端要求用户给予授权。</p>
 <p>（B）用户同意给予客户端授权。</p>
 <p>（C）客户端使用上一步获得的授权，向认证服务器申请令牌。</p>
@@ -317,7 +333,7 @@
 <h3 id="授权码模式"><a href="#授权码模式" class="headerlink" title="授权码模式"></a><strong>授权码模式</strong></h3><p><strong>授权码（authorization code）方式，指的是第三方应用先申请一个授权码，然后再用该码获取令牌。</strong></p>
 <p>这种方式是最常用的流程，安全性也最高，它适用于那些有后端的 Web 应用。授权码通过前端传送，令牌则是储存在后端，而且所有与资源服务器的通信都在后端完成。这样的前后端分离，可以避免令牌泄漏。</p>
 <p>适用场景：目前主流的第三方验证都是采用这种模式</p>
-<p><img src="/2022/11/09/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-2c1e8a6347274092c0c455a0d1130a5f_720w.webp" alt="img"></p>
+<p><img src="/2022/02/16/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-2c1e8a6347274092c0c455a0d1130a5f_720w.webp" alt="img"></p>
 <p>主要流程：</p>
 <p>（A）用户访问客户端，后者将前者导向授权服务器。</p>
 <p>（B）用户选择是否给予客户端授权。</p>
@@ -345,14 +361,14 @@
 <p><a href="http://localhost:8080/oauth/authorize?response_type=code&amp;client_id=client&amp;redirect_uri=http://www.baidu.com&amp;scope=all" target="_blank" rel="noopener">http://localhost:8080/oauth/authorize?response_type=code&amp;client_id=client&amp;redirect_uri=http://www.baidu.com&amp;scope=all</a></p>
 <p>2、用户跳转后，B 网站会要求用户登录，然后询问是否同意给予 A 网站授权。用户表示同意，这时 B 网站就会跳回redirect_uri参数指定的网址。跳转时，会传回一个授权码</p>
 <p>登录：</p>
-<p><img src="/2022/11/09/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-8d48abd15e424900ea6a6d780607cf63_720w.webp" alt="img"></p>
+<p><img src="/2022/02/16/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-8d48abd15e424900ea6a6d780607cf63_720w.webp" alt="img"></p>
 <p>授权：</p>
-<p><img src="/2022/11/09/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-771b132d02c42ba3eccfad00fcdea176_720w.webp" alt="img"></p>
+<p><img src="/2022/02/16/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-771b132d02c42ba3eccfad00fcdea176_720w.webp" alt="img"></p>
 <p>选择 authorize ，获取授权码，浏览器返回：<a href="https://link.zhihu.com/?target=https%3A//www.baidu.com/%3Fcode%3DPVpEEw">https://www.baidu.com/?code=PVpEEw</a></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https:&#x2F;&#x2F;a.com&#x2F;callback?code&#x3D;AUTHORIZATION_CODE    #code参数就是授权码</span><br></pre></td></tr></table></figure>
 
 <p>如果使用数据库模式：</p>
-<p><img src="/2022/11/09/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-e465f211c92d93890334ed2ad1e1d337_720w.webp" alt="img"></p>
+<p><img src="/2022/02/16/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-e465f211c92d93890334ed2ad1e1d337_720w.webp" alt="img"></p>
 <p>3、A 网站拿到授权码以后，就可以在后端，向 B 网站请求令牌。 用户不可见，服务端行为</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1:8080&#x2F;oauth&#x2F;token? </span><br><span class="line">client_id&#x3D;CLIENT_ID&amp; </span><br><span class="line">client_secret&#x3D;CLIENT_SECRET&amp;     # client_id和client_secret用来让 B 确认 A 的身份,client_secret参数是保密的，因此只能在后端发请求 </span><br><span class="line">grant_type&#x3D;authorization_code&amp;   # 采用的授权方式是授权码</span><br><span class="line">code&#x3D;AUTHORIZATION_CODE&amp;         # 上一步拿到的授权码 </span><br><span class="line">redirect_uri&#x3D;CALLBACK_URL        # 令牌颁发后的回调网址</span><br></pre></td></tr></table></figure>
 
@@ -361,13 +377,13 @@
 
 
 
-<p><img src="/2022/11/09/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-8443ed6dfe341142d0104ebf9d0d4378_720w.webp" alt="img"></p>
+<p><img src="/2022/02/16/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-8443ed6dfe341142d0104ebf9d0d4378_720w.webp" alt="img"></p>
 <p>此时redis中会存储token</p>
-<p><img src="/2022/11/09/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-295117bf22b768f44623556f66ddec7a_720w.webp" alt="img"></p>
+<p><img src="/2022/02/16/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-295117bf22b768f44623556f66ddec7a_720w.webp" alt="img"></p>
 <h3 id="密码模式"><a href="#密码模式" class="headerlink" title="密码模式"></a><strong>密码模式</strong></h3><p>如果你高度信任某个应用，RFC 6749 也允许用户把用户名和密码，直接告诉该应用。该应用就使用你的密码，申请令牌，这种方式称为”密码式”（password）。</p>
 <p>在这种模式中，用户必须把自己的密码给客户端，但是客户端不得储存密码。这通常用在用户对客户端高度信任的情况下，比如客户端是操作系统的一部分，或者由一个著名公司出品。而授权服务器只有在其他授权模式无法执行的情况下，才能考虑使用这种模式。</p>
 <p>适用场景：公司搭建的授权服务器</p>
-<p><img src="/2022/11/09/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-9f26138da24bba989525e73cb59589bb_720w.webp" alt="img"></p>
+<p><img src="/2022/02/16/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-9f26138da24bba989525e73cb59589bb_720w.webp" alt="img"></p>
 <p>（A）用户向客户端提供用户名和密码。</p>
 <p>（B）客户端将用户名和密码发给授权服务器，向后者请求令牌。</p>
 <p>（C）授权服务器确认无误后，向客户端提供访问令牌。</p>
@@ -384,10 +400,10 @@
 
 
 
-<p><img src="/2022/11/09/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-7ddf3b5a046a6328ccd4f877b271d591_720w.webp" alt="img"></p>
+<p><img src="/2022/02/16/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-7ddf3b5a046a6328ccd4f877b271d591_720w.webp" alt="img"></p>
 <h3 id="客户端模式"><a href="#客户端模式" class="headerlink" title="客户端模式"></a><strong>客户端模式</strong></h3><p>客户端模式（Client Credentials Grant）指客户端以自己的名义，而不是以用户的名义，向”服务提供商”进行 授权。</p>
 <p><strong>适用于没有前端的命令行应用，即在命令行下请求令牌。</strong>一般用来提供给我们完全信任的服务器端服务。</p>
-<p><img src="/2022/11/09/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-4e3a76b4df3cc5c699ee1e6c79fd7be9_720w.webp" alt="img"></p>
+<p><img src="/2022/02/16/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-4e3a76b4df3cc5c699ee1e6c79fd7be9_720w.webp" alt="img"></p>
 <p>它的步骤如下：</p>
 <p>（A）客户端向授权服务器进行身份认证，并要求一个访问令牌。</p>
 <p>（B）授权服务器确认无误后，向客户端提供访问令牌。</p>
@@ -398,11 +414,11 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">clients.inMemory()</span><br><span class="line">        &#x2F;&#x2F;配置client_id</span><br><span class="line">        .withClient(&quot;client&quot;)</span><br><span class="line">        &#x2F;&#x2F;配置client-secret</span><br><span class="line">        .secret(passwordEncoder.encode(&quot;123123&quot;))</span><br><span class="line">        &#x2F;&#x2F;配置访问token的有效期</span><br><span class="line">        .accessTokenValiditySeconds(3600)</span><br><span class="line">        &#x2F;&#x2F;配置刷新token的有效期</span><br><span class="line">        .refreshTokenValiditySeconds(864000)</span><br><span class="line">        &#x2F;&#x2F;配置redirect_uri，用于授权成功后跳转</span><br><span class="line">        .redirectUris(&quot;http:&#x2F;&#x2F;www.baidu.com&quot;)</span><br><span class="line">        &#x2F;&#x2F;配置申请的权限范围</span><br><span class="line">        .scopes(&quot;all&quot;)</span><br><span class="line">        &#x2F;**</span><br><span class="line">         * 配置grant_type，表示授权类型</span><br><span class="line">         * authorization_code: 授权码模式</span><br><span class="line">         * implicit: 简化模式</span><br><span class="line">         * password： 密码模式</span><br><span class="line">         * client_credentials: 客户端模式</span><br><span class="line">         * refresh_token: 更新令牌</span><br><span class="line">         *&#x2F;</span><br><span class="line">        .authorizedGrantTypes(&quot;authorization_code&quot;,&quot;implicit&quot;,&quot;password&quot;,&quot;client_credentials&quot;,&quot;refresh_token&quot;);</span><br></pre></td></tr></table></figure>
 
 <p>获取令牌：</p>
-<p><img src="/2022/11/09/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-23f4d7129d2701d105fe82fdb1fcb4e5_720w.webp" alt="img"></p>
+<p><img src="/2022/02/16/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-23f4d7129d2701d105fe82fdb1fcb4e5_720w.webp" alt="img"></p>
 <h3 id="简化-隐式-模式"><a href="#简化-隐式-模式" class="headerlink" title="简化(隐式)模式"></a><strong>简化(隐式)模式</strong></h3><p>有些 Web 应用是纯前端应用，没有后端。这时就不能用上面的方式了，必须将令牌储存在前端。<strong>RFC 6749 就规定了第二种方式，允许直接向前端颁发令牌，这种方式没有授权码这个中间步骤，所以称为（授权码）”隐藏式”（implicit）</strong></p>
 <p>简化模式不通过第三方应用程序的服务器，直接在浏览器中向授权服务器申请令牌，跳过了”授权码”这个步骤，所有步骤在浏览器中完成，令牌对访问者是可见的，且客户端不需要认证。</p>
 <p>这种方式把令牌直接传给前端，是很不安全的。因此，只能用于一些安全要求不高的场景，并且令牌的有效期必须非常短，通常就是会话期间（session）有效，浏览器关掉，令牌就失效了。</p>
-<p><img src="/2022/11/09/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-e70efba7781be74052111a207a03f5e3_720w.webp" alt="img"></p>
+<p><img src="/2022/02/16/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-e70efba7781be74052111a207a03f5e3_720w.webp" alt="img"></p>
 <p>它的步骤如下：</p>
 <p>（A）客户端将用户导向授权服务器。</p>
 <p>（B）用户决定是否给于客户端授权。</p>
@@ -422,27 +438,27 @@
 
 <p><a href="http://localhost:8080/oauth/authorize?client_id=client&amp;response_type=token&amp;scope=all&amp;redirect_uri=http://www.baidu.com" target="_blank" rel="noopener">http://localhost:8080/oauth/authorize?client_id=client&amp;response_type=token&amp;scope=all&amp;redirect_uri=http://www.baidu.com</a></p>
 <p>登录之后进入授权页面，确定授权后浏览器会重定向到指定路径，并以Hash的形式存放在重定向uri的fargment中：</p>
-<p><img src="/2022/11/09/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-057af015eeab9ddf884e51fe929efbee_720w.webp" alt="img"></p>
+<p><img src="/2022/02/16/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-057af015eeab9ddf884e51fe929efbee_720w.webp" alt="img"></p>
 <p>如果想要支持数据库模式，配置同授权码模式一样，只需要在oauth_client_details表的authorized_grant_types配置上implicit即可。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">INSERT INTO &#96;oauth&#96;.&#96;oauth_client_details&#96;(&#96;client_id&#96;, &#96;resource_ids&#96;, &#96;client_secret&#96;, &#96;scope&#96;, &#96;authorized_grant_types&#96;, &#96;web_server_redirect_uri&#96;, &#96;authorities&#96;, &#96;access_token_validity&#96;, &#96;refresh_token_validity&#96;, &#96;additional_information&#96;, &#96;autoapprove&#96;) VALUES (&#39;gateway&#39;, NULL, &#39;$2a$10$CE1GKj9eBZsNNMCZV2hpo.QBOz93ojy9mTd9YQaOy8H4JAyYKVlm6&#39;, &#39;all&#39;, &#39;authorization_code,password,refresh_token,implicit&#39;, &#39;http:&#x2F;&#x2F;www.baidu.com&#39;, NULL, 3600, 864000, NULL, NULL);</span><br></pre></td></tr></table></figure>
 
 <h3 id="令牌的使用"><a href="#令牌的使用" class="headerlink" title="令牌的使用"></a><strong>令牌的使用</strong></h3><p>A 网站拿到令牌以后，就可以向 B 网站的 API 请求数据了。</p>
 <p>此时，每个发到 API 的请求，都必须带有令牌。具体做法是在请求的头信息，加上一个Authorization字段，令牌就放在这个字段里面。</p>
-<p><img src="/2022/11/09/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-3b210a561d39ac8193b40d04179c6f37_720w.webp" alt="img"></p>
+<p><img src="/2022/02/16/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-3b210a561d39ac8193b40d04179c6f37_720w.webp" alt="img"></p>
 <p>也可以添加请求参数access_token请求数据</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">localhost&#x2F;user&#x2F;getCurrentUser?access_token&#x3D;xxxxxxxxxxxxxxxxxxxxxxxxxxx</span><br></pre></td></tr></table></figure>
 
 
 
-<p><img src="/2022/11/09/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-4d6567cf4b86fd1236483e50062eae0a_720w.webp" alt="img"></p>
+<p><img src="/2022/02/16/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-4d6567cf4b86fd1236483e50062eae0a_720w.webp" alt="img"></p>
 <h3 id="更新令牌"><a href="#更新令牌" class="headerlink" title="更新令牌"></a><strong>更新令牌</strong></h3><p>令牌的有效期到了，如果让用户重新走一遍上面的流程，再申请一个新的令牌，很可能体验不好，而且也没有必要。OAuth 2.0 允许用户自动更新令牌。</p>
-<p><img src="/2022/11/09/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-221564197e4555ad4f753962c075aedb_720w.webp" alt="img"></p>
+<p><img src="/2022/02/16/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-221564197e4555ad4f753962c075aedb_720w.webp" alt="img"></p>
 <p>具体方法是，B 网站颁发令牌的时候，一次性颁发两个令牌，一个用于获取数据，另一个用于获取新的令牌（refresh token 字段）。令牌到期前，用户使用 refresh token 发一个请求，去更新令牌。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">https:&#x2F;&#x2F;b.com&#x2F;oauth&#x2F;token?</span><br><span class="line">&gt;   grant_type&#x3D;refresh_token&amp;    # grant_type参数为refresh_token表示要求更新令牌</span><br><span class="line">&gt;   client_id&#x3D;CLIENT_ID&amp;</span><br><span class="line">&gt;   client_secret&#x3D;CLIENT_SECRET&amp;</span><br><span class="line">&gt;   refresh_token&#x3D;REFRESH_TOKEN    # 用于更新令牌的令牌</span><br></pre></td></tr></table></figure>
 
 
 
-<p><img src="/2022/11/09/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-c4e70729b0b1bf4baacf0ec13b6b4927_720w.webp" alt="img"></p>
+<p><img src="/2022/02/16/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/v2-c4e70729b0b1bf4baacf0ec13b6b4927_720w.webp" alt="img"></p>
 <h3 id="基于redis存储Token"><a href="#基于redis存储Token" class="headerlink" title="基于redis存储Token"></a><strong>基于redis存储Token</strong></h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.springframework.boot&lt;&#x2F;groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;spring-boot-starter-data-redis&lt;&#x2F;artifactId&gt;</span><br><span class="line">&lt;&#x2F;dependency&gt;</span><br><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.apache.commons&lt;&#x2F;groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;commons-pool2&lt;&#x2F;artifactId&gt;</span><br><span class="line">&lt;&#x2F;dependency&gt;</span><br></pre></td></tr></table></figure>
 
 <h3 id="redis配置类"><a href="#redis配置类" class="headerlink" title="redis配置类"></a>redis配置类</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">@Configuration</span><br><span class="line">public class RedisConfig &#123;</span><br><span class="line">    @Autowired</span><br><span class="line">    private RedisConnectionFactory redisConnectionFactory;</span><br><span class="line">    @Bean</span><br><span class="line">    public TokenStore tokenStore()&#123;</span><br><span class="line">        return new RedisTokenStore(redisConnectionFactory);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -466,7 +482,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="http://yoursite.com/2022/11/09/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/" title="SSO统一认证协议">http://yoursite.com/2022/11/09/SSO统一认证协议/</a>
+    <a href="http://yoursite.com/2022/02/16/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/" title="SSO统一认证协议">http://yoursite.com/2022/02/16/SSO统一认证协议/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -476,6 +492,9 @@
 
 
       <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/SpringSecurity/" rel="tag"># SpringSecurity</a>
+          </div>
 
         
 
@@ -483,10 +502,13 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2022/10/26/Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E8%AF%A6%E8%A7%A3/" rel="prev" title="Lambda表达式详解">
-      <i class="fa fa-chevron-left"></i> Lambda表达式详解
+    <a href="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/" rel="prev" title="SpringSecurity技术">
+      <i class="fa fa-chevron-left"></i> SpringSecurity技术
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2022/04/28/Hadoop%E4%B9%8BYarn/" rel="next" title="Hadoop之Yarn">
+      Hadoop之Yarn <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
