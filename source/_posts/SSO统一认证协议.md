@@ -1,3 +1,12 @@
+---
+title: SSO统一认证协议
+date: 2022-02-16 14:21:18
+tags:
+- SpringSecurity
+categories:
+- SpringSecurity
+---
+
 # OAuth2.0
 
 ### **OAuth2.0介绍**
