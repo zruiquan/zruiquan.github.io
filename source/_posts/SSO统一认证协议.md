@@ -122,7 +122,7 @@ OAuth 2.0的运行流程如下图，摘自RFC 6749。
 
 引入依赖
 
-```text
+```xml
 <dependency>
     <groupId>org.springframework.cloud</groupId>
     <artifactId>spring-cloud-starter-oauth2</artifactId>
@@ -174,7 +174,7 @@ OAuth 2.0的运行流程如下图，摘自RFC 6749。
 
 注意：实际项目中clinet_id 和client_secret 是配置在数据库中，省略spring security相关配置，可以参考
 
-```text
+```java
 @Configuration
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
@@ -224,7 +224,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
 首先在数据库中新建存储客户端信息，及授权码的表：
 
-```text
+```sql
 #客户端信息
 CREATE TABLE `oauth_client_details`  (
   `client_id` varchar(128) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -255,7 +255,7 @@ CREATE TABLE `oauth_code`  (
 
 引入依赖
 
-```text
+```java
 <dependency>
     <groupId>com.baomidou</groupId>
     <artifactId>mybatis-plus-boot-starter</artifactId>
@@ -348,7 +348,7 @@ public class AuthorizationServerConfig1 extends AuthorizationServerConfigurerAda
 
 ### **配置资源服务器**
 
-```text
+```java
 @Configuration
 @EnableResourceServer
 public class ResourceServiceConfig extends ResourceServerConfigurerAdapter {
@@ -367,7 +367,7 @@ public class ResourceServiceConfig extends ResourceServerConfigurerAdapter {
 
 ### 配置 spring security
 
-```text
+```java
 @Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -404,7 +404,7 @@ public class UserService implements UserDetailsService {
 
 1、A网站（客户端）提供一个链接，用户点击后就会跳转到 B （授权服务器）网站，授权用户数据给 A 网站使用。
 
-```text
+```properties
  127.0.0.1:9999/oauth/authorize?   
  response_type=code&            # 表示授权类型，必选项，此处的值固定为"code"
  client_id=CLIENT_ID&           # 表示客户端的ID，必选项
@@ -434,7 +434,7 @@ http://localhost:8080/oauth/authorize?response_type=code&client_id=client&redire
 
 选择 authorize ，获取授权码，浏览器返回：[https://www.baidu.com/?code=PVpEEw](https://link.zhihu.com/?target=https%3A//www.baidu.com/%3Fcode%3DPVpEEw)
 
-```text
+```properties
 https://a.com/callback?code=AUTHORIZATION_CODE    #code参数就是授权码                   
 ```
 
@@ -448,7 +448,7 @@ https://a.com/callback?code=AUTHORIZATION_CODE    #code参数就是授权码
 
 3、A 网站拿到授权码以后，就可以在后端，向 B 网站请求令牌。 用户不可见，服务端行为
 
-```text
+```properties
 127.0.0.1:8080/oauth/token? 
 client_id=CLIENT_ID& 
 client_secret=CLIENT_SECRET&     # client_id和client_secret用来让 B 确认 A 的身份,client_secret参数是保密的，因此只能在后端发请求 
@@ -459,7 +459,7 @@ redirect_uri=CALLBACK_URL        # 令牌颁发后的回调网址
 
 4、B 网站收到请求以后，就会颁发令牌。具体做法是向redirect_uri指定的网址，返回数据。
 
-```text
+```json
  {    
    "access_token":"ACCESS_TOKEN",     # 令牌
    "token_type":"bearer",
@@ -509,7 +509,7 @@ redirect_uri=CALLBACK_URL        # 令牌颁发后的回调网址
 
 增加AuthenticationManager
 
-```text
+```java
 @Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -576,7 +576,7 @@ public class RedisConfig {
 
 ### 配置授权服务器
 
-```text
+```java
 @Configuration
 @EnableAuthorizationServer
 public class AuthorizationServerConfig2 extends AuthorizationServerConfigurerAdapter {
@@ -642,7 +642,7 @@ public class AuthorizationServerConfig2 extends AuthorizationServerConfigurerAda
 
 如需支持数据库模式，只需要把授权服务器在授权码模式的基础上增加AuthenticationManager，关键代码如下：
 
-```text
+```java
 //AuthorizationServerConfig1
 @Autowired
 private AuthenticationManager authenticationManagerBean;
@@ -660,7 +660,7 @@ public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws E
 
 获取token：
 
-```text
+```properties
 https://oauth.b.com/oauth/token?
   grant_type=password&       # 授权方式是"密码式"
   username=USERNAME&
@@ -696,7 +696,7 @@ https://oauth.b.com/oauth/token?
 
 A 应用在命令行向 B 发出请求。
 
-```text
+```properties
 https://oauth.b.com/token? 
 grant_type=client_credentials& 
 client_id=CLIENT_ID& 
@@ -707,7 +707,7 @@ client_secret=CLIENT_SECRET
 
 在grant_type增加client_credentials来支持客户端模式。
 
-```text
+```java
 clients.inMemory()
         //配置client_id
         .withClient("client")
@@ -772,7 +772,7 @@ clients.inMemory()
 
 A 网站提供一个链接，要求用户跳转到 B 网站，授权用户数据给 A 网站使用。
 
-```text
+```properties
 https://b.com/oauth/authorize?
 >   response_type=token&          # response_type参数为token，表示要求直接返回令牌
 >   client_id=CLIENT_ID&
@@ -782,7 +782,7 @@ https://b.com/oauth/authorize?
 
 用户跳转到 B 网站，登录后同意给予 A 网站授权。这时，B 网站就会跳回redirect_uri参数指定的跳转网址，并且把令牌作为 URL 参数，传给 A 网站。
 
-```text
+```properties
 https://a.com/callback#token=ACCESS_TOKEN     #token参数就是令牌，A 网站直接在前端拿到令牌。 
 ```
 
@@ -790,7 +790,7 @@ https://a.com/callback#token=ACCESS_TOKEN     #token参数就是令牌，A 网�
 
 只需要在配置grant_type增加implicit
 
-```text
+```java
 clients.inMemory()
         //配置client_id
         .withClient("client")
@@ -820,7 +820,7 @@ http://localhost:8080/oauth/authorize?client_id=client&response_type=token&scope
 
 如果想要支持数据库模式，配置同授权码模式一样，只需要在oauth_client_details表的authorized_grant_types配置上implicit即可。
 
-```text
+```sql
 INSERT INTO `oauth`.`oauth_client_details`(`client_id`, `resource_ids`, `client_secret`, `scope`, `authorized_grant_types`, `web_server_redirect_uri`, `authorities`, `access_token_validity`, `refresh_token_validity`, `additional_information`, `autoapprove`) VALUES ('gateway', NULL, '$2a$10$CE1GKj9eBZsNNMCZV2hpo.QBOz93ojy9mTd9YQaOy8H4JAyYKVlm6', 'all', 'authorization_code,password,refresh_token,implicit', 'http://www.baidu.com', NULL, 3600, 864000, NULL, NULL);
 ```
 
@@ -838,7 +838,7 @@ A 网站拿到令牌以后，就可以向 B 网站的 API 请求数据了。
 
 也可以添加请求参数access_token请求数据
 
-```text
+```properties
 localhost/user/getCurrentUser?access_token=xxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
@@ -860,7 +860,7 @@ localhost/user/getCurrentUser?access_token=xxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 具体方法是，B 网站颁发令牌的时候，一次性颁发两个令牌，一个用于获取数据，另一个用于获取新的令牌（refresh token 字段）。令牌到期前，用户使用 refresh token 发一个请求，去更新令牌。
 
-```text
+```properties
 https://b.com/oauth/token?
 >   grant_type=refresh_token&    # grant_type参数为refresh_token表示要求更新令牌
 >   client_id=CLIENT_ID&
@@ -876,7 +876,7 @@ https://b.com/oauth/token?
 
 ### **基于redis存储Token**
 
-```text
+```xml
 <dependency>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-data-redis</artifactId>
@@ -889,7 +889,7 @@ https://b.com/oauth/token?
 
 ### redis配置类
 
-```text
+```java
 @Configuration
 public class RedisConfig {
     @Autowired
@@ -903,7 +903,7 @@ public class RedisConfig {
 
 在授权服务器配置中指定令牌的存储策略为Redis
 
-```text
+```java
 @Autowired
 private TokenStore tokenStore;
 
