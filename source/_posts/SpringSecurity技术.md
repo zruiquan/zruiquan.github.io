@@ -1,5 +1,5 @@
 ---
-title: Spring Security技术
+title: SpringSecurity技术
 date: 2022-02-16 14:20:18
 tags:
 - SpringSecurity
@@ -8,7 +8,7 @@ categories:
 ---
 # 1. SpringSecurity 框架简介
 
- ![image-20220217100218352](Spring-Security技术/image-20220217100218352.png)
+ ![image-20220217100218352](SpringSecurity技术/image-20220217100218352.png)
 
 ## 1.1 概要
 
@@ -46,13 +46,13 @@ Acegi 安全 2007 年底正式成为了 Spring 组合项目，更名为"Spring S
 
 Spring 技术栈的组成部分。
 
-![image-20220217100310529](Spring-Security技术/image-20220217100310529.png)
+![image-20220217100310529](SpringSecurity技术/image-20220217100310529.png)
 
 ### 1.3.2 Shiro
 
 Apache 旗下的轻量级权限控制框架。
 
-![image-20220217100333678](Spring-Security技术/image-20220217100333678.png) 
+![image-20220217100333678](SpringSecurity技术/image-20220217100333678.png) 
 
 特点：
 
@@ -82,17 +82,17 @@ Spring Security 是 Spring 家族中的一个安全管理框架，实际上，�
 
 ## 1.4 模块划分
 
-![image-20220217100404384](Spring-Security技术/image-20220217100404384.png)
+![image-20220217100404384](SpringSecurity技术/image-20220217100404384.png)
 
 # 2. SpringSecurity 入门案例
 
 ## 2.1 创建一个项目
 
- ![image-20220217100425634](Spring-Security技术/image-20220217100425634.png)
-![image-20220217100512975](Spring-Security技术/image-20220217100512975.png)
+ ![image-20220217100425634](SpringSecurity技术/image-20220217100425634.png)
+![image-20220217100512975](SpringSecurity技术/image-20220217100512975.png)
 
- ![image-20220217100522638](Spring-Security技术/image-20220217100522638.png)
-![image-20220217100631283](Spring-Security技术/image-20220217100631283.png)
+ ![image-20220217100522638](SpringSecurity技术/image-20220217100522638.png)
+![image-20220217100631283](SpringSecurity技术/image-20220217100631283.png)
 
 添加一个配置类：  
 
@@ -113,16 +113,16 @@ protected void configure(HttpSecurity http) throws Exception {
 
 访问 localhost:8080
 
-![image-20220217100713230](Spring-Security技术/image-20220217100713230.png)
+![image-20220217100713230](SpringSecurity技术/image-20220217100713230.png)
 
 默认的用户名： user
 密码在项目启动的时候在控制台会打印， 注意每次启动的时候密码都回发生变化！  
 
-![image-20220217100730915](Spring-Security技术/image-20220217100730915.png)
+![image-20220217100730915](SpringSecurity技术/image-20220217100730915.png)
 
 输入用户名，密码，这样表示可以访问了， 404 表示我们没有这个控制器，但是我们可以访问了。  
 
-![image-20220217100754340](Spring-Security技术/image-20220217100754340.png)
+![image-20220217100754340](SpringSecurity技术/image-20220217100754340.png)
 
 ## 2.3 权限管理中的相关概念
 
@@ -162,7 +162,7 @@ protected void configure(HttpSecurity http) throws Exception {
  }
  ```
 
-![image-20220217100846943](Spring-Security技术/image-20220217100846943.png)
+![image-20220217100846943](SpringSecurity技术/image-20220217100846943.png)
 
 ## 2.5 SpringSecurity 基本原理
 
@@ -190,7 +190,7 @@ protected void configure(HttpSecurity http) throws Exception {
 
 FilterSecurityInterceptor：是一个方法级的权限过滤器, 基本位于过滤链的最底部。
 
-![image-20220217101007025](Spring-Security技术/image-20220217101007025.png)
+![image-20220217101007025](SpringSecurity技术/image-20220217101007025.png)
 
  
 
@@ -199,11 +199,11 @@ fi.getChain().doFilter(fi.getRequest(), fi.getResponse());表示真正的调用�
 
 ExceptionTranslationFilter：是个异常过滤器，用来处理在认证授权过程中抛出的异常  
 
-![image-20220217101032005](Spring-Security技术/image-20220217101032005.png)
+![image-20220217101032005](SpringSecurity技术/image-20220217101032005.png)
 
 UsernamePasswordAuthenticationFilter ：对/login 的 POST 请求做拦截，校验表单中用户名，密码。
 
-![image-20220217101051441](Spring-Security技术/image-20220217101051441.png)
+![image-20220217101051441](SpringSecurity技术/image-20220217101051441.png)
 
 
 
@@ -212,7 +212,7 @@ UsernamePasswordAuthenticationFilter ：对/login 的 POST 请求做拦截，校
 当什么也没有配置的时候，账号和密码是由 Spring Security 定义生成的。而在实际项目中账号和密码都是从数据库中查询出来的。 所以我们要通过自定义逻辑控制认证逻辑。
 如果需要自定义逻辑时，只需要实现 UserDetailsService 接口即可。接口定义如下：  
 
- ![image-20220217101138064](Spring-Security技术/image-20220217101138064.png)
+ ![image-20220217101138064](SpringSecurity技术/image-20220217101138064.png)
 
 ### 返回值 UserDetails
 
@@ -237,11 +237,11 @@ boolean isEnabled();
 
 以下是 UserDetails 实现类  
 
- ![image-20220217101230159](Spring-Security技术/image-20220217101230159.png)
+ ![image-20220217101230159](SpringSecurity技术/image-20220217101230159.png)
 
 以后我们只需要使用 User 这个实体类即可！
 
-![image-20220217101241855](Spring-Security技术/image-20220217101241855.png)
+![image-20220217101241855](SpringSecurity技术/image-20220217101241855.png)
 
 ### 方法参数 username  
 
@@ -263,7 +263,7 @@ default boolean upgradeEncoding(String encodedPassword) {
 
 接口实现类
 
-![image-20220217101406501](Spring-Security技术/image-20220217101406501.png)
+![image-20220217101406501](SpringSecurity技术/image-20220217101406501.png)
 
  BCryptPasswordEncoder 是 Spring Security 官方推荐的密码解析器，平时多使用这个解析
 器。
@@ -471,7 +471,7 @@ spring.datasource.password=root
 
 ### 3.2.6 测试访问
 
-![image-20220217102035648](Spring-Security技术/image-20220217102035648.png)
+![image-20220217102035648](SpringSecurity技术/image-20220217102035648.png)
 
 输入用户名，密码
 
@@ -508,25 +508,25 @@ public class IndexController {
 
 ### 3.3.4 编写配置类放行登录页面以及静态资源
 
-![image-20220217102235107](Spring-Security技术/image-20220217102235107.png)
+![image-20220217102235107](SpringSecurity技术/image-20220217102235107.png)
 
 ###  3.3.5 测试  
 
 访问 localhost:8090/index  
 
-![image-20220217102343008](Spring-Security技术/image-20220217102343008.png)
+![image-20220217102343008](SpringSecurity技术/image-20220217102343008.png)
 
 访问 localhost:8090/findAll 会提示 403 错误 表示没有这个权限。
 
-![image-20220217102407966](Spring-Security技术/image-20220217102407966.png)
+![image-20220217102407966](SpringSecurity技术/image-20220217102407966.png)
 
 ### 3.3.6 设置未授权的请求跳转到登录页
 
-![image-20220217102525631](Spring-Security技术/image-20220217102525631.png)
+![image-20220217102525631](SpringSecurity技术/image-20220217102525631.png)
 
-![image-20220217102554894](Spring-Security技术/image-20220217102554894.png)
+![image-20220217102554894](SpringSecurity技术/image-20220217102554894.png)
 
-![image-20220217102603200](Spring-Security技术/image-20220217102603200.png)
+![image-20220217102603200](SpringSecurity技术/image-20220217102603200.png)
 
 ## 3.4 基于角色或权限进行访问控制
 
@@ -536,19 +536,19 @@ public class IndexController {
 
 #### 修改配置类
 
-![image-20220217102632127](Spring-Security技术/image-20220217102632127.png)
+![image-20220217102632127](SpringSecurity技术/image-20220217102632127.png)
 
 #### 添加一个控制器
 
-![image-20220217102708350](Spring-Security技术/image-20220217102708350.png) 
+![image-20220217102708350](SpringSecurity技术/image-20220217102708350.png) 
 
 #### 给用户登录主体赋予权限  
 
-![image-20220217102723934](Spring-Security技术/image-20220217102723934.png)
+![image-20220217102723934](SpringSecurity技术/image-20220217102723934.png)
 
 #### 测试  
 
-![image-20220217102733695](Spring-Security技术/image-20220217102733695.png)
+![image-20220217102733695](SpringSecurity技术/image-20220217102733695.png)
 
 ### 3.4.2 hasAnyAuthority 方法
 
@@ -558,19 +558,19 @@ true.
 
 访问 http://localhost:8090/find
 
-![image-20220217102803678](Spring-Security技术/image-20220217102803678.png)
+![image-20220217102803678](SpringSecurity技术/image-20220217102803678.png)
 
 ###  3.4.3 hasRole 方法  
 
-![image-20220217102827024](Spring-Security技术/image-20220217102827024.png)
+![image-20220217102827024](SpringSecurity技术/image-20220217102827024.png)
 
  
 
-![image-20220217102842637](Spring-Security技术/image-20220217102842637.png)
+![image-20220217102842637](SpringSecurity技术/image-20220217102842637.png)
 
 ### 3.4.4 hasAnyRole  
 
-![image-20220217102912734](Spring-Security技术/image-20220217102912734.png)
+![image-20220217102912734](SpringSecurity技术/image-20220217102912734.png)
 
 
 
@@ -578,71 +578,71 @@ true.
 
 ### 3.5.1 添加实体类
 
-![image-20220217103537261](Spring-Security技术/image-20220217103537261.png)
+![image-20220217103537261](SpringSecurity技术/image-20220217103537261.png)
 
 ###  3.5.2 编写接口与实现类  
 
-![image-20220217103553198](Spring-Security技术/image-20220217103553198.png)
+![image-20220217103553198](SpringSecurity技术/image-20220217103553198.png)
 
  
 
-![image-20220217103603758](Spring-Security技术/image-20220217103603758.png)
+![image-20220217103603758](SpringSecurity技术/image-20220217103603758.png)
 
 UsersServiceImpl  
 
-![image-20220217103624000](Spring-Security技术/image-20220217103624000.png)
+![image-20220217103624000](SpringSecurity技术/image-20220217103624000.png)
 
 ### 3.5.3 在配置文件中添加映射
 
-![image-20220217104010464](Spring-Security技术/image-20220217104010464.png)
+![image-20220217104010464](SpringSecurity技术/image-20220217104010464.png)
 
 ### 3.5.4 修改访问配置类
 
-![image-20220217104022975](Spring-Security技术/image-20220217104022975.png)
+![image-20220217104022975](SpringSecurity技术/image-20220217104022975.png)
 
 ### 3.5.5 使用管理员与非管理员进行测试  
 
-![image-20220217104053476](Spring-Security技术/image-20220217104053476.png)
+![image-20220217104053476](SpringSecurity技术/image-20220217104053476.png)
 
 ##  3.6 自定义 403 页面  
 
- ![image-20220217104126608](Spring-Security技术/image-20220217104126608.png)
+ ![image-20220217104126608](SpringSecurity技术/image-20220217104126608.png)
 
-![image-20220217104238959](Spring-Security技术/image-20220217104238959.png)
+![image-20220217104238959](SpringSecurity技术/image-20220217104238959.png)
 
 ## 3.7 注解使用  
 
 ###  3.7.1 @Secured  
 
-![image-20220217104312754](Spring-Security技术/image-20220217104312754.png)
+![image-20220217104312754](SpringSecurity技术/image-20220217104312754.png)
 
-![image-20220217104319680](Spring-Security技术/image-20220217104319680.png)
+![image-20220217104319680](SpringSecurity技术/image-20220217104319680.png)
 
-![image-20220217104325694](Spring-Security技术/image-20220217104325694.png)
+![image-20220217104325694](SpringSecurity技术/image-20220217104325694.png)
 
 
 
 ### 3.7.2 @PreAuthorize  
 
-![image-20220217104341425](Spring-Security技术/image-20220217104341425.png)
+![image-20220217104341425](SpringSecurity技术/image-20220217104341425.png)
 
 ### 3.7.3 @PostAuthorize  
 
-![image-20220217104355102](Spring-Security技术/image-20220217104355102.png)
+![image-20220217104355102](SpringSecurity技术/image-20220217104355102.png)
 
 使用李四登录测试：  
 
 ### 3.7.4 @PostFilter  
 
-![image-20220217104419824](Spring-Security技术/image-20220217104419824.png)
+![image-20220217104419824](SpringSecurity技术/image-20220217104419824.png)
 
 ### 3.7.5 @PreFilter  
 
-![image-20220217104432432](Spring-Security技术/image-20220217104432432.png)
+![image-20220217104432432](SpringSecurity技术/image-20220217104432432.png)
 
-![image-20220217104440174](Spring-Security技术/image-20220217104440174.png)
+![image-20220217104440174](SpringSecurity技术/image-20220217104440174.png)
 
-![image-20220217104455629](Spring-Security技术/image-20220217104455629.png)
+![image-20220217104455629](SpringSecurity技术/image-20220217104455629.png)
 
 测试的 Json 数据：  
 
@@ -677,45 +677,45 @@ https://docs.spring.io/springsecurity/site/docs/5.3.4.RELEASE/reference/html5/#e
 
 ### 3.8.1 创建表
 
-![image-20220217115355565](Spring-Security技术/image-20220217115355565.png)
+![image-20220217115355565](SpringSecurity技术/image-20220217115355565.png)
 
 ### 3.8.2 添加数据库的配置文件
 
-![image-20220217115415639](Spring-Security技术/image-20220217115415639.png)
+![image-20220217115415639](SpringSecurity技术/image-20220217115415639.png)
 
 ### 3.8.3 编写配置类
 
-![image-20220217115614584](Spring-Security技术/image-20220217115614584.png)
+![image-20220217115614584](SpringSecurity技术/image-20220217115614584.png)
 
 ### 3.8.4 修改安全配置类
 
-![image-20220217115601256](Spring-Security技术/image-20220217115601256.png)
+![image-20220217115601256](SpringSecurity技术/image-20220217115601256.png)
 
 ### 3.8.5 页面添加记住我复选框  
 
-![image-20220217115635623](Spring-Security技术/image-20220217115635623.png)
+![image-20220217115635623](SpringSecurity技术/image-20220217115635623.png)
 
 ### 3.8.6 使用张三进行登录测试
 
 登录成功之后，关闭浏览器再次访问 http://localhost:8090/find，发现依然可以使用！
 
-![image-20220217115726252](Spring-Security技术/image-20220217115726252.png)
+![image-20220217115726252](SpringSecurity技术/image-20220217115726252.png)
 
 ### 3.8.7 设置有效期
 
 默认 2 周时间。但是可以通过设置状态有效时间，即使项目重新启动下次也可以正常登录。
 
-![image-20220217115746087](Spring-Security技术/image-20220217115746087.png)
+![image-20220217115746087](SpringSecurity技术/image-20220217115746087.png)
 
 ## 3.9 用户注销  
 
 ### 3.9.1 在登录页面添加一个退出连接
 
-![image-20220217115818632](Spring-Security技术/image-20220217115818632.png)
+![image-20220217115818632](SpringSecurity技术/image-20220217115818632.png)
 
 ### 3.9.2 在配置类中添加退出映射地址
 
-![image-20220217115844359](Spring-Security技术/image-20220217115844359.png)
+![image-20220217115844359](SpringSecurity技术/image-20220217115844359.png)
 
 ### 3.9.3 测试
 
@@ -725,27 +725,27 @@ https://docs.spring.io/springsecurity/site/docs/5.3.4.RELEASE/reference/html5/#e
 
 ### 3.10.1 CSRF 理解
 
- ![image-20220217115934668](Spring-Security技术/image-20220217115934668.png)
+ ![image-20220217115934668](SpringSecurity技术/image-20220217115934668.png)
 
 ###  3.10.2 案例  
 
-![image-20220217115954186](Spring-Security技术/image-20220217115954186.png)
+![image-20220217115954186](SpringSecurity技术/image-20220217115954186.png)
 
 ### 3.10.3 Spring Security 实现 CSRF 的原理：
 
 1. 生成 csrfToken 保存到HttpSession 或者 Cookie 中。
 
-![image-20220217120041497](Spring-Security技术/image-20220217120041497.png)
+![image-20220217120041497](SpringSecurity技术/image-20220217120041497.png)
 
-![image-20220217120157145](Spring-Security技术/image-20220217120157145.png)
+![image-20220217120157145](SpringSecurity技术/image-20220217120157145.png)
 
-![image-20220217120207738](Spring-Security技术/image-20220217120207738.png)
+![image-20220217120207738](SpringSecurity技术/image-20220217120207738.png)
 
 2. 请求到来时，从请求中提取 csrfToken，和保存的 csrfToken 做比较，进而判断当前请求是否合法。主要通过 CsrfFilter 过滤器来完成。
 
-![image-20220217120247479](Spring-Security技术/image-20220217120247479.png)
+![image-20220217120247479](SpringSecurity技术/image-20220217120247479.png)
 
-![image-20220217120259495](Spring-Security技术/image-20220217120259495.png)
+![image-20220217120259495](SpringSecurity技术/image-20220217120259495.png)
 
 # 4. SpringSecurity 微服务权限方案
 
@@ -753,7 +753,7 @@ https://docs.spring.io/springsecurity/site/docs/5.3.4.RELEASE/reference/html5/#e
 
 1、微服务由来
 
-![image-20220217131023255](Spring-Security技术/image-20220217131023255.png)
+![image-20220217131023255](SpringSecurity技术/image-20220217131023255.png)
 
 ## 4.2 微服务认证与授权实现思路
 
@@ -763,13 +763,13 @@ https://docs.spring.io/springsecurity/site/docs/5.3.4.RELEASE/reference/html5/#e
 
 （2） 如果是token，则是解析出 token，然后将当前请求加入到 Spring-security 管理的权限信息中去
 
-![image-20220217131058737](Spring-Security技术/image-20220217131058737.png)
+![image-20220217131058737](SpringSecurity技术/image-20220217131058737.png)
 
 如果系统的模块众多，每个模块都需要进行授权与认证，所以我们选择基于 token 的形式进行授权与认证，用户根据用户名密码认证成功，然后获取当前用户角色的一系列权限  值，并以用户名为key，权限列表为value 的形式存入 redis 缓存中，根据用户名相关信息生成token 返回，浏览器将 token 记录到 cookie 中，每次调用 api 接口都默认将token 携带到 header 请求头中，Spring-security 解析 header 头获取 token 信息，解析 token 获取当前用户名，根据用户名就可以从redis 中获取权限列表，这样 Spring-security 就能够判断当前请求是否有权限访问
 
 ### 2、权限管理数据模型
 
-![image-20220217131130338](Spring-Security技术/image-20220217131130338.png)
+![image-20220217131130338](SpringSecurity技术/image-20220217131130338.png)
 
 ## 4.3 jwt 介绍
 
@@ -777,101 +777,101 @@ https://docs.spring.io/springsecurity/site/docs/5.3.4.RELEASE/reference/html5/#e
 
 ### 1、访问令牌的类型
 
- ![image-20220217131146048](Spring-Security技术/image-20220217131146048.png)
+ ![image-20220217131146048](SpringSecurity技术/image-20220217131146048.png)
 
 ### 2、JWT 的组成
 
 典型的，一个JWT 看起来如下图：
 
- ![image-20220217131206995](Spring-Security技术/image-20220217131206995.png)
+ ![image-20220217131206995](SpringSecurity技术/image-20220217131206995.png)
 
  该对象为一个很长的字符串，字符之间通过"."分隔符分为三个子串。每一个子串表示了一个功能块，总共有以下三个部分： JWT 头、有效载荷和签名  
 
 #### JWT 头
 
-![image-20220217131307568](Spring-Security技术/image-20220217131307568.png) 
+![image-20220217131307568](SpringSecurity技术/image-20220217131307568.png) 
 
 #### 有效载荷
 
- ![image-20220217131325571](Spring-Security技术/image-20220217131325571.png)
+ ![image-20220217131325571](SpringSecurity技术/image-20220217131325571.png)
 
 #### 签名哈希
 
- ![image-20220217131358256](Spring-Security技术/image-20220217131358256.png)
+ ![image-20220217131358256](SpringSecurity技术/image-20220217131358256.png)
 
 
 
 ## 4.4 具体代码实现   
 
-![image-20220217131523554](Spring-Security技术/image-20220217131523554.png)
+![image-20220217131523554](SpringSecurity技术/image-20220217131523554.png)
 
 ### 4.4.1 编写核心配置类
 
  Spring Security 的核心配置就是继承 WebSecurityConfigurerAdapter 并注解@EnableWebSecurity 的配置。这个配置指明了用户名密码的处理方式、请求路径、登录、登出控制等和安全相关的配置  
 
-![image-20220217131655539](Spring-Security技术/image-20220217131655539.png)
+![image-20220217131655539](SpringSecurity技术/image-20220217131655539.png)
 
-![image-20220217131718111](Spring-Security技术/image-20220217131718111.png)
+![image-20220217131718111](SpringSecurity技术/image-20220217131718111.png)
 
 ### 4.4.2 创建认证授权相关的工具类
 
-![image-20220217131819633](Spring-Security技术/image-20220217131819633.png)  
+![image-20220217131819633](SpringSecurity技术/image-20220217131819633.png)  
 
 #### （1）DefaultPasswordEncoder：密码处理的方法
 
-![image-20220217131842705](Spring-Security技术/image-20220217131842705.png)
+![image-20220217131842705](SpringSecurity技术/image-20220217131842705.png)
 
-![image-20220217131850783](Spring-Security技术/image-20220217131850783.png)
+![image-20220217131850783](SpringSecurity技术/image-20220217131850783.png)
 
 #### （2） TokenManager：token 操作的工具类
 
-![image-20220217131927011](Spring-Security技术/image-20220217131927011.png)
+![image-20220217131927011](SpringSecurity技术/image-20220217131927011.png)
 
 #### （3） TokenLogoutHandler：退出实现  
 
-![image-20220217132001826](Spring-Security技术/image-20220217132001826.png)
+![image-20220217132001826](SpringSecurity技术/image-20220217132001826.png)
 
-![image-20220217132014463](Spring-Security技术/image-20220217132014463.png)
+![image-20220217132014463](SpringSecurity技术/image-20220217132014463.png)
 
  
 
 #### （4）UnauthorizedEntryPoint：未授权统一处理
 
-![image-20220217132045792](Spring-Security技术/image-20220217132045792.png)
+![image-20220217132045792](SpringSecurity技术/image-20220217132045792.png)
 
 ### 4.4.3 创建认证授权实体类  
 
- ![image-20220217132127744](Spring-Security技术/image-20220217132127744.png)
+ ![image-20220217132127744](SpringSecurity技术/image-20220217132127744.png)
 
 #### (1) SecutityUser  
 
-![image-20220217132156864](Spring-Security技术/image-20220217132156864.png)
+![image-20220217132156864](SpringSecurity技术/image-20220217132156864.png)
 
-![image-20220217132213413](Spring-Security技术/image-20220217132213413.png)
+![image-20220217132213413](SpringSecurity技术/image-20220217132213413.png)
 
 #### (2) User  
 
-![image-20220217132313249](Spring-Security技术/image-20220217132313249.png)
+![image-20220217132313249](SpringSecurity技术/image-20220217132313249.png)
 
 
 
 ### 4.4.4 创建认证和授权的filter
 
-![image-20220217132556052](Spring-Security技术/image-20220217132556052.png)
+![image-20220217132556052](SpringSecurity技术/image-20220217132556052.png)
 
 #### （1)TokenLoginFilter：认证的 filter
 
-![image-20220217132623922](Spring-Security技术/image-20220217132623922.png)
+![image-20220217132623922](SpringSecurity技术/image-20220217132623922.png)
 
 
 
-![image-20220217132636463](Spring-Security技术/image-20220217132636463.png)
+![image-20220217132636463](SpringSecurity技术/image-20220217132636463.png)
 
 ####  （2） TokenAuthenticationFilter： 授权 filter  
 
-![image-20220217132709408](Spring-Security技术/image-20220217132709408.png)
+![image-20220217132709408](SpringSecurity技术/image-20220217132709408.png)
 
-![image-20220217132723600](Spring-Security技术/image-20220217132723600.png)
+![image-20220217132723600](SpringSecurity技术/image-20220217132723600.png)
 
 
 
@@ -879,65 +879,65 @@ https://docs.spring.io/springsecurity/site/docs/5.3.4.RELEASE/reference/html5/#e
 
 ## 5.1 SpringSecurity 的过滤器介绍  
 
-![image-20220217133448549](Spring-Security技术/image-20220217133448549.png)
+![image-20220217133448549](SpringSecurity技术/image-20220217133448549.png)
 
-![image-20220217133504705](Spring-Security技术/image-20220217133504705.png)
+![image-20220217133504705](SpringSecurity技术/image-20220217133504705.png)
 
 ## 5.2 SpringSecurity 基本流程  
 
-![image-20220217133532719](Spring-Security技术/image-20220217133532719.png)
+![image-20220217133532719](SpringSecurity技术/image-20220217133532719.png)
 
-![image-20220217133539935](Spring-Security技术/image-20220217133539935.png)
+![image-20220217133539935](SpringSecurity技术/image-20220217133539935.png)
 
 ## 5.3 SpringSecurity 认证流程  
 
-![image-20220217133601360](Spring-Security技术/image-20220217133601360.png)
+![image-20220217133601360](SpringSecurity技术/image-20220217133601360.png)
 
 ### 5.3.1 UsernamePasswordAuthenticationFilter 源码
 
 当前端提交的是一个 POST 方式的登录表单请求，就会被该过滤器拦截，并进行身份认证。该过滤器的 doFilter() 方法实现在其抽象父类
 AbstractAuthenticationProcessingFilter 中，查看相关源码：  
 
-![image-20220217133648737](Spring-Security技术/image-20220217133648737.png)
+![image-20220217133648737](SpringSecurity技术/image-20220217133648737.png)
 
-![image-20220217133656623](Spring-Security技术/image-20220217133656623.png)
+![image-20220217133656623](SpringSecurity技术/image-20220217133656623.png)
 
 上述的 第二 过程调用了 UsernamePasswordAuthenticationFilter 的attemptAuthentication() 方法，源码如下：
 
-![image-20220217133743618](Spring-Security技术/image-20220217133743618.png)
+![image-20220217133743618](SpringSecurity技术/image-20220217133743618.png)
 
   
 
 上述的（ 3）过程创建的 UsernamePasswordAuthenticationToken 是Authentication 接口的实现类，该类有两个构造器，一个用于封装前端请求传入的未认
 证的用户信息，一个用于封装认证成功后的用户信息：  
 
-![image-20220217133910722](Spring-Security技术/image-20220217133910722.png)
+![image-20220217133910722](SpringSecurity技术/image-20220217133910722.png)
 
 Authentication 接口的实现类用于存储用户认证信息，查看该接口具体定义：  
 
-![image-20220217133935888](Spring-Security技术/image-20220217133935888.png)
+![image-20220217133935888](SpringSecurity技术/image-20220217133935888.png)
 
 
 
 ### 5.3.2 ProviderManager 源码  
 
-![image-20220217134045332](Spring-Security技术/image-20220217134045332.png)
+![image-20220217134045332](SpringSecurity技术/image-20220217134045332.png)
 
-![image-20220217134102359](Spring-Security技术/image-20220217134102359.png)
+![image-20220217134102359](SpringSecurity技术/image-20220217134102359.png)
 
-![image-20220217134114484](Spring-Security技术/image-20220217134114484.png)
+![image-20220217134114484](SpringSecurity技术/image-20220217134114484.png)
 
-![image-20220217134124240](Spring-Security技术/image-20220217134124240.png)
+![image-20220217134124240](SpringSecurity技术/image-20220217134124240.png)
 
-![image-20220217134130865](Spring-Security技术/image-20220217134130865.png)
+![image-20220217134130865](SpringSecurity技术/image-20220217134130865.png)
 
 ### 5.3.3 认证成功/失败处理  
 
-![image-20220217134145986](Spring-Security技术/image-20220217134145986.png)
+![image-20220217134145986](SpringSecurity技术/image-20220217134145986.png)
 
-![image-20220217134205556](Spring-Security技术/image-20220217134205556.png)
+![image-20220217134205556](SpringSecurity技术/image-20220217134205556.png)
 
-![image-20220217134216869](Spring-Security技术/image-20220217134216869.png)
+![image-20220217134216869](SpringSecurity技术/image-20220217134216869.png)
 
 ## 5.4 SpringSecurity 权限访问流程  
 
@@ -945,33 +945,33 @@ Authentication 接口的实现类用于存储用户认证信息，查看该接�
 
 ### 5.4.1 ExceptionTranslationFilter 过滤器  
 
-![image-20220217134256484](Spring-Security技术/image-20220217134256484.png)
+![image-20220217134256484](SpringSecurity技术/image-20220217134256484.png)
 
 ### 5.4.2 FilterSecurityInterceptor 过滤器  
 
-![image-20220217134311955](Spring-Security技术/image-20220217134311955.png)
+![image-20220217134311955](SpringSecurity技术/image-20220217134311955.png)
 
-![image-20220217134321077](Spring-Security技术/image-20220217134321077.png)
+![image-20220217134321077](SpringSecurity技术/image-20220217134321077.png)
 
 ## 5.5 SpringSecurity 请求间共享认证信息  
 
-![image-20220217134341107](Spring-Security技术/image-20220217134341107.png)
+![image-20220217134341107](SpringSecurity技术/image-20220217134341107.png)
 
-![image-20220217134354149](Spring-Security技术/image-20220217134354149.png)
+![image-20220217134354149](SpringSecurity技术/image-20220217134354149.png)
 
-![image-20220217134403555](Spring-Security技术/image-20220217134403555.png)
+![image-20220217134403555](SpringSecurity技术/image-20220217134403555.png)
 
-![image-20220217134429799](Spring-Security技术/image-20220217134429799.png)
+![image-20220217134429799](SpringSecurity技术/image-20220217134429799.png)
 
-![image-20220217134439141](Spring-Security技术/image-20220217134439141.png)
+![image-20220217134439141](SpringSecurity技术/image-20220217134439141.png)
 
-![image-20220217134444917](Spring-Security技术/image-20220217134444917.png)
+![image-20220217134444917](SpringSecurity技术/image-20220217134444917.png)
 
 ### 5.5.1 SecurityContextPersistenceFilter 过滤器  
 
-![image-20220217134616681](Spring-Security技术/image-20220217134616681.png)
+![image-20220217134616681](SpringSecurity技术/image-20220217134616681.png)
 
-![image-20220217134624821](Spring-Security技术/image-20220217134624821.png)
+![image-20220217134624821](SpringSecurity技术/image-20220217134624821.png)
 
-![image-20220217134631495](Spring-Security技术/image-20220217134631495.png)
+![image-20220217134631495](SpringSecurity技术/image-20220217134631495.png)
 

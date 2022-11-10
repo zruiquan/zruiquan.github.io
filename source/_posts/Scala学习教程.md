@@ -1881,7 +1881,7 @@ object Test06_HighOrderFunction {
       a + b
     }
 
-    println(dualEval(add, 10, 12))
+    println(dualEval(add, 10, 12)) // 这里add 不加下划线也可以，原因是dualEval函数的参数里面已经对add参数进行了类型定义
     println(dualEval(add _, 10, 12))
     println(dualEval((a, b) => a + b, 10, 12))
     println(dualEval(_ + _, 10, 12))
@@ -1910,8 +1910,6 @@ object Test06_HighOrderFunction {
   }
 }
 ```
-
-
 
 ### 5.2.2 匿名函数  
 
@@ -2019,7 +2017,7 @@ object Test05_Lambda {
     f(name => println(name))
     //（4）如果参数只出现一次，则参数省略且后面参数可以用_代替
     f(println(_))
-    //（5）如何可以推断出，当前传入的println是一个函数体，而不是一个调用语句，可以直接省略下划线,直接写要执行的函数名称
+    //（5）如果可以推断出，当前传入的println是一个函数体，而不是一个调用语句，可以直接省略下划线,直接写要执行的函数名称
     f(println)
 
     // 实际示例，定义一个“二元运算”函数，只操作1和2两个数，但是具体运算通过参数传入
@@ -2057,3 +2055,120 @@ object Test05_Lambda {
 练习 2： 定义一个函数 func，它接收一个 Int 类型的参数，返回一个函数（记作 f1）。它返回的函数 f1，接收一个 String 类型的参数，同样返回一个函数（记作 f2）。函数 f2 接收一个 Char 类型的参数，返回一个 Boolean 的值。  
 
 要求调用函数 func(0) (“”) (‘0’)得到返回值为 false，其它情况均返回 true。  
+
+```scala
+object Test08_Practicec {
+  def main(args: Array[String]): Unit = {
+    // 练习1
+    val fun = (a: Int, b: String, c: Char) => {
+      if (0 == a && "" == b && '0' == c) false else true
+    }
+    println(fun(0, "", '0'))
+    println(fun(0, "", '1'))
+    println(fun(1, "", '0'))
+    println(fun(0, "hello", '0'))
+
+    // 练习2
+    def func(a: Int) = {
+      def f1(b: String) = {
+        def f2(c: Char) = {
+          if (0 == a && "" == b && '0' == c) false else true
+        }
+
+        f2 _ // 将函数直接返回
+      }
+
+      f1 _
+    }
+
+    println(func(0)("")('0'))
+    println(func(0)("")('1'))
+    println(func(1)("")('0'))
+    println(func(0)("hello")('0'))
+
+    // 匿名函数简写 （闭包）
+    def func1(a: Int): String => (Char => Boolean) = {
+      b => c => if (0 == a && "" == b && '0' == c) false else true
+    }
+
+    println(func1(0)("")('0'))
+    println(func1(0)("")('1'))
+    println(func1(1)("")('0'))
+    println(func1(0)("hello")('0'))
+
+    // 柯里化，闭包的另外一种形式
+    def func2(a: Int)(b: String)(c: Char): Boolean = {
+      if (0 == a && "" == b && '0' == c) false else true
+    }
+
+    println(func2(0)("")('0'))
+    println(func2(0)("")('1'))
+    println(func2(1)("")('0'))
+    println(func2(0)("hello")('0'))
+  }
+}
+```
+
+### 5.2.3 高阶函数案例  
+
+需求：模拟 Map 映射、 Filter 过滤、 Reduce 聚合  
+
+```scala
+object TestFunction {
+    def main(args: Array[String]): Unit = {
+        // （1） map 映射
+        def map(arr: Array[Int], op: Int => Int) = {
+        	for (elem <- arr) yield op(elem)
+        }
+        val arr = map(Array(1, 2, 3, 4),(x: Int) => x * x)
+        println(arr.mkString(","))
+        // （2） filter 过滤。有参数，且参数再后面只使用一次，则参数省略且后面参数用_表示
+        def filter(arr:Array[Int],op:Int =>Boolean) ={
+            var arr1:ArrayBuffer[Int] = ArrayBuffer[Int]()
+            for(elem <- arr if op(elem)){
+            	arr1.append(elem)
+            }
+            arr1.toArray
+        }
+        var arr1 = filter(Array(1, 2, 3, 4), _ % 2 == 1)
+        println(arr1.mkString(","))
+        // （3） reduce 聚合。有多个参数，且每个参数在后面只使用一次，则参数省略且后面参数用_表示，第 n 个_代表第 n 个参数
+        def reduce(arr: Array[Int], op: (Int, Int) => Int) = {
+            var init: Int = arr(0)
+            for (elem <- 1 until arr.length) {
+            	init = op(init, elem)
+            }
+            init
+        }
+        //val arr2 = reduce(Array(1, 2, 3, 4), (x, y) => x * y)
+        val arr2 = reduce(Array(1, 2, 3, 4), _ * _)
+        println(arr2)
+    }
+}
+```
+
+```scala
+object Test07_Practice_CollectionOperation {
+  def main(args: Array[String]): Unit = {
+
+    val arr: Array[Int] = Array(10, 11, 12, 13, 14, 15)
+
+    // 对数组进行处理，将操作抽象出来，处理完毕之后的结果返回一个新的数组
+    def arrayOperation(array: Array[Int], op: Int => Int): Array[Int] = {
+      for (elem <- array) yield op(elem)
+    }
+
+    def addOne(elem: Int): Int = {
+      elem + 1
+    }
+
+    val array = arrayOperation(arr, addOne);
+    println(array.mkString(","))
+
+    //传入匿名函数，实现元素翻倍
+    val array1 = arrayOperation(arr, _ * 2);
+    println(array1.mkString(","))
+  }
+}
+```
+
