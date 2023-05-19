@@ -248,7 +248,7 @@ sudo systemctl restart docker
 
 ### 容器命令
 
-#### docker run [OPTIONS]  镜像ID/容器名  [COMMAND] [ARG...]
+#### docker run [OPTIONS]  镜像ID/镜像名  [COMMAND] [ARG...]
 
 新建+启动容器
 
@@ -277,6 +277,14 @@ sudo systemctl restart docker
 * docker run -d 容器名
 
 ​	<img src="Docker使用教程/image-20220622162019848.png" alt="image-20220622162019848" style="zoom:80%;" />
+
+一般为了避免上述情况，让centos后台运行则使用
+
+```shell
+docker run -itd centos bash
+```
+
+
 
 #### docker ps [OPTIONS]
 
@@ -453,7 +461,10 @@ $ docker push registry.cn-hangzhou.aliyuncs.com/zruiquan/ubuntu_vim:[镜像版�
 ![image-20220624103403718](Docker使用教程/image-20220624103403718.png)
 
 ```shell
-[root@localhost ~]# docker run -d -p 5000:5000 -v /zrq/myregistry/:/tmp/registry --privileged=true registry
+# 运行 
+# 默认端口：5000 
+# 上传的镜像保存目录：/var/lib/registry
+docker run -d  --name registry --restart=always -v /usr/local/registry/:/var/lib/registry -p 5000:5000 registry:latest
 ```
 
 3. 演示创建一个新的镜像，ubuntu安装ifconfig命令
@@ -522,6 +533,54 @@ Digest: sha256:c0f22da7b437f07b11dda0191c1a20d6b92e4fe032e8ed15de8e5baade8d4c9b
 Status: Downloaded newer image for 192.168.106.135:5000/ubuntuifconfig:1.0
 192.168.106.135:5000/ubuntuifconfig:1.0
 ```
+
+11. 其他常用命令
+
+```shell
+# 更改镜像名称
+docker tag numax/docker-domp-centos-base:v1.0 10.8.106.101:5000/numax/docker-domp-centos-base:v1.0
+
+# 推送镜像
+docker push 10.8.106.101:5000/numax/docker-domp-centos-base:v1.0
+
+# 拉取镜像
+docker pull 10.8.106.101:5000/numax/docker-domp-centos-base:v1.0
+docker pull 10.8.106.101:5000/numax/docker-domp-mysql:v1.0.0
+# 删除私有仓库镜像
+curl --header "Accept:application/vnd.docker.distribution.manifest.v2+json" -I -XGET http://10.8.106.101:5000/v2/domp-centos-base/manifests/v1.0
+
+curl -I -XDELETE http://10.8.106.101:5000/v2/domp-centos-base/manifests/sha256:8c965c83f7184c695ab26fdf71bab152723a227f0a3641caa8f981c0cb386e39
+
+# 删除私有仓库内容
+docker exec registry bin/registry garbage-collect /etc/docker/registry/config.yml
+docker exec registry rm -rf /var/lib/registry/docker/registry/v2/repositories/domp-centos-base
+
+# 查看私有仓库镜像列表和版本信息
+curl http://10.8.106.101:5000/v2/_catalog
+curl -X GET http://10.8.106.101:5000/v2/domp-centos-base/tags/list
+```
+
+### 本次仓库可视化界面
+
+```shell
+# 向 docker hub 拉取 registry 镜像
+docker pull hyper/docker-registry-web
+# 修改config.yml文件，允许可视化删除
+    registry:
+      # Docker registry url
+      # url: http://registry-srv:5000/v2
+      # Docker registry fqdn
+      # name: localhost:5000
+      # To allow image delete, should be false
+      readonly: false
+      auth:
+        # Disable authentication
+        enabled: false
+# 启动，并将配置挂载到本地（先将容器内配置取出来进行配置并放到本地配置目录，然后再挂载并重新启动）        
+docker run -d -p 5001:8080 --name registry-web --restart=always --link registry -e registry_url=http://registry:5000/v2 -e registry_name=localhost:5000  -v /conf/registry-web-config.yml:/conf/config.yml:ro  hyper/docker-registry-web:latest
+```
+
+
 
 ## Docker 容器卷
 
@@ -1595,6 +1654,84 @@ Commands:
   ls          List networks
   prune       Remove all unused networks
   rm          Remove one or more networks
+  
+  
+  #1） 常用 docker network inspect networkname 查看网络详情
+[root@bigdata1 docker_domp_hadoop]# docker network inspect domp_network
+[
+    {
+        "Name": "domp_network",
+        "Id": "bc9ebce256e0d0108f5f034fa7b5b3de17f67e8bb1e964df7b01871bab196347",
+        "Created": "2023-04-26T13:05:01.324466429+08:00",
+        "Scope": "local",
+        "Driver": "bridge",
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": {},
+            "Config": [
+                {
+                    "Subnet": "172.18.0.0/16",
+                    "Gateway": "172.18.0.1"
+                }
+            ]
+        },
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "ConfigFrom": {
+            "Network": ""
+        },
+        "ConfigOnly": false,
+        "Containers": {
+            "46a2a14d38808edf56d7d774d1506887bd3c712994380f459a227ffc003fb0c3": {
+                "Name": "bigdata2",
+                "EndpointID": "a97d992f965999651436761d7f86d35987b3451a4c1498b874868844d9dee298",
+                "MacAddress": "02:42:ac:12:00:03",
+                "IPv4Address": "172.18.0.3/16",
+                "IPv6Address": ""
+            },
+            "ad75f61dd218898a51206b091949f465189e76c9711a61f870874354398a66e9": {
+                "Name": "bigdata3",
+                "EndpointID": "733cfa39033e3f07cae6c6c178b2d8d8f63b360b691dbe990ab9e3829ae26933",
+                "MacAddress": "02:42:ac:12:00:04",
+                "IPv4Address": "172.18.0.4/16",
+                "IPv6Address": ""
+            },
+            "d69e374fd77a0e129b734366aa68cd6733bffeb64dda7e62180eea63cc57076e": {
+                "Name": "bigdata1",
+                "EndpointID": "2c87d6183b07cf7278fcdffd2b872faf8b2484e438966cecff6b0420ae968aa5",
+                "MacAddress": "02:42:ac:12:00:02",
+                "IPv4Address": "172.18.0.2/16",
+                "IPv6Address": ""
+            }
+        },
+        "Options": {},
+        "Labels": {}
+    }
+]
+#1） 常用 docker inspect container 查看某个容器网络详情
+[root@bigdata1 docker_domp_hadoop]# docker inspect bigdata1 | tail -n 20
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": [
+                        "d69e374fd77a"
+                    ],
+                    "NetworkID": "bc9ebce256e0d0108f5f034fa7b5b3de17f67e8bb1e964df7b01871bab196347",
+                    "EndpointID": "2c87d6183b07cf7278fcdffd2b872faf8b2484e438966cecff6b0420ae968aa5",
+                    "Gateway": "172.18.0.1",
+                    "IPAddress": "172.18.0.2",
+                    "IPPrefixLen": 16,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "MacAddress": "02:42:ac:12:00:02",
+                    "DriverOpts": null
+                }
+            }
+        }
+    }
+]
 ```
 
 ### 作用
