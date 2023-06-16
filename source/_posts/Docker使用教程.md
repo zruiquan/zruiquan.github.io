@@ -1883,6 +1883,24 @@ docker run -d -p 8082:8080 --network zzyy_network --name tomcat82 billygoo/tomca
 
 ![image-20220711145331236](Docker使用教程/image-20220711145331236.png)
 
+## Swarm网络
+
+```shell
+# 初始化Swarm
+docker swarm init --advertise-addr ${HOST_IP1}:2377 --listen-addr ${HOST_IP1}:2377
+# 加入Swarm
+docker swarm join-token worker token
+# 创建网络
+docker network create -d overlay --attachable  ${NETWOEK}
+# 离开overlay网
+docker swarm leave        # 从节点 
+docker swarm leave -force # 主节点
+```
+
+
+
+
+
 ## Docker-compose容器编排
 
 ### 概念
