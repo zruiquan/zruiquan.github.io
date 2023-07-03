@@ -255,7 +255,7 @@ bin/spark-shell
 sc.textFile("data/word.txt").flatMap(_.split("")).map((_,1)).reduceByKey(_+_).collect
 ```
 
-![image-20230703104235902](SparkCore笔记/image-20230703104235902.png)
+![image-20230703105636460](SparkCore笔记/image-20230703105636460.png)
 
 ### 3.1.4 退出本地模式  
 
