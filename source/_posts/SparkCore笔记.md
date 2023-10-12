@@ -964,7 +964,8 @@ Spark 计算框架为了能够进行高并发和高吞吐的数据处理，封�
 * RDD : 弹性分布式数据集
 * 累加器：分布式共享只写变量
 * 广播变量：分布式共享只读变量
-  接下来我们一起看看这三大数据结构是如何在数据处理中使用的。  
+
+接下来我们一起看看这三大数据结构是如何在数据处理中使用的。
 
 ## 5.1 RDD  
 
@@ -1001,7 +1002,7 @@ RDD与IO的关系图
 
 RDD的数据处理方式类似于IO流，也有装饰者设计模式
 RDD的数据只有在调用collect方法时，才会真正执行业务逻辑操作，之前的封装全部都是功能的扩展
-RDD是不保存数据的，但是IO可以临时保存一部分数据
+RDD是不保存数据的，但是IO流可以临时保存一部分数据
 
 ### 5.1.2 核心属性 
 
@@ -1061,7 +1062,7 @@ RDD 是 Spark 框架中用于数据处理的核心模型，接下来我们看看
 
    ![image-20230804173818441](SparkCore笔记/image-20230804173818441.png)
 
-从以上流程可以看出 RDD 在整个流程中主要用于将逻辑进行封装，并生成 Task 发送给Executor 节点执行计算，接下来我们就一起看看 Spark 框架中 RDD 是具体是如何进行数据处理的。  
+从以上流程可以看出 RDD 在整个流程中主要用于将逻辑进行封装，并生成 Task 发送给Executor 节点执行计算，接下来我们就一起看看 Spark 框架中 RDD 是具体是如何进行数据处理的。
 
 ### 5.1.4 基础编程  
 
@@ -3287,7 +3288,7 @@ def mapPartitions[U: ClassTag](f: Iterator[T] => Iterator[U],preservesPartitioni
 
 #### 5.1.4.5 RDD 行动算子
 
-###### reduce
+##### reduce
 
 * 函数签名
 
@@ -3350,7 +3351,7 @@ def mapPartitions[U: ClassTag](f: Iterator[T] => Iterator[U],preservesPartitioni
   }
   ```
 
-###### collect  
+##### collect  
 
 * 函数签名
 
@@ -3392,7 +3393,7 @@ def mapPartitions[U: ClassTag](f: Iterator[T] => Iterator[U],preservesPartitioni
   }
   ```
 
-###### count  
+##### count  
 
 * 函数签名
 
@@ -3410,7 +3411,7 @@ def mapPartitions[U: ClassTag](f: Iterator[T] => Iterator[U],preservesPartitioni
   val countResult: Long = rdd.count()
   ```
 
-###### first  
+##### first  
 
 * 函数签名
 
@@ -3429,7 +3430,7 @@ def mapPartitions[U: ClassTag](f: Iterator[T] => Iterator[U],preservesPartitioni
   println(firstResult)
   ```
 
-###### take  
+##### take  
 
 * 函数签名
 
@@ -3448,7 +3449,7 @@ def mapPartitions[U: ClassTag](f: Iterator[T] => Iterator[U],preservesPartitioni
   println(takeResult.mkString(","))
   ```
 
-###### takeOrdered  
+##### takeOrdered  
 
 * 函数签名
 
@@ -3513,7 +3514,7 @@ def mapPartitions[U: ClassTag](f: Iterator[T] => Iterator[U],preservesPartitioni
   }
   ```
 
-###### aggregate  
+##### aggregate  
 
 * 函数签名
 
@@ -3559,7 +3560,7 @@ def mapPartitions[U: ClassTag](f: Iterator[T] => Iterator[U],preservesPartitioni
   }
   ```
 
-###### fold  
+##### fold  
 
 * 函数签名
 
@@ -3597,7 +3598,7 @@ def mapPartitions[U: ClassTag](f: Iterator[T] => Iterator[U],preservesPartitioni
   }
   ```
 
-###### countByKey  
+##### countByKey  
 
 * 函数签名
 
@@ -3642,7 +3643,7 @@ def mapPartitions[U: ClassTag](f: Iterator[T] => Iterator[U],preservesPartitioni
   }
   ```
 
-###### save 相关算子  
+##### save 相关算子  
 
 * 函数签名
 
@@ -3688,7 +3689,7 @@ def mapPartitions[U: ClassTag](f: Iterator[T] => Iterator[U],preservesPartitioni
   }
   ```
 
-###### foreach  
+##### foreach  
 
 * 函数签名
 
@@ -3747,6 +3748,152 @@ def mapPartitions[U: ClassTag](f: Iterator[T] => Iterator[U],preservesPartitioni
   }
   ```
 
+  ![image-20230920141352308](SparkCore笔记/image-20230920141352308.png)
+
+  ```scala
+  package com.atguigu.spark.core.rdd.operator.action
+  import org.apache.spark.{SparkConf, SparkContext}
+  
+  object Spark10_RDD_Operator_Action {
+    def main(args: Array[String]): Unit = {
+      val sparkConf = new SparkConf().setMaster("local[*]").setAppName("Operator")
+      val sc = new SparkContext(sparkConf)
+  
+      // TODO RDD的方法的内外部操作
+      val rdd = sc.makeRDD(List(1, 2, 3, 4))
+  
+      val user = new User()
+  
+      // RDD算子中传递的函数是会包含闭包操作，那么就会进行检测功能，称之为：闭包检测
+      rdd.foreach(num => {
+        println("age=" + (user.age + num))
+      })
+  
+      sc.stop()
+    }
+  
+    // SparkException: Task not serializable
+    // java.io.NotSerializableException: com.atguigu.spark.core.rdd.operator.action.Spark10_RDD_Operator_Action$User
+    // 因为println是在executor执行，而new User()在Driver执行，所以需要序列化对象传递数据
+    // class User extends Serializable {
+  
+    // 样例类在编译时，会自动混入序列化特质（实现可序列化接口）
+    case class User(){
+      var age: Int = 30
+    }
+  }
+  ```
+
+* 算子总结与练习
+
+  ```scala
+  package com.atguigu.spark.core.wc
+  import org.apache.spark.rdd.RDD
+  import org.apache.spark.{SparkConf, SparkContext}
+  import scala.collection.mutable
+  
+  object Spark04_WordCount {
+    // TODO wordCount的多种算子实现方式
+    def main(args: Array[String]): Unit = {
+      val sparkConf = new SparkConf().setMaster("local").setAppName("WordCount")
+      val sc = new SparkContext(sparkConf)
+  
+      wordCount91011(sc)
+  
+      sc.stop()
+    }
+  
+    // groupBy
+    def wordCount1(sc: SparkContext): Unit = {
+      val rdd = sc.makeRDD(List("Hello Scala", "Hello Spark"))
+      val words = rdd.flatMap(_.split(" "))
+      val group: RDD[(String, Iterable[String])] = words.groupBy(word => word)
+      val workCount = group.mapValues(iter => iter.size)
+    }
+  
+    // groupByKey
+    def wordCount2(sc: SparkContext): Unit = {
+      val rdd = sc.makeRDD(List("Hello Scala", "Hello Spark"))
+      val words = rdd.flatMap(_.split(" "))
+      val wordOne = words.map((_, 1))
+      val group: RDD[(String, Iterable[Int])] = wordOne.groupByKey()
+      val workCount = group.mapValues(iter => iter.size)
+    }
+  
+    // reduceByKey
+    def wordCount3(sc: SparkContext): Unit = {
+      val rdd = sc.makeRDD(List("Hello Scala", "Hello Spark"))
+      val words = rdd.flatMap(_.split(" "))
+      val wordOne = words.map((_, 1))
+      val wordCount: RDD[(String, Int)] = wordOne.reduceByKey(_ + _)
+    }
+  
+    // aggregateByKey
+    def wordCount4(sc: SparkContext): Unit = {
+      val rdd = sc.makeRDD(List("Hello Scala", "Hello Spark"))
+      val words = rdd.flatMap(_.split(" "))
+      val wordOne = words.map((_, 1))
+      val wordCount: RDD[(String, Int)] = wordOne.aggregateByKey(0)(_ + _, _ + _)
+    }
+  
+    // foldByKey
+    def wordCount5(sc: SparkContext): Unit = {
+      val rdd = sc.makeRDD(List("Hello Scala", "Hello Spark"))
+      val words = rdd.flatMap(_.split(" "))
+      val wordOne = words.map((_, 1))
+      val wordCount: RDD[(String, Int)] = wordOne.foldByKey(0)(_ + _)
+    }
+  
+    // combineByKey
+    def wordCount6(sc: SparkContext): Unit = {
+      val rdd = sc.makeRDD(List("Hello Scala", "Hello Spark"))
+      val words = rdd.flatMap(_.split(" "))
+      val wordOne = words.map((_, 1))
+      val wordCount = wordOne.combineByKey(v => v, (x: Int, y) => x + y, (x: Int, y: Int) => x + y)
+      wordCount.collect().foreach(println)
+    }
+  
+    // countByKey
+    def wordCount7(sc: SparkContext): Unit = {
+      val rdd = sc.makeRDD(List("Hello Scala", "Hello Spark"))
+      val words = rdd.flatMap(_.split(" "))
+      val wordOne = words.map((_, 1))
+      val wordCount: collection.Map[String, Long] = wordOne.countByKey()
+    }
+  
+    // countByValue
+    def wordCount8(sc: SparkContext): Unit = {
+      val rdd = sc.makeRDD(List("Hello Scala", "Hello Spark"))
+      val words = rdd.flatMap(_.split(" "))
+      val wordCount: collection.Map[String, Long] = words.countByValue()
+      println(wordCount)
+    }
+  
+    // reduce, aggregate, fold
+    def wordCount91011(sc: SparkContext): Unit = {
+      val rdd = sc.makeRDD(List("Hello Scala", "Hello Spark"))
+      val words: RDD[String] = rdd.flatMap(_.split(" "))
+      val mapWord: RDD[mutable.Map[String, Long]] = words.map(
+        word => {
+          mutable.Map[String, Long]((word, 1))
+        }
+      )
+      val wordCount: mutable.Map[String, Long] = mapWord.reduce(
+        (map1, map2) => {
+          map2.foreach {
+            case (word, count) => {
+              val newCount = map1.getOrElse(word, 0L) + count
+              map1.update(word, newCount)
+            }
+          }
+          map1
+        }
+      )
+      println(wordCount)
+    }
+  }
+  ```
+
 #### 5.1.4.6 RDD 序列化
 
 1) 闭包检查
@@ -3761,8 +3908,7 @@ def mapPartitions[U: ClassTag](f: Iterator[T] => Iterator[U],preservesPartitioni
    object serializable02_function {
        def main(args: Array[String]): Unit = {
            //1.创建 SparkConf 并设置 App 名称
-           val conf: SparkConf = new
-           SparkConf().setAppName("SparkCoreTest").setMaster("local[*]")
+           val conf: SparkConf = new SparkConf().setAppName("SparkCoreTest").setMaster("local[*]")
            //2.创建 SparkContext，该对象是提交 Spark App 的入口
            val sc: SparkContext = new SparkContext(conf)
            //3.创建一个 RDD
@@ -3796,4 +3942,1237 @@ def mapPartitions[U: ClassTag](f: Iterator[T] => Iterator[U],preservesPartitioni
    }
    ```
 
+3) Kryo 序列化框架  
+
+   参考地址: https://github.com/EsotericSoftware/kryo
+   Java 的序列化能够序列化任何的类。但是比较重（字节多） ，序列化后，对象的提交也比较大。 Spark 出于性能的考虑， Spark2.0 开始支持另外一种 Kryo 序列化机制。 Kryo 速度是 Serializable 的 10 倍。当 RDD 在 Shuffle 数据的时候，简单数据类型、数组和字符串类型已经在 Spark 内部使用 Kryo 来序列化。
+   注意：即使使用 Kryo 序列化，也要继承 Serializable 接口。  
+
+   ```scala
+   object serializable_Kryo {
+       def main(args: Array[String]): Unit = {
+           val conf: SparkConf = new SparkConf().setAppName("SerDemo").setMaster("local[*]")
+           // 替换默认的序列化机制
+           .set("spark.serializer","org.apache.spark.serializer.KryoSerializer")
+           // 注册需要使用 kryo 序列化的自定义类
+           .registerKryoClasses(Array(classOf[Searcher]))
+           val sc = new SparkContext(conf)
+           val rdd: RDD[String] = sc.makeRDD(Array("hello world", "hello atguigu", "atguigu", "hahah"), 2)
+           val searcher = new Searcher("hello")
+           val result: RDD[String] = searcher.getMatchedRDD1(rdd)
+           result.collect.foreach(println)
+       }
+   }
+   case class Searcher(val query: String) {
+       def isMatch(s: String) = {
+       	s.contains(query)
+       }
+       def getMatchedRDD1(rdd: RDD[String]) = {
+       	rdd.filter(isMatch)
+       }
+       def getMatchedRDD2(rdd: RDD[String]) = {
+       	val q = query
+       	rdd.filter(_.contains(q))
+       }
+   }
+   ```
+
+4) 练习与测试
+
+   ```scala
+   package com.atguigu.spark.core.rdd.serial
+   import org.apache.spark.rdd.RDD
+   import org.apache.spark.{SparkConf, SparkContext}
    
+   object Spark01_RDD_Serial {
+     def main(args: Array[String]): Unit = {
+       // 1. 创建 SparkConf 并设置 App 名称
+       val conf: SparkConf = new SparkConf().setAppName("SparkCoreTest").setMaster("local[*]")
+       // 2. 创建 SparkContext，该对象是提交 Spark App 的入口
+       val sc: SparkContext = new SparkContext(conf)
+       // 3. 创建一个 RDD
+       val rdd: RDD[String] = sc.makeRDD(Array("hello world", "hello spark", "hive", "atguigu"))
+       // 3.1 创建一个 Search 对象
+       val search = new Search("hello")
+       // 3.2 函数传递，打印： ERROR Task not serializable
+       // search.getMatch1(rdd).collect().foreach(println)
+       // 3.3 属性传递，打印： ERROR Task not serializable
+       search.getMatch2(rdd).collect().foreach(println)
+       //4. 关闭连接
+       sc.stop()
+     }
+   }
+   
+   // 查询对象
+   // 类的构造参数其实是类的属性,构造参数需要进行闭包检测，其实就等同于类型进行闭包检测。
+   // class Search(query: String) {
+   class Search(query: String) extends Serializable {
+     def isMatch(s: String): Boolean = {
+       s.contains(query) // 底层其实就是s.contains(this.query)
+     }
+   
+     // 函数序列化案例
+     def getMatch1(rdd: RDD[String]): RDD[String] = {
+       rdd.filter(isMatch)
+     }
+   
+     // 属性序列化案例
+     def getMatch2(rdd: RDD[String]): RDD[String] = {
+       rdd.filter(x => x.contains(query))
+     }
+   }
+   ```
+
+#### 5.1.4.7 RDD 依赖关系
+
+回顾在maven中的依赖和间接依赖
+
+![image-20230920180926032](SparkCore笔记/image-20230920180926032.png)
+
+在RDD中
+
+![image-20230920181115290](SparkCore笔记/image-20230920181115290.png)
+
+* 相邻的两个RDD的关系称之为依赖关系
+* 新的RDD依赖于旧的RDD
+* 多个连续的RDD的依赖关系，称之为血缘关系
+* 每个RDD会保存血缘关系
+
+![image-20230920181227289](SparkCore笔记/image-20230920181227289.png)
+
+* RDD不会保存数据的
+* RDD为了提供容错性，需要将RDD间的关系保存下来
+* 一旦出现错误，可以根据血缘关系将数据源重新读取进行计算
+
+![image-20230920181432749](SparkCore笔记/image-20230920181432749.png)
+
+##### RDD 血缘关系  
+
+RDD 只支持粗粒度转换，即在大量记录上执行的单个操作。将创建 RDD 的一系列 Lineage（血统）记录下来，以便恢复丢失的分区。RDD 的 Lineage 会记录 RDD 的元数据信息和转换行为，当该 RDD 的部分分区数据丢失时，它可以根据这些信息来重新运算和恢复丢失的数据分区。
+
+```scala
+val fileRDD: RDD[String] = sc.textFile("input/1.txt")
+println(fileRDD.toDebugString)
+println("----------------------")
+val wordRDD: RDD[String] = fileRDD.flatMap(_.split(" "))
+println(wordRDD.toDebugString)
+println("----------------------")
+val mapRDD: RDD[(String, Int)] = wordRDD.map((_,1))
+println(mapRDD.toDebugString)
+println("----------------------")
+val resultRDD: RDD[(String, Int)] = mapRDD.reduceByKey(_+_)
+println(resultRDD.toDebugString)
+resultRDD.collect()
+```
+
+练习与测试
+
+```scala
+package com.atguigu.spark.core.rdd.dep
+import org.apache.spark.rdd.RDD
+import org.apache.spark.{SparkConf, SparkContext}
+
+object Spark01_RDD_Dep {
+  def main(args: Array[String]): Unit = {
+    val sparkConf = new SparkConf().setMaster("local[*]").setAppName("WordCount")
+    val sc = new SparkContext(sparkConf)
+
+    val lines: RDD[String] = sc.textFile("datas/dep.txt")
+    // TODO 展示血缘关系
+    println(lines.toDebugString)
+    println("*********************")
+
+    val words: RDD[String] = lines.flatMap(_.split(" "))
+    println(words.toDebugString)
+    println("*********************")
+
+    val wordToOne: RDD[(String, Int)] = words.map(word => (word, 1))
+    println(wordToOne.toDebugString)
+    println("*********************")
+
+    val wordToCount: RDD[(String, Int)] = wordToOne.reduceByKey(_ + _)
+    println(wordToCount.toDebugString)
+    println("*********************")
+
+    val array: Array[(String, Int)] = wordToCount.collect()
+    array.foreach(println)
+
+    sc.stop()
+  }
+}
+```
+
+##### RDD 依赖关系  
+
+这里所谓的依赖关系，其实就是两个相邻 RDD 之间的关系
+```scala
+val sc: SparkContext = new SparkContext(conf)
+val fileRDD: RDD[String] = sc.textFile("input/1.txt")
+println(fileRDD.dependencies)
+println("----------------------")
+val wordRDD: RDD[String] = fileRDD.flatMap(_.split(" "))
+println(wordRDD.dependencies)
+println("----------------------")
+val mapRDD: RDD[(String, Int)] = wordRDD.map((_,1))
+println(mapRDD.dependencies)
+println("----------------------")
+val resultRDD: RDD[(String, Int)] = mapRDD.reduceByKey(_+_)
+println(resultRDD.dependencies)
+resultRDD.collect()
+```
+
+练习与测试
+
+```scala
+package com.atguigu.spark.core.rdd.dep
+import org.apache.spark.rdd.RDD
+import org.apache.spark.{SparkConf, SparkContext}
+
+object Spark02_RDD_Dep {
+  def main(args: Array[String]): Unit = {
+    val sparkConf = new SparkConf().setMaster("local[*]").setAppName("WordCount")
+    val sc = new SparkContext(sparkConf)
+
+    val lines: RDD[String] = sc.textFile("datas/dep.txt")
+    // TODO 展示相邻的RDD之间的依赖关系
+    println(lines.dependencies)
+    println("*********************")
+
+    val words: RDD[String] = lines.flatMap(_.split(" "))
+    println(words.dependencies)
+    println("*********************")
+
+    val wordToOne: RDD[(String, Int)] = words.map(word => (word, 1))
+    println(wordToOne.dependencies)
+    println("*********************")
+
+    val wordToCount: RDD[(String, Int)] = wordToOne.reduceByKey(_ + _)
+    println(wordToCount.dependencies)
+    println("*********************")
+
+    val array: Array[(String, Int)] = wordToCount.collect()
+    array.foreach(println)
+
+    sc.stop()
+  }
+}
+```
+
+##### RDD 窄依赖
+
+窄依赖表示每一个父(上游)RDD 的 Partition 最多被子（下游） RDD 的一个 Partition 使用，窄依赖我们形象的比喻为独生子女。  
+
+```scala
+class OneToOneDependency[T](rdd: RDD[T]) extends NarrowDependency[T](rdd)
+```
+
+![image-20230920181641350](SparkCore笔记/image-20230920181641350.png)
+
+* 新的RDD的一个分区的数据依赖于旧的RDD一个分区的数据
+* 这个依赖称之为OneToOne依赖
+
+##### RDD 宽依赖
+
+宽依赖表示同一个父（上游） RDD 的 Partition 被多个子（下游） RDD 的 Partition 依赖，会引起 Shuffle，总结：宽依赖我们形象的比喻为多生。  
+
+```scala
+class ShuffleDependency[K: ClassTag, V: ClassTag, C: ClassTag](
+    @transient private val _rdd: RDD[_ <: Product2[K, V]],
+    val partitioner: Partitioner,
+    val serializer: Serializer = SparkEnv.get.serializer,
+    val keyOrdering: Option[Ordering[K]] = None,
+    val aggregator: Option[Aggregator[K, V, C]] = None,
+    val mapSideCombine: Boolean = false) extends Dependency[Product2[K, V]]
+```
+
+![image-20230920181831605](SparkCore笔记/image-20230920181831605.png)
+
+* 新的RDD的一个分区的数据依赖于旧的RDD多个分区的数据
+* 这个依赖称之为Shuffle依赖
+
+##### RDD 阶段划分
+
+DAG（Directed Acyclic Graph）有向无环图是由点和线组成的拓扑图形，该图形具有方向，不会闭环。例如，DAG 记录了 RDD 的转换过程和任务的阶段。
+
+![image-20230920175435337](SparkCore笔记/image-20230920175435337.png)
+
+![image-20230920182229743](SparkCore笔记/image-20230920182229743.png)
+
+* 当RDD中存在shuffle依赖时，阶段会自动增加一个
+* 阶段的数量 = shuffle依赖的数量 + 1
+* ResultStage只有一个，最后需要执行的阶段
+
+##### RDD 阶段划分源码
+
+```scala
+try {
+	// New stage creation may throw an exception if, for example, jobs are run on
+	// HadoopRDD whose underlying HDFS files have been deleted.
+	finalStage = createResultStage(finalRDD, func, partitions, jobId, callSite)
+} catch {
+	case e: Exception =>
+		logWarning("Creating new stage failed due to exception - job: " + jobId, e)
+		listener.jobFailed(e)
+	return
+}
+... ...
+
+private def createResultStage(
+    rdd: RDD[_],
+    func: (TaskContext, Iterator[_]) => _,
+    partitions: Array[Int],
+    jobId: Int,
+    callSite: CallSite): ResultStage = {
+    val parents = getOrCreateParentStages(rdd, jobId)
+    val id = nextStageId.getAndIncrement()
+    val stage = new ResultStage(id, rdd, func, partitions, parents, jobId, callSite)
+    stageIdToStage(id) = stage
+    updateJobIdStageIdMaps(jobId, stage)
+    stage
+}
+... ...	
+
+private def getOrCreateParentStages(rdd: RDD[_], firstJobId: Int): List[Stage]= {
+		getShuffleDependencies(rdd).map { shuffleDep =>getOrCreateShuffleMapStage(shuffleDep, firstJobId)
+	}.toList
+}
+... ...
+private[scheduler] def getShuffleDependencies(rdd: RDD[_]): HashSet[ShuffleDependency[_, _, _]] = {
+    val parents = new HashSet[ShuffleDependency[_, _, _]]
+    val visited = new HashSet[RDD[_]]
+    val waitingForVisit = new Stack[RDD[_]]
+    waitingForVisit.push(rdd)
+    while (waitingForVisit.nonEmpty) {
+        val toVisit = waitingForVisit.pop()
+        if (!visited(toVisit)) {
+            visited += toVisit
+            toVisit.dependencies.foreach {
+                case shuffleDep: ShuffleDependency[_, _, _] => 
+                    parents += shuffleDep
+                case dependency => 
+                    waitingForVisit.push(dependency.rdd)
+            }
+        }
+    }
+    parents
+}
+```
+
+##### RDD 任务划分
+
+RDD 任务切分中间分为： Application、 Job、 Stage 和 Task  
+
+* Application：初始化一个 SparkContext 即生成一个 Application
+* Job：一个 Action 算子就会生成一个 Job
+* Stage： Stage 等于宽依赖(ShuffleDependency)的个数加 1
+* Task：一个 Stage 阶段中，最后一个 RDD 的分区个数就是 Task 的个数（看源码）
+
+> **注意： Application->Job->Stage->Task 每一层都是 1 对 n 的关系。**  
+
+![image-20230920175947360](SparkCore笔记/image-20230920175947360.png)
+
+![image-20230920182359385](SparkCore笔记/image-20230920182359385.png)
+
+* 任务的数量 = 当前阶段中最后一个RDD的分区数量
+* ShuffleMapStage => ShuffleMapTask  例：ShuffleMapStage阶段中任务称之为ShuffleMapTask
+* ResultStage => ResultTask 例：ResultStage 阶段中任务称之为ResultTask
+
+##### RDD 任务划分源码
+
+```scala
+val tasks: Seq[Task[_]] = try {
+	stage match {
+		case stage: ShuffleMapStage =>
+			partitionsToCompute.map { id =>
+				val locs = taskIdToLocations(id)
+				val part = stage.rdd.partitions(id)
+				new ShuffleMapTask(stage.id, stage.latestInfo.attemptId,taskBinary, part, locs, stage.latestInfo.taskMetrics, properties,Option(jobId),Option(sc.applicationId), sc.applicationAttemptId)
+		}
+		case stage: ResultStage =>
+			partitionsToCompute.map { id =>
+				val p: Int = stage.partitions(id)
+				val part = stage.rdd.partitions(p)
+				val locs = taskIdToLocations(id)
+				new ResultTask(stage.id, stage.latestInfo.attemptId,taskBinary, part, locs, id, properties, stage.latestInfo.taskMetrics,Option(jobId), Option(sc.applicationId), sc.applicationAttemptId)
+		}
+	}
+... ...
+    
+val partitionsToCompute: Seq[Int] = stage.findMissingPartitions()
+... ...
+override def findMissingPartitions(): Seq[Int] = {
+mapOutputTrackerMaster
+.findMissingPartitions(shuffleDep.shuffleId)
+.getOrElse(0 until numPartitions)
+}
+```
+
+##### RDD 窄依赖与宽依赖的阶段任务区别
+
+窄依赖
+
+![image-20230920183046400](SparkCore笔记/image-20230920183046400.png)
+
+宽依赖
+
+![image-20230920183224156](SparkCore笔记/image-20230920183224156.png)
+
+#### 5.1.4.8 RDD 持久化
+
+RDD对象复用
+
+![image-20230921174728434](SparkCore笔记/image-20230921174728434.png)
+
+* RDD中不存储数据
+* 如果一个RDD需要重复使用，那么需要从头再次执行来获取数据
+* RDD对象可以重用的，但是数据无法重用
+
+RDD数据持久化
+
+![image-20230921175401894](SparkCore笔记/image-20230921175401894.png)
+
+* RDD对象的持久化操作不一定是为了重用
+* 在数据执行较长，或数据比较重要的场合也可以采用持久化操作
+
+##### RDD Cache 缓存  
+
+RDD 通过 Cache 或者 Persist 方法将前面的计算结果缓存，默认情况下会把数据以缓存在 JVM 的堆内存中。但是并不是这两个方法被调用时立即缓存，而是触发后面的 action 算子时，该 RDD 将会被缓存在计算节点的内存中，并供后面重用。
+
+```scala
+// cache 操作会增加血缘关系，不改变原有的血缘关系
+println(wordToOneRdd.toDebugString)
+// 数据缓存。
+wordToOneRdd.cache()
+// 可以更改存储级别
+//mapRdd.persist(StorageLevel.MEMORY_AND_DISK_2)
+```
+
+存储级别  
+
+```scala
+object StorageLevel {
+val NONE = new StorageLevel(false, false, false, false)
+val DISK_ONLY = new StorageLevel(true, false, false, false)
+val DISK_ONLY_2 = new StorageLevel(true, false, false, false, 2)
+val MEMORY_ONLY = new StorageLevel(false, true, false, true)
+val MEMORY_ONLY_2 = new StorageLevel(false, true, false, true, 2)
+val MEMORY_ONLY_SER = new StorageLevel(false, true, false, false)
+val MEMORY_ONLY_SER_2 = new StorageLevel(false, true, false, false, 2)
+val MEMORY_AND_DISK = new StorageLevel(true, true, false, true)
+val MEMORY_AND_DISK_2 = new StorageLevel(true, true, false, true, 2)
+val MEMORY_AND_DISK_SER = new StorageLevel(true, true, false, false)
+val MEMORY_AND_DISK_SER_2 = new StorageLevel(true, true, false, false, 2)
+val OFF_HEAP = new StorageLevel(true, true, true, false, 1)
+```
+
+![image-20230921172651650](SparkCore笔记/image-20230921172651650.png)
+
+缓存有可能丢失，或者存储于内存的数据由于内存不足而被删除， RDD 的缓存容错机制保证了即使缓存丢失也能保证计算的正确执行。通过基于 RDD 的一系列转换，丢失的数据会被重算，由于 RDD 的各个 Partition 是相对独立的，因此只需要计算丢失的部分即可，并不需要重算全部 Partition。
+Spark 会自动对一些 Shuffle 操作的中间数据做持久化操作(比如： reduceByKey)。这样做的目的是为了当一个节点 Shuffle 失败了避免重新计算整个输入。但是，在实际使用的时候，如果想重用数据，仍然建议调用 persist 或 cache。
+
+练习与测试
+
+```scala
+package com.atguigu.spark.core.rdd.persist
+import org.apache.spark.storage.StorageLevel
+import org.apache.spark.{SparkConf, SparkContext}
+
+object Spark01_RDD_Persist {
+  def main(args: Array[String]): Unit = {
+    val sparkConf = new SparkConf().setMaster("local").setAppName("WordCount")
+    val sc = new SparkContext(sparkConf)
+
+    // TODO RDD的数据持久化操作-cache-persist
+    val rdd = sc.makeRDD(List("Hello Scala", "Hello Spark"))
+    val flatRDD = rdd.flatMap(_.split(" "))
+    val mapRDD = flatRDD.map(word => {
+      println("======")
+      (word, 1)
+    })
+    // 数据持久化
+    // 默认持久化只能将数据保存到内存中，如果想要保存到磁盘文件，需要更改存储级别
+    // mapRDD.cache() // 默认保存到内存，与下面persist()方法不带参数一样的效果
+    // mapRDD.persist()
+    // 持久化操作必须在行动算子执行时完成的
+    // RDD对象的持久化操作不一定是为了重用，在数据执行较长，或数据比较重要的场合也可以采用持久化操作
+    // 避免流程较长和或者流程非常复杂的情况，因为一旦出现了问题，从头走流程的时候需要耗时的时间较长，所以把耗时较长，或者比较重要的数据进行持久化，性能和安全都能得到保障
+    mapRDD.persist(StorageLevel.DISK_ONLY)
+
+    val reduceRDD = mapRDD.reduceByKey(_ + _)
+    reduceRDD.collect().foreach(println)
+    println("*********************")
+    // 如果上面不设置持久化操作，则重复执行并打印"======"
+    // RDD不存储数据。如果一个RDD需要重复使用，那么需要从头再次执行来获取数据
+    // RDD对象可以重用，但是数据无法重用
+    val reduceRDD1 = mapRDD.groupByKey()
+    reduceRDD1.collect().foreach(println)
+
+    sc.stop()
+  }
+}
+```
+
+##### RDD CheckPoint 检查点  
+
+所谓的检查点其实就是通过将 RDD 中间结果写入磁盘，由于血缘依赖过长会造成容错成本过高，这样就不如在中间阶段做检查点容错，如果检查点之后有节点出现问题， 可以从检查点开始重做血缘，减少了开销。对 RDD 进行 checkpoint 操作并不会马上被执行，必须执行 Action 操作才能触发。  
+
+```scala
+// 设置检查点路径
+sc.setCheckpointDir("./checkpoint1")
+// 创建一个 RDD，读取指定位置文件:hello atguigu atguigu
+val lineRdd: RDD[String] = sc.textFile("input/1.txt")
+// 业务逻辑
+val wordRdd: RDD[String] = lineRdd.flatMap(line => line.split(" "))
+val wordToOneRdd: RDD[(String, Long)] = wordRdd.map {
+	word => {
+    	(word, System.currentTimeMillis())
+    }
+}
+// 增加缓存,避免再重新跑一个 job 做 checkpoint
+wordToOneRdd.cache()
+// 数据检查点：针对 wordToOneRdd 做检查点计算
+wordToOneRdd.checkpoint()
+// 触发执行逻辑
+wordToOneRdd.collect().foreach(println)
+```
+
+##### 缓存和检查点区别  
+
+1）Cache 缓存只是将数据保存起来，不切断血缘依赖。 Checkpoint 检查点切断血缘依赖。
+2）Cache 缓存的数据通常存储在磁盘、内存等地方，可靠性低。 Checkpoint 的数据通常存储在 HDFS 等容错、高可用的文件系统，可靠性高。
+3）建议对 checkpoint()的 RDD 使用 Cache 缓存，这样 checkpoint 的 job 只需从 Cache 缓存中读取数据即可，否则需要再从头计算一次 RDD。
+
+练习与测试
+
+```scala
+package com.atguigu.spark.core.rdd.persist
+import org.apache.spark.{SparkConf, SparkContext}
+
+object Spark02_RDD_Persist {
+  def main(args: Array[String]): Unit = {
+    val sparkConf = new SparkConf().setMaster("local").setAppName("WordCount")
+    val sc = new SparkContext(sparkConf)
+
+    // TODO RDD的数据持久化操作-checkpoint
+    // 设置检查点保存路径
+    sc.setCheckpointDir("cp")
+    val rdd = sc.makeRDD(List("Hello Scala", "Hello Spark"))
+    val flatRDD = rdd.flatMap(_.split(" "))
+    val mapRDD = flatRDD.map(word => {
+      println("======")
+      (word, 1)
+    })
+    // checkpoint：需要落盘，需要指定检查点保存路径
+    // 检查点路径保存的文件，当作业执行完毕后，不会被删除，而persist如果设置数据落盘，则只是保存临时文件，任务执行完毕会自动删除临时文件
+    // 一般保存路径都是在分布式存储系统中，比如：HDFS
+    mapRDD.checkpoint()
+
+    val reduceRDD = mapRDD.reduceByKey(_ + _)
+    reduceRDD.collect().foreach(println)
+    println("*********************")
+
+    val reduceRDD1 = mapRDD.groupByKey()
+    reduceRDD1.collect().foreach(println)
+
+    sc.stop()
+  }
+}
+```
+
+```scala
+package com.atguigu.spark.core.rdd.persist
+import org.apache.spark.{SparkConf, SparkContext}
+
+object Spark03_RDD_Persist {
+  def main(args: Array[String]): Unit = {
+    val sparkConf = new SparkConf().setMaster("local").setAppName("WordCount")
+    val sc = new SparkContext(sparkConf)
+
+    // TODO RDD的数据持久化操作-cache/persist 和 checkpoint 的区别
+    // cache：
+    //    将数据临时存储在内存中进行数据重用
+    //    数据不安全。如：内存溢出，数据移除，内存重启等
+    // persist：
+    //    将数据临时存储在磁盘文件中进行数据重用
+    //    涉及到磁盘IO，性能较低，但是数据安全，如果作业执行完毕，临时保存的数据文件就会丢失
+    // checkpoint：
+    //    将数据长久地保存在磁盘文件汇总进行数据重用
+    //    涉及到磁盘IO，性能较低，但是数据安全，为了保证数据安全
+    //    所以一般情况下，会独立执行作业(从头开始再执行一次)，为了能够提高效率，一般情况下，是需要和cache联合使用
+
+    // 设置检查点保存路径
+    sc.setCheckpointDir("cp")
+    val rdd = sc.makeRDD(List("Hello Scala", "Hello Spark"))
+    val flatRDD = rdd.flatMap(_.split(" "))
+    val mapRDD = flatRDD.map(word => {
+      println("======")
+      (word, 1)
+    })
+    // 联合使用，避免任务独立执行从头开始再执行一次，直接用内存中取数据，提高效率
+    mapRDD.cache()
+    mapRDD.checkpoint()
+
+    val reduceRDD = mapRDD.reduceByKey(_ + _)
+    reduceRDD.collect().foreach(println)
+    println("*********************")
+
+    val reduceRDD1 = mapRDD.groupByKey()
+    reduceRDD1.collect().foreach(println)
+
+    sc.stop()
+  }
+}
+```
+
+```scala
+package com.atguigu.spark.core.rdd.persist
+import org.apache.spark.{SparkConf, SparkContext}
+
+object Spark04_RDD_Persist {
+  def main(args: Array[String]): Unit = {
+    val sparkConf = new SparkConf().setMaster("local").setAppName("WordCount")
+    val sc = new SparkContext(sparkConf)
+
+    // TODO RDD的数据持久化操作-cache/persist 和 checkpoint 的区别2
+    // cache：
+    //    将数据临时存储在内存中进行数据重用
+    //    数据不安全。如：内存溢出，数据移除，内存重启等
+    //    会在血缘关系中添加新的依赖,一旦出现问题（比如内存失效），可以重头读取数据
+    // persist：
+    //    将数据临时存储在磁盘文件中进行数据重用
+    //    涉及到磁盘IO，性能较低，但是数据安全，如果作业执行完毕，临时保存的数据文件就会丢失
+    //    会在血缘关系中添加新的依赖,一旦出现问题（比如内存失效），可以重头读取数据
+    // checkpoint：
+    //    将数据长久地保存在磁盘文件汇总进行数据重用
+    //    涉及到磁盘IO，性能较低，但是数据安全，为了保证数据安全
+    //    所以一般情况下，会独立执行作业(会重复打印)，为了能够提高效率，一般情况下，是需要和cache联合使用
+    val rdd = sc.makeRDD(List("Hello Scala", "Hello Spark"))
+    val flatRDD = rdd.flatMap(_.split(" "))
+    val mapRDD = flatRDD.map(word => {
+      (word, 1)
+    })
+    mapRDD.cache()
+    println(mapRDD.toDebugString)
+
+    val reduceRDD = mapRDD.reduceByKey(_ + _)
+    reduceRDD.collect().foreach(println)
+    println("*********************")
+    println(mapRDD.toDebugString)
+
+    sc.stop()
+  }
+}
+```
+
+```scala
+package com.atguigu.spark.core.rdd.persist
+import org.apache.spark.{SparkConf, SparkContext}
+
+object Spark05_RDD_Persist {
+  def main(args: Array[String]): Unit = {
+    val sparkConf = new SparkConf().setMaster("local").setAppName("WordCount")
+    val sc = new SparkContext(sparkConf)
+
+    // TODO RDD的数据持久化操作-cache/persist 和 checkpoint 的区别3
+    // cache：
+    //    将数据临时存储在内存中进行数据重用
+    //    数据不安全。如：内存溢出，数据移除，内存重启等
+    //    会在血缘关系中添加新的依赖,一旦出现问题（比如内存失效），可以重头读取数据
+    // persist：
+    //    将数据临时存储在磁盘文件中进行数据重用
+    //    涉及到磁盘IO，性能较低，但是数据安全，如果作业执行完毕，临时保存的数据文件就会丢失
+    //    会在血缘关系中添加新的依赖,一旦出现问题（比如内存失效），可以重头读取数据
+    // checkpoint：
+    //    将数据长久地保存在磁盘文件汇总进行数据重用
+    //    涉及到磁盘IO，性能较低，但是数据安全，为了保证数据安全
+    //    所以一般情况下，会独立执行作业(会重复打印)，为了能够提高效率，一般情况下，是需要和cache联合使用
+    //    执行过程中，会切断血缘关系，会重新建立新的血缘关系
+    //    checkpoint等同于改变了数据源(相当于从检查点开始执行，因此可以看做数据源发生了改变，因此血缘关系也发生改变)
+
+    // 设置检查点保存路径
+    sc.setCheckpointDir("cp")
+    val rdd = sc.makeRDD(List("Hello Scala", "Hello Spark"))
+    val flatRDD = rdd.flatMap(_.split(" "))
+    val mapRDD = flatRDD.map(word => {
+      (word, 1)
+    })
+    mapRDD.checkpoint()
+    println(mapRDD.toDebugString)
+
+    val reduceRDD = mapRDD.reduceByKey(_ + _)
+    reduceRDD.collect().foreach(println)
+    println("*********************")
+    println(mapRDD.toDebugString)
+
+    sc.stop()
+  }
+}
+```
+
+#### 5.1.4.9 RDD 分区器  
+
+Spark 目前支持 Hash 分区和 Range 分区，和用户自定义分区。Hash 分区为当前的默认分区。分区器直接决定了 RDD 中分区的个数、 RDD 中每条数据经过 Shuffle 后进入哪个分区，进而决定了 Reduce 的个数。
+
+* 只有 Key-Value 类型的 RDD 才有分区器，非 Key-Value 类型的 RDD 分区的值是 None
+* 每个 RDD 的分区 ID 范围： 0 ~ (numPartitions - 1)，决定这个值是属于那个分区的
+
+1) Hash 分区：对于给定的 key，计算其 hashCode,并除以分区个数取余
+
+   ```scala
+   class HashPartitioner(partitions: Int) extends Partitioner {
+   	require(partitions >= 0, s"Number of partitions ($partitions) cannot be negative.")
+   	def numPartitions: Int = partitions
+       def getPartition(key: Any): Int = key match {
+           case null => 0
+           case _ => Utils.nonNegativeMod(key.hashCode, numPartitions)
+       }
+       override def equals(other: Any): Boolean = other match {
+           case h: HashPartitioner =>
+               h.numPartitions == numPartitions
+           case _ =>
+               false
+       }
+   	override def hashCode: Int = numPartitions
+   }
+   ```
+
+2) Range 分区：将一定范围内的数据映射到一个分区中，尽量保证每个分区数据均匀，而且分区间有序
+
+   ```scala
+   class RangePartitioner[K: Ordering : ClassTag, V](partitions: Int,rdd: RDD[_ <: Product2[K, V]],private var ascending: Boolean = true) extends Partitioner 
+   {
+       // We allow partitions = 0, which happens when sorting an empty RDD under the
+       default settings
+       .
+       require(partitions >= 0, s"Number of partitions cannot be negative but found
+       $partitions
+       .")
+       private var ordering = implicitly[Ordering[K]]
+       // An array of upper bounds for the first (partitions - 1) partitions
+       private var rangeBounds: Array[K] = {
+       ...
+       }
+   
+       def numPartitions: Int = rangeBounds.length + 1
+   
+       private var binarySearch: ((Array[K], K) => Int) =
+       CollectionsUtils.makeBinarySearch[K]
+   
+       def getPartition(key: Any): Int = {
+       val k = key.asInstanceOf[K]
+       var partition = 0
+       if (rangeBounds.length <= 128) {
+         // If we have less than 128 partitions naive search
+         while (partition < rangeBounds.length && ordering.gt(k,
+           rangeBounds(partition))) {
+           partition += 1
+         }
+       } else {
+         // Determine which binary search method to use only once.
+         partition = binarySearch(rangeBounds, k)
+         // binarySearch either returns the match location or -[insertion point]-1
+         if (partition < 0) {
+           partition = -partition - 1
+         }
+         if (partition > rangeBounds.length) {
+           partition = rangeBounds.length
+         }
+       }
+       if (ascending) {
+         partition
+       } else {
+         rangeBounds.length - partition
+       }
+       }
+   
+       override def equals(other: Any): Boolean = other match {
+       ...
+       }
+   
+       override def hashCode(): Int = {
+       ...
+       }
+   
+       @throws(classOf[IOException])
+       private def writeObject(out: ObjectOutputStream): Unit =
+       Utils.tryOrIOException {
+         ...
+       }
+   
+       @throws(classOf[IOException])
+       private def readObject(in: ObjectInputStream): Unit = Utils.tryOrIOException {
+       ...
+       }
+   }
+   ```
+
+练习与测试
+
+```scala
+package com.atguigu.spark.core.rdd.part
+import org.apache.spark.{Partitioner, SparkConf, SparkContext}
+
+object Spark01_RDD_Part {
+  def main(args: Array[String]): Unit = {
+    val sparkConf = new SparkConf().setMaster("local[*]").setAppName("WordCount")
+    val sc = new SparkContext(sparkConf)
+    val rdd = sc.makeRDD(List(
+      ("nba", "科比"),
+      ("cba", "姚明"),
+      ("wnba", "无"),
+      ("nba", "詹姆斯")
+    ))
+    val partRDD = rdd.partitionBy(new MyPartitioner)
+    partRDD.saveAsTextFile("output")
+    sc.stop()
+  }
+
+  // 自定义分区器
+  // 1. 集成Partitioner
+  // 2. 重写方法
+  class MyPartitioner extends Partitioner {
+    // 分区数量
+    override def numPartitions: Int = 3
+
+    // 返回数据的分区索引（从0开始）
+    override def getPartition(key: Any): Int = {
+      key match {
+        case "nba" => 0
+        case "cba" => 1
+        case _ => 2
+      }
+    }
+  }
+}
+```
+
+#### 5.1.4.10 RDD 文件读取与保存  
+
+Spark 的数据读取及数据保存可以从两个维度来作区分：文件格式以及文件系统。文件格式分为： text 文件、 csv 文件、 sequence 文件以及 Object 文件；文件系统分为：本地文件系统、 HDFS、 HBASE 以及数据库。  
+
+* text 文件  
+
+  ```scala
+  // 读取输入文件
+  val inputRDD: RDD[String] = sc.textFile("input/1.txt")
+  // 保存数据
+  inputRDD.saveAsTextFile("output")
+  ```
+
+* sequence 文件  
+
+  SequenceFile 文件是 Hadoop 用来存储二进制形式的 key-value 对而设计的一种平面文件(FlatFile)。 在 SparkContext 中，可以调用 `sequenceFile[keyClass, valueClass](path)`
+
+  ```scala
+  // 保存数据为 SequenceFile
+  dataRDD.saveAsSequenceFile("output")
+  // 读取 SequenceFile 文件
+  sc.sequenceFile[Int,Int]("output").collect().foreach(println)
+  ```
+
+* object 对象文件
+
+  对象文件是将对象序列化后保存的文件，采用 Java 的序列化机制。 可以通过 `objectFile[T:ClassTag](path)`函数接收一个路径， 读取对象文件， 返回对应的 RDD， 也可以通过调用`saveAsObjectFile()`实现对对象文件的输出。因为是序列化所以要指定类型。
+
+  ```scala
+  // 保存数据
+  dataRDD.saveAsObjectFile("output")
+  // 读取数据
+  sc.objectFile[Int]("output").collect().foreach(println)
+  ```
+
+练习与测试
+
+```scala
+package com.atguigu.spark.core.rdd.io
+import org.apache.spark.{SparkConf, SparkContext}
+
+object Spark01_RDD_IO_Save {
+  def main(args: Array[String]): Unit = {
+    val sparkConf = new SparkConf().setMaster("local").setAppName("WordCount")
+    val sc = new SparkContext(sparkConf)
+
+    // TODO 文件数据保存
+    val rdd = sc.makeRDD(List(
+      ("a", 1),
+      ("b", 2),
+      ("c", 3)
+    ))
+
+    rdd.saveAsTextFile("output1")
+    rdd.saveAsObjectFile("output2")
+    rdd.saveAsSequenceFile("output3")
+    sc.stop()
+  }
+}
+```
+
+```scala
+package com.atguigu.spark.core.rdd.io
+import org.apache.spark.{SparkConf, SparkContext}
+
+object Spark01_RDD_IO_Load {
+  def main(args: Array[String]): Unit = {
+    val sparkConf = new SparkConf().setMaster("local").setAppName("WordCount")
+    val sc = new SparkContext(sparkConf)
+
+    // TODO 文件数据加载
+    val rdd1 = sc.textFile("output1")
+    println(rdd1.collect().mkString(","))
+
+    val rdd2 = sc.objectFile[(String, Int)]("output2")
+    println(rdd2.collect().mkString(","))
+
+    // 注意泛型是键值类型
+    val rdd3 = sc.sequenceFile[String, Int]("output3")
+    println(rdd3.collect().mkString(","))
+
+    sc.stop()
+  }
+}
+```
+
+## 5.2 累加器
+
+### 5.2.1 实现原理
+
+累加器用来把 Executor 端变量信息聚合到 Driver 端。在 Driver 程序中定义的变量，在Executor 端的每个 Task 都会得到这个变量的一份新的副本，每个 task 更新这些副本的值后，传回 Driver 端进行 merge。
+
+![image-20231010154154383](SparkCore笔记/image-20231010154154383.png)
+
+### 5.2.2 基础编程
+
+#### 5.2.2.1 系统累加器
+
+```scala
+val rdd = sc.makeRDD(List(1,2,3,4,5))
+// 声明累加器
+var sum = sc.longAccumulator("sum");
+rdd.foreach(
+    num => {
+        // 使用累加器
+        sum.add(num)
+    }
+)
+// 获取累加器的值
+println("sum = " + sum.value)
+```
+
+#### 5.2.2.2 自定义累加器
+
+```scala
+// 自定义累加器
+// 1. 继承 AccumulatorV2，并设定泛型
+// 2. 重写累加器的抽象方法
+class WordCountAccumulator extends AccumulatorV2[String, mutable.Map[String,
+Long]]{
+var map : mutable.Map[String, Long] = mutable.Map()
+// 累加器是否为初始状态
+override def isZero: Boolean = {
+	map.isEmpty
+}
+// 复制累加器
+override def copy(): AccumulatorV2[String, mutable.Map[String, Long]] = {
+	new WordCountAccumulator
+}
+// 重置累加器
+override def reset(): Unit = {
+	map.clear()
+}
+// 向累加器中增加数据 (In)
+override def add(word: String): Unit = {
+    // 查询 map 中是否存在相同的单词
+    // 如果有相同的单词，那么单词的数量加 1
+    // 如果没有相同的单词，那么在 map 中增加这个单词
+    map(word) = map.getOrElse(word, 0L) + 1L
+}
+
+// 合并累加器
+override def merge(other: AccumulatorV2[String, mutable.Map[String, Long]]):
+Unit = {
+    val map1 = map
+    val map2 = other.value
+    // 两个 Map 的合并
+    map = map1.foldLeft(map2)(
+        ( innerMap, kv ) => {
+            innerMap(kv._1) = innerMap.getOrElse(kv._1, 0L) + kv._2
+            innerMap
+        }
+    )
+}
+// 返回累加器的结果 （Out）
+override def value: mutable.Map[String, Long] = map
+}
+```
+
+练习与测试
+
+```scala
+package com.atguigu.spark.core.acc
+import org.apache.spark.{SparkConf, SparkContext}
+
+object Spark01_Acc {
+  def main(args: Array[String]): Unit = {
+    val sparkConf = new SparkConf().setMaster("local").setAppName("WordCount")
+    val sc = new SparkContext(sparkConf)
+    // TODO 探究为什么不能累加
+    val rdd = sc.makeRDD(List(1, 2, 3, 4))
+
+    // val i = rdd.reduce(_ + _)
+    var sum = 0
+    rdd.foreach(num => {
+      sum += num
+    })
+    println("sum: " + sum)
+
+    sc.stop()
+  }
+}
+```
+
+```scala
+package com.atguigu.spark.core.acc
+import org.apache.spark.{SparkConf, SparkContext}
+
+object Spark02_Acc {
+  def main(args: Array[String]): Unit = {
+    val sparkConf = new SparkConf().setMaster("local").setAppName("WordCount")
+    val sc = new SparkContext(sparkConf)
+    // TODO 使用系统累加器
+    val rdd = sc.makeRDD(List(1, 2, 3, 4))
+    // 获取系统累加器
+    // Spark默认就提供简单数据聚合的累加器
+    val sumAcc = sc.longAccumulator("sum")
+    // 此外还有其他不同类型的累加器
+    // sc.doubleAccumulator("")
+    // sc.collectionAccumulator("")
+    rdd.foreach(num => {
+      // 使用累加器
+      sumAcc.add(num)
+    })
+
+    // 获取累加器的值
+    println(sumAcc.value)
+    sc.stop()
+  }
+}
+```
+
+```scala
+package com.atguigu.spark.core.acc
+import org.apache.spark.{SparkConf, SparkContext}
+
+object Spark03_Acc {
+  def main(args: Array[String]): Unit = {
+    val sparkConf = new SparkConf().setMaster("local").setAppName("WordCount")
+    val sc = new SparkContext(sparkConf)
+    // TODO 累加器的少加和多加的情况分析
+    val rdd = sc.makeRDD(List(1, 2, 3, 4))
+    // 获取系统累加器
+    // Spark默认就提供简单数据聚合的累加器
+    val sumAcc = sc.longAccumulator("sum")
+
+    val mapRDD = rdd.map(num => {
+      // 使用累加器
+      sumAcc.add(num)
+      num
+    })
+
+    // mapRDD.cache()
+    // 获取累加器的值，会出现两种特殊情况
+    // 少加：转换算子中调用累加器，如果没有行动算子的话，那么不会执行
+    println(sumAcc.value)
+    // 多加：多次调用行动算子，相应的累加操作也会重复执行,如果不想出现多加的情况，可以使用持久化操作
+    // 一般情况下，累加器放在行动算子中进行操作
+    mapRDD.collect()
+    mapRDD.collect()
+    println(sumAcc.value)
+    sc.stop()
+  }
+}
+```
+
+```scala
+package com.atguigu.spark.core.acc
+import org.apache.spark.util.AccumulatorV2
+import org.apache.spark.{SparkConf, SparkContext}
+import scala.collection.mutable
+
+object Spark04_Acc {
+  def main(args: Array[String]): Unit = {
+    val sparkConf = new SparkConf().setMaster("local").setAppName("WordCount")
+    val sc = new SparkContext(sparkConf)
+    // TODO 使用自定义累加器完成WordCount
+    val rdd = sc.makeRDD(List("Hello", "Spark", "Scala", "Hello"))
+    rdd.map((_, 1)).reduceByKey(_ + _)
+
+    // 自定义累加器
+    // 1、创建累加器对象
+    // 2、向Spark进行注册
+    val wcAcc = new MyAccumulator
+    sc.register(wcAcc, "wordCountAcc")
+
+    rdd.foreach(
+      word => {
+        // 数据累加（使用累加器）
+        wcAcc.add(word)
+      }
+    )
+
+    // 获取累加器累加的结果
+    println(wcAcc.value)
+    sc.stop()
+  }
+
+  /*
+  * 自定义数据累加器：WordCount
+  * 1、继承AccumulatorV2，定义泛型
+  *   IN：累加器输入的数据类型
+  *   OUT：累加器返回的数据类型
+  * 2、重写方法（6个）
+  * */
+  class MyAccumulator extends AccumulatorV2[String, mutable.Map[String, Long]] {
+    private val wcMap = mutable.Map[String, Long]()
+
+    // 判断是否是初始状态
+    override def isZero: Boolean = {
+      wcMap.isEmpty
+    }
+
+    // 复制一个新的累加器
+    override def copy(): AccumulatorV2[String, mutable.Map[String, Long]] = {
+      new MyAccumulator()
+    }
+
+    // 重置累加器
+    override def reset(): Unit = {
+      wcMap.clear()
+    }
+
+    // 获取累加器需要计算的值
+    override def add(word: String): Unit = {
+      val newCnt = wcMap.getOrElse(word, 0L) + 1
+      wcMap.update(word, newCnt)
+    }
+
+    // Driver合并多个累加器
+    override def merge(other: AccumulatorV2[String, mutable.Map[String, Long]]): Unit = {
+      val map1 = this.wcMap
+      val map2 = other.value
+      map2.foreach {
+        case (word, count) => {
+          val newCount = map1.getOrElse(word, 0L) + count
+          map1.update(word, newCount)
+        }
+      }
+    }
+
+    // 返回累加后的值
+    override def value: mutable.Map[String, Long] = {
+      wcMap
+    }
+  }
+}
+```
+
+## 5.3 广播变量
+
+### 5.3.1 实现原理
+
+广播变量用来高效分发较大的对象。向所有工作节点发送一个较大的只读值，以供一个或多个 Spark 操作使用。比如，如果你的应用需要向所有节点发送一个较大的只读查询表，广播变量用起来都很顺手。在多个并行操作中使用同一个变量，但是 Spark 会为每个任务分别发送。
+
+![image-20231010154250327](SparkCore笔记/image-20231010154250327.png)
+
+* 闭包数据，都是以Task为单位发送的，每个任务中包含闭包数据
+* 这样可能会导致，一个Executor中含有大量重复的数据，并且占用大量的内存
+* Executor其实就一个JVM，所以在启动时，会自动分配内存
+* 完全可以将任务中的闭包数据放置在Executor的内存中，达到共享的目的
+* Spark中的广播变量就可以将闭包的数据保存到Executor的内存中
+* Spark中的广播变量不能够更改 ： 分布式共享只读变量
+
+### 5.3.2 基础编程
+
+```scala
+val rdd1 = sc.makeRDD(List( ("a",1), ("b", 2), ("c", 3), ("d", 4) ),4)
+val list = List( ("a",4), ("b", 5), ("c", 6), ("d", 7) )
+// 声明广播变量
+val broadcast: Broadcast[List[(String, Int)]] = sc.broadcast(list)
+val resultRDD: RDD[(String, (Int, Int))] = rdd1.map {
+    case (key, num) => {
+    var num2 = 0
+    // 使用广播变量
+    for ((k, v) <- broadcast.value) {
+        if (k == key) {
+        	num2 = v
+        }
+    }
+    (key, (num, num2))
+    }
+}
+```
+
+练习与测试
+
+```scala
+package com.atguigu.spark.core.acc
+import org.apache.spark.{SparkConf, SparkContext}
+import scala.collection.mutable
+
+object Spark05_Bc {
+  def main(args: Array[String]): Unit = {
+    val sparkConf = new SparkConf().setMaster("local").setAppName("WordCount")
+    val sc = new SparkContext(sparkConf)
+    // TODO 出现内存数据过多问题
+    val rdd1 = sc.makeRDD(List(("a", 1), ("b", 2), ("c", 3)))
+    // val rdd2 = sc.makeRDD(List(("a", 4), ("b", 5), ("c", 6)))
+    // join会导致数据量集合增长，并且会影响shuffle的性能，不推荐使用
+    // val joinRDD = rdd1.join(rdd2)
+
+    // ("a", 1), ("b", 2), ("c", 3)
+    // (a, (1, 4)), (b, (2, 5)), (c,(3,5))
+    val map = mutable.Map(("a", 4), ("b", 5), ("c", 6))
+    rdd1.map {
+      case (w, c) => {
+        val l = map.getOrElse(w, 0)
+        (w, (c, l))
+      }
+    }.collect().foreach(println)
+
+    // joinRDD.collect().foreach(println)
+    sc.stop()
+  }
+}
+```
+
+```scala
+package com.atguigu.spark.core.acc
+import org.apache.spark.{SparkConf, SparkContext}
+import scala.collection.mutable
+
+object Spark06_Bc {
+  def main(args: Array[String]): Unit = {
+    val sparkConf = new SparkConf().setMaster("local").setAppName("WordCount")
+    val sc = new SparkContext(sparkConf)
+    // TODO 广播变量
+    val rdd1 = sc.makeRDD(List(("a", 1), ("b", 2), ("c", 3)))
+    // val rdd2 = sc.makeRDD(List(("a", 4), ("b", 5), ("c", 6)))
+    // join会导致数据量集合增长，并且会影响shuffle的性能，不推荐使用
+    // val joinRDD = rdd1.join(rdd2)
+
+    val map = mutable.Map(("a", 4), ("b", 5), ("c", 6))
+    // 封装广播变量
+    val bc = sc.broadcast(map)
+    rdd1.map {
+      case (w, c) => {
+        // 访问广播变量
+        val l = bc.value.getOrElse(w, 0)
+        (w, (c, l))
+      }
+    }.collect().foreach(println)
+
+    // joinRDD.collect().foreach(println)
+    sc.stop()
+  }
+}
+```
+

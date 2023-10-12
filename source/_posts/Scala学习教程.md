@@ -3328,8 +3328,7 @@ class Person(nameParam: String) {
     }
     println("父类主构造器")
 }
-class Emp(nameParam: String, ageParam: Int) extends
-    Person(nameParam, ageParam) {
+class Emp(nameParam: String, ageParam: Int) extends Person(nameParam, ageParam) {
     var empNo: Int = _
     def this(nameParam: String, ageParam: Int, empNoParam: Int) {
         this(nameParam, ageParam)
@@ -4340,7 +4339,6 @@ class Student17(name: String, age: Int) extends Person17(name, age) {
 
   def study(): Unit = println("student study")
 }
-
 
 // 定义枚举类对象
 object WorkDay extends Enumeration {
