@@ -19,7 +19,7 @@ categories:
 
 示例
 
-```html
+```vue
 <head>
     <meta charset="UTF-8">
     <title>TodoList Jquery</title>
@@ -68,7 +68,7 @@ categories:
 
 示例
 
-```html
+```vue
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -118,7 +118,7 @@ Vue的ViewModel层实现原理：Vue用到了es5里面比较核心的API：Objec
 
 # Vue 初探
 
-```html
+```vue
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -163,7 +163,7 @@ Vue的ViewModel层实现原理：Vue用到了es5里面比较核心的API：Objec
 
 ## 父组件向子组件传值
 
-```html
+```vue
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -229,7 +229,7 @@ Vue的ViewModel层实现原理：Vue用到了es5里面比较核心的API：Objec
 
 ## 子组件向父组件传值
 
-```html
+```vue
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -296,7 +296,7 @@ Vue的ViewModel层实现原理：Vue用到了es5里面比较核心的API：Objec
 
 # Vue 实例
 
-```html
+```vue
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -338,7 +338,7 @@ Vue的ViewModel层实现原理：Vue用到了es5里面比较核心的API：Objec
 
 ![image-20231016110000783](Vue笔记/image-20231016110000783.png)
 
-```html
+```vue
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -399,7 +399,7 @@ Vue的ViewModel层实现原理：Vue用到了es5里面比较核心的API：Objec
 
 # Vue 模板语法
 
-```html
+```vue
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -438,7 +438,7 @@ Vue的ViewModel层实现原理：Vue用到了es5里面比较核心的API：Objec
 
 # Vue 计算属性、方法、侦听器
 
-```html
+```vue
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -515,7 +515,7 @@ Vue的ViewModel层实现原理：Vue用到了es5里面比较核心的API：Objec
 
 # Vue 计算属性的setter和getter
 
-```html
+```vue
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -563,7 +563,7 @@ Vue的ViewModel层实现原理：Vue用到了es5里面比较核心的API：Objec
 
 # Vue 样式绑定
 
-```html
+```vue
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -604,7 +604,7 @@ Vue的ViewModel层实现原理：Vue用到了es5里面比较核心的API：Objec
 </html>
 ```
 
-```html
+```vue
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -645,7 +645,7 @@ Vue的ViewModel层实现原理：Vue用到了es5里面比较核心的API：Objec
 </html>
 ```
 
-```html
+```vue
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -680,7 +680,7 @@ Vue的ViewModel层实现原理：Vue用到了es5里面比较核心的API：Objec
 </html>
 ```
 
-```html
+```vue
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -717,7 +717,7 @@ Vue的ViewModel层实现原理：Vue用到了es5里面比较核心的API：Objec
 
 # Vue 条件渲染
 
-```html
+```vue
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -773,7 +773,7 @@ Vue的ViewModel层实现原理：Vue用到了es5里面比较核心的API：Objec
 
 # Vue 列表渲染
 
-```html
+```vue
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -837,7 +837,7 @@ Vue的ViewModel层实现原理：Vue用到了es5里面比较核心的API：Objec
 </html>
 ```
 
-```html
+```vue
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -891,7 +891,7 @@ Vue的ViewModel层实现原理：Vue用到了es5里面比较核心的API：Objec
 </html>
 ```
 
-```html
+```vue
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -944,7 +944,7 @@ Vue的ViewModel层实现原理：Vue用到了es5里面比较核心的API：Objec
 
 ## 对象
 
-```html
+```vue
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -983,7 +983,7 @@ Vue的ViewModel层实现原理：Vue用到了es5里面比较核心的API：Objec
 
 ## 数组
 
-```html
+```vue
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1015,7 +1015,7 @@ Vue的ViewModel层实现原理：Vue用到了es5里面比较核心的API：Objec
 
 # Vue 组件使用细节
 
-```html
+```vue
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1062,7 +1062,7 @@ Vue的ViewModel层实现原理：Vue用到了es5里面比较核心的API：Objec
 </html>
 ```
 
-```html
+```vue
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1102,7 +1102,7 @@ Vue的ViewModel层实现原理：Vue用到了es5里面比较核心的API：Objec
 </html>
 ```
 
-```html
+```vue
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1131,7 +1131,7 @@ Vue的ViewModel层实现原理：Vue用到了es5里面比较核心的API：Objec
 </html>
 ```
 
-```html
+```vue
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1184,7 +1184,7 @@ Vue的ViewModel层实现原理：Vue用到了es5里面比较核心的API：Objec
 
 # Vue 父子组件传值
 
-```html
+```vue
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1251,7 +1251,7 @@ Vue的ViewModel层实现原理：Vue用到了es5里面比较核心的API：Objec
 
 # Vue 组件参数校验与非Props特性
 
-```html
+```vue
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1301,7 +1301,7 @@ Vue的ViewModel层实现原理：Vue用到了es5里面比较核心的API：Objec
 
 # Vue 给组件绑定原生事件
 
-```html
+```vue
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1338,7 +1338,7 @@ Vue的ViewModel层实现原理：Vue用到了es5里面比较核心的API：Objec
 </html>
 ```
 
-```html
+```vue
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1371,7 +1371,7 @@ Vue的ViewModel层实现原理：Vue用到了es5里面比较核心的API：Objec
 
 # Vue 给非父子组件传值
 
-```html
+```vue
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1429,7 +1429,7 @@ Vue的ViewModel层实现原理：Vue用到了es5里面比较核心的API：Objec
 
 ## 旧方式
 
-```html
+```vue
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1458,7 +1458,7 @@ Vue的ViewModel层实现原理：Vue用到了es5里面比较核心的API：Objec
 
 ## slot方式
 
-```html
+```vue
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1496,7 +1496,7 @@ Vue的ViewModel层实现原理：Vue用到了es5里面比较核心的API：Objec
 
 ## 具名插槽
 
-```html
+```vue
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1535,7 +1535,7 @@ Vue的ViewModel层实现原理：Vue用到了es5里面比较核心的API：Objec
 
 # Vue 中的作用域插槽
 
-```html
+```vue
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1577,7 +1577,7 @@ Vue的ViewModel层实现原理：Vue用到了es5里面比较核心的API：Objec
 
 # Vue 动态组件与v-once指令
 
-```html
+```vue
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1623,7 +1623,7 @@ Vue的ViewModel层实现原理：Vue用到了es5里面比较核心的API：Objec
 </html>
 ```
 
-```html
+```vue
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1672,7 +1672,7 @@ Vue的ViewModel层实现原理：Vue用到了es5里面比较核心的API：Objec
 
 ![image-20231101144920584](Vue笔记/image-20231101144920584.png)
 
-```html
+```vue
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1728,7 +1728,7 @@ Vue的ViewModel层实现原理：Vue用到了es5里面比较核心的API：Objec
 
 官网地址：[Animate.css 官网](https://animate.style/)
 
-```html
+```vue
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1798,7 +1798,7 @@ Vue的ViewModel层实现原理：Vue用到了es5里面比较核心的API：Objec
 </html>
 ```
 
-```html
+```vue
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1841,7 +1841,7 @@ Vue的ViewModel层实现原理：Vue用到了es5里面比较核心的API：Objec
 
 # Vue 中同时使用过渡动画和@keyframes动画
 
-```html
+```vue
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1922,7 +1922,7 @@ Vue的ViewModel层实现原理：Vue用到了es5里面比较核心的API：Objec
 
 官网地址：[Velocity.js 官网](http://velocityjs.org/)
 
-```html
+```vue
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1990,7 +1990,7 @@ Vue的ViewModel层实现原理：Vue用到了es5里面比较核心的API：Objec
 </html>
 ```
 
-```html
+```vue
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -2054,7 +2054,7 @@ Vue的ViewModel层实现原理：Vue用到了es5里面比较核心的API：Objec
 
 # Vue 中多个元素或组件的过渡
 
-```html
+```vue
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -2103,7 +2103,7 @@ Vue的ViewModel层实现原理：Vue用到了es5里面比较核心的API：Objec
 </html>
 ```
 
-```html
+```vue
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -2161,7 +2161,7 @@ Vue的ViewModel层实现原理：Vue用到了es5里面比较核心的API：Objec
 
 # Vue 中的列表过渡
 
-```html
+```vue
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -2211,7 +2211,7 @@ Vue的ViewModel层实现原理：Vue用到了es5里面比较核心的API：Objec
 
 # Vue中的动画封装
 
-```html
+```vue
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -2507,7 +2507,7 @@ config文件主要是项目相关配置，我们常用的就是当端口冲突�
 
 3. **文件：App.vue——[根组件]**
 
-   ```html
+   ```vue
    <template>
      <div id="app">
        <img src="./assets/logo.png">
@@ -2569,7 +2569,7 @@ config文件主要是项目相关配置，我们常用的就是当端口冲突�
 
    后期还可以引入插件，当然首先得安装插件。
 
-   ```javascript
+   ```js
    // The Vue build version to load with the `import` command
    // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
    import Vue from 'vue' // 引入vue文件, 后面可以不用加后缀，webpack会优先选择.vue后缀文件
@@ -2591,7 +2591,7 @@ config文件主要是项目相关配置，我们常用的就是当端口冲突�
 
    router文件夹下，有一个index.js，即为路由配置文件
 
-   ```javascript
+   ```js
    import Vue from 'vue'  // 引用vue文件
    import Router from 'vue-router'  // 引用vue路由模块，并赋值给变量Router
    import HelloWorld from '@/components/HelloWorld'  // 英文HelloWorld.vue模版，并赋值给变量HelloWorld,这里是“@”相当于“../”, 也指src目录
@@ -2627,7 +2627,7 @@ SEO：搜索引擎优。单页面应用搜索引擎优化比较差，搜索引�
 
 2. 保证移动端设备，用户通过手指放大缩小这样的操作无效的，它的页面比例始终是1比1，调整`viewport`标签添加 `minimun-scale=1.0,maximum-scale=1.0,er-scalable=no`
 
-   ```html
+   ```vue
    <!DOCTYPE html>
    <html>
      <head>
@@ -2645,14 +2645,14 @@ SEO：搜索引擎优。单页面应用搜索引擎优化比较差，搜索引�
 
 3. 用来重置页面样式表，对基础样式的修饰，保证不同手机浏览器的默认展示样式统一，main.js添加如下
 
-   ```javascript
+   ```js
    // 用来重置页面样式表，对基础样式的修饰，保证不同手机浏览器的默认展示样式统一
    import './assets/styles/reset.css'
    ```
 
 4. 解决1像素边框的问题，多倍屏物理像素实际对应的是2或者3等多像素的问题，main.js添加如下
 
-   ```javascript
+   ```js
    // 解决1像素边框的问题，多倍屏物理像素实际对应的是2或者3等多像素的问题
    import './assets/styles/border.css'
    ```
@@ -2678,7 +2678,7 @@ SEO：搜索引擎优。单页面应用搜索引擎优化比较差，搜索引�
 
    main.js添加如下
 
-   ```javascript
+   ```js
    // 解决移动端点击事件延迟300ms问题
    import fastClick from 'fastclick'
    // 使用fastClick绑定到document.body
@@ -2729,7 +2729,7 @@ SEO：搜索引擎优。单页面应用搜索引擎优化比较差，搜索引�
 
    router/index.js
    
-   ```typescript
+   ```js
    import Vue from 'vue'
    import Router from 'vue-router'
    import Home from '@/pages/home/Home
@@ -2754,7 +2754,7 @@ SEO：搜索引擎优。单页面应用搜索引擎优化比较差，搜索引�
    
    pages/home/Home.Vue
    
-   ```html
+   ```vue
    <template>
      <div>
        <home-header></home-header>
@@ -2779,7 +2779,7 @@ SEO：搜索引擎优。单页面应用搜索引擎优化比较差，搜索引�
    
    pages/home/components/Header.vue
    
-   ```html
+   ```vue
    <template>
        <div class="header">
          <div class="header-left">返回</div>
@@ -2854,7 +2854,7 @@ SEO：搜索引擎优。单页面应用搜索引擎优化比较差，搜索引�
 
    5）使用图标
 
-   ```html
+   ```vue
    <div class="header-left">
    	<span class="iconfont">&#xe624;</span>
    </div>
@@ -2876,7 +2876,7 @@ $headerHeight = .86rem
 
 build/webpack.base.conf.js
 
-```javascript
+```js
  resolve: {
     extensions: ['.js', '.vue', '.json'],
     alias: {
@@ -2890,7 +2890,7 @@ build/webpack.base.conf.js
 
 pages/home/components/Header.vue
 
-```html
+```vue
 <template>
     <div class="header">
       <div class="header-left">
@@ -3046,7 +3046,7 @@ new Vue({
 
 pages/home/components/Swiper.vue
 
-```html
+```vue
 <template>
   <div class="wrapper">
     <swiper :options="swiperOption">
@@ -3098,7 +3098,7 @@ export default {
 
 合并流程：
 
-```
+```shell
 git checkout main
 git merge orgin/index-swiper
 git push
@@ -3108,7 +3108,7 @@ git push
 
 pages/home/components/Icons.vue
 
-```html
+```vue
 <template>
   <div class="icons">
     <swiper >
@@ -3239,7 +3239,7 @@ ellipsis()
 
 pages/home/components/Recommend.vue
 
-```html
+```vue
 <template>
   <div>
     <div class="title">热销推荐</div>
@@ -3325,7 +3325,7 @@ export default {
 
 pages/home/components/Weekend.vue
 
-```html
+```vue
 <template>
   <div>
     <div class="title">周末去哪儿</div>
@@ -3539,7 +3539,7 @@ added 6 packages from 18 contributors in 22.229s
 
    在`config/index.js` 文件中添加转发模拟数据地址配置，会自动替换代码中的路径到`static/mock` 的静态文件中取数据，这个配置是由webpack决定的
 
-   ```javascript
+   ```js
    'use strict'
    // Template version: 1.3.1
    // see http://vuejs-templates.github.io/webpack for documentation.
@@ -3552,7 +3552,7 @@ added 6 packages from 18 contributors in 22.229s
        // Paths
        assetsSubDirectory: 'static',
        assetsPublicPath: '/',
-       // 识别api开头路径，并转发到/static/mock的静态文件数据上
+       // 测试开发环境下的前后端联调配置，识别api开头路径，并转发到/static/mock的静态文件数据上
        proxyTable: {
          '/api': {
            target: 'http://localhost:8080',
@@ -3581,7 +3581,7 @@ added 6 packages from 18 contributors in 22.229s
 
 pages/home/Home.Vue
 
-```html
+```vue
 <template>
   <div>
     <home-header :city="city"></home-header>
@@ -3645,7 +3645,7 @@ export default {
 
 pages/home/components/Header.vue
 
-```html
+```vue
 <template>
     <div class="header">
       <div class="header-left">
@@ -3715,7 +3715,7 @@ export default {
 
 pages/home/components/Swiper.vue
 
-```html
+```vue
 <template>
   <div class="wrapper">
     <swiper :options="swiperOption" v-if="showSwiper">
@@ -3767,7 +3767,7 @@ export default {
 
 pages/home/components/Icons.vue
 
-```html
+```vue
 <template>
   <div class="icons">
     <swiper :options="swiperOption">
@@ -3858,7 +3858,7 @@ export default {
 
 pages/home/components/Recommend.vue
 
-```html
+```vue
 <template>
   <div>
     <div class="title">热销推荐</div>
@@ -3925,7 +3925,7 @@ export default {
 
 pages/home/components/Weekend.vue
 
-```html
+```vue
 <template>
   <div>
     <div class="title">周末去哪儿</div>
@@ -4012,7 +4012,7 @@ export default new Router({
 
 pages/city/City.Vue
 
-```html
+```vue
 <template>
   <city-header></city-header>
 </template>
@@ -4036,7 +4036,7 @@ export default {
 
 pages/city/components/Header.vue
 
-```html
+```vue
 <template>
   <div class="header">
     城市选择
@@ -4079,7 +4079,7 @@ export default {
 
 pages/city/components/Search.vue
 
-```html
+```vue
 <template>
     <div class="search">
         <input class="searchInput" type="text" placeholder=输入城市名或拼音>
@@ -4115,7 +4115,7 @@ export default {
 
 pages/city/components/List.vue
 
-```html
+```vue
 <template>
   <div class="list">
     <div class="area">
@@ -4290,7 +4290,7 @@ added 1 package from 1 contributor in 20.802s
 
 pages/city/components/List.vue
 
-```html
+```vue
 <template>
   <div class="list" ref="wrapper">
     <div>
@@ -4451,7 +4451,7 @@ export default {
 
 pages/city/components/Alphabet.vue
 
-```html
+```vue
 <template>
     <div class="list">
         <li class="item">A</li>
@@ -4499,7 +4499,7 @@ export default {
 
 pages/city/City.vue
 
-```html
+```vue
 <template>
   <div>
     <city-header></city-header>
@@ -4555,7 +4555,7 @@ export default {
 
 pages/city/components/List.vue
 
-```html
+```vue
 <template>
   <div class="list" ref="wrapper">
     <div>
@@ -4657,7 +4657,7 @@ export default {
 
 pages/city/components/Alphabet.vue
 
-```html
+```vue
 <template>
     <div class="list">
         <li class="item" v-for="(item, key) of cities" :key="key">{{ key }}</li>
@@ -4697,7 +4697,7 @@ export default {
 
 pages/city/City.vue
 
-```html
+```vue
 <template>
   <div>
     <city-header></city-header>
@@ -4766,7 +4766,7 @@ export default {
 
 pages/city/components/List.vue
 
-```html
+```vue
 <template>
   <div class="list" ref="wrapper">
     <div>
@@ -4870,7 +4870,7 @@ export default {
 
 pages/city/components/Alphabet.vue
 
-```html
+```vue
 <template>
     <div class="list">
         <li class="item"
@@ -4955,7 +4955,7 @@ export default {
 
 pages/city/components/Alphabet.vue
 
-```html
+```vue
 <template>
     <div class="list">
         <li class="item"
@@ -5049,7 +5049,7 @@ export default {
 
 pages/city/City.vue
 
-```html
+```vue
 <template>
   <div>
     <city-header></city-header>
@@ -5118,7 +5118,7 @@ export default {
 
 pages/city/components/Search.vue
 
-```html
+```vue
 <template>
   <div>
     <div class="search">
@@ -5234,7 +5234,7 @@ export default {
 
 src/main.js
 
-```javascript
+```js
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
@@ -5271,7 +5271,7 @@ new Vue({
 
 src/store/index.js
 
-```javascript
+```js
 import Vue from 'vue'
 import Vuex from 'vuex'
 import state from './state'
@@ -5299,7 +5299,7 @@ export default new Vuex.Store({
 
 src/store/state.js
 
-```javascript
+```js
 let defaultCity = '北京'
 try {
   if (localStorage.city) {
@@ -5314,7 +5314,7 @@ export default{
 
 src/store/mutations.js
 
-```javascript
+```js
 export default {
   changeCity (state, city) {
     state.city = city
@@ -5327,7 +5327,7 @@ export default {
 
 pages/home/Home.vue
 
-```html
+```vue
 <template>
   <div>
     <home-header></home-header>
@@ -5389,7 +5389,7 @@ export default {
 
 pages/home/components/Header.vue
 
-```html
+```vue
 <template>
     <div class="header">
       <div class="header-left">
@@ -5468,7 +5468,7 @@ export default {
 
 pages/city/components/List.vue
 
-```html
+```vue
 <template>
   <div class="list" ref="wrapper">
     <div>
@@ -5601,7 +5601,7 @@ export default {
 
 pages/city/components/Search.vue
 
-```html
+```vue
 <template>
   <div>
     <div class="search">
@@ -5720,4 +5720,1751 @@ export default {
 ```
 
 ## 使用keep-alive vue内置标签优化网页性能
+
+src/App.vue
+
+```vue
+<template>
+  <div id="app">
+    <!--
+      keep-alive: 路由的内容被加载过一次后就把路由中的内容放在内存中，下载再进这个路由的时候，
+                  不需要重新渲染这个组件和重新执行钩子函数，只需要从内存中把之前的内容拿出来显示在页面上就可以了
+    -->
+    <keep-alive>
+      <router-view/>
+    </keep-alive>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'App'
+}
+</script>
+
+<style>
+
+</style>
+```
+
+pages/home/Home.vue
+
+```vue
+<template>
+  <div>
+    <home-header></home-header>
+    <home-swiper :list="swiperList"></home-swiper>
+    <home-icons :list="iconList"></home-icons>
+    <home-recommend :list="recommendList"></home-recommend>
+    <home-weekend :list="weekendList"></home-weekend>
+  </div>
+</template>
+
+<script>
+import HomeHeader from './components/Header.vue'
+import HomeSwiper from './components/Swiper.vue'
+import HomeIcons from './components/Icons.vue'
+import HomeRecommend from './components/Recommend.vue'
+import HomeWeekend from './components/Weekend.vue'
+import axios from 'axios'
+import { mapState } from 'vuex'
+export default {
+  name: 'Home',
+  components: {
+    HomeHeader,
+    HomeSwiper,
+    HomeIcons,
+    HomeRecommend,
+    HomeWeekend
+  },
+  computed: {
+    ...mapState(['city'])
+  },
+  mounted () {
+    this.lastCity = this.city
+    this.getHomeInfo()
+  },
+  data () {
+    return {
+      lastCity: '',
+      swiperList: [],
+      iconList: [],
+      recommendList: [],
+      weekendList: []
+    }
+  },
+  methods: {
+    getHomeInfo () {
+      axios.get('/api/index.json?city=' + this.city).then(this.getHomeInfoSucc)
+    },
+    getHomeInfoSucc (res) {
+      res = res.data
+      if (res.ret && res.data) {
+        const data = res.data
+        this.swiperList = data.swiperList
+        this.iconList = data.iconList
+        this.recommendList = data.recommendList
+        this.weekendList = data.weekendList
+      }
+    }
+  },
+  // 当使用了keep-alive，则会多出来一个生命周期函数，表示页面每次重新被显示的时候，activated会被执行
+  // 结合lastCity这个临时缓冲变量，实现首页代码性能优化的调整
+  activated () {
+    if (this.lastCity !== this.city) {
+      this.lastCity = this.city
+      this.getHomeInfo()
+    }
+  }
+}
+</script>
+<style>
+
+</style>
+```
+
+pages/home/components/Header.vue
+
+```vue
+<template>
+    <div class="header">
+      <div class="header-left">
+        <div class="iconfont back-icon">&#xe624;</div>
+      </div>
+      <div class="header-input">
+        <span class="iconfont">&#xe632;</span>
+        输入城市/景点/游玩主题
+      </div>
+      <router-link to="/city">
+      <div class="header-right">
+        {{ this.city }}
+        <span class="iconfont arrow-icon">&#xe62d;</span>
+      </div>
+    </router-link>
+    </div>
+  </template>
+
+<script>
+import { mapGetters, mapState } from 'vuex'
+export default {
+  name: 'HomeHeader',
+  computed: {
+    // mapState：指将vuex里面名为city的数据映射到本组件的computed的名为city的计算属性中
+    ...mapState(['city']),
+    // mapGetters：指将vuex里面名为doubleCity的getter映射到本组件的computed的名为doubleCity的计算属性中
+    ...mapGetters(['doubleCity'])
+  }
+}
+</script>
+
+<!-- lang="stylus": 使用stylus语法编写css, scoped: 样式做限制，只对当前组件有影响，不会影响其他组件 -->
+<!-- 1rem = html font-size = 50px -->
+<!-- $bgColor 引用varibles.styl文件中的变量 -->
+<!--
+     @import '~@/assets/styles/varibles.styl'
+     @import: 样式中引用样式，使用样式变量
+     注意：导入的时候区分于其他形式的导入，可以用相对路径的方式，也可以用@符号
+     如果用@符号，则代表从src目录开始，但是这里需要在@符号前面加上~
+     可以自定义路径别名，在webpack.base.conf.js文件中进行配置，配置完成之后可以进行最终简化路径 @import '~styles/varibles.styl'
+-->
+<style lang="stylus" scoped>
+@import '~styles/varibles.styl'
+.header
+  display: flex
+  line-height: $headerHeight
+  background: $bgColor
+  color: #fff
+  .header-left
+    width: .64rem
+    float: left
+    .back-icon
+      text-align: center
+      font-size: .4rem
+  .header-input
+    flex: 1
+    height: .64rem
+    line-height: .64rem
+    margin-left: .2rem
+    margin-top: .12rem
+    padding-left: .2rem
+    background: #fff
+    border-radius: .1rem
+    color: #ccc
+  .header-right
+    min-width: 1.04rem
+    padding: 0 .1rem
+    float: right
+    text-align: center
+    color: #fff
+    .arrow-icon
+      margin-left: -.04rem
+      font-size: .24rem
+</style>
+```
+
+## 详情页动态路由及banner布局
+
+src/router/index.js
+
+```js
+import Vue from 'vue'
+import Router from 'vue-router'
+import Home from '@/pages/home/Home'
+import City from '@/pages/city/City'
+import Detail from '@/pages/detail/Detail'
+Vue.use(Router)
+
+export default new Router({
+  routes: [
+    {
+      path: '/',
+      name: 'Home',
+      component: Home
+    },
+    {
+      path: '/city',
+      name: 'City',
+      component: City
+    },
+    // 动态路由
+    {
+      path: '/detail/:id',
+      name: 'Detail',
+      component: Detail
+    }
+  ]
+})
+```
+
+pages/detail/Detail.vue
+
+```vue
+<template>
+    <div>
+      <detail-banner></detail-banner>
+    </div>
+</template>
+
+<script>
+import DetailBanner from './components/Banner'
+export default {
+  name: 'Detail',
+  components: {
+    DetailBanner
+  }
+}
+</script>
+
+<style lang="stylus" scoped>
+
+</style>
+```
+
+pages/detail/components/Banner.vue
+
+```vue
+<template>
+  <div class="banner">
+    <img class="banner-img" src="http://img1.qunarzz.com/sight/p0/201404/23/04b92c99462687fa1ba45c1b5ba4ad77.jpg_600x330_bf9c4904.jpg">
+    <div class="banner-info">
+      <div class="banner-tittle">大连圣亚海洋世界(AAAA景区)</div>
+      <div class="banner-number">
+        <span class="iconfont banner-icon">&#xe731;</span>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'Banner'
+}
+</script>
+
+<style lang="stylus" scoped>
+.banner
+  position: relative
+  overflow hidden
+  height: 0
+  padding-bottom: 55%
+  .banner-img
+    width: 100%
+  .banner-info
+    display: flex
+    position: absolute
+    left: 0
+    right: 0
+    bottom: 0
+    line-height: .6rem
+    color: #fff
+    background-image: linear-gradient(top, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.8))
+    .banner-tittle
+      flex: 1
+      font-size: .32rem
+      padding: 0 .2rem
+    .banner-number
+      height: .32rem
+      line-height: .32rem
+      margin-top: .14rem
+      padding: 0 .4rem
+      border-radius: .2rem
+      background: rgba(0, 0, 0, .8)
+      font-size: .24rem
+      .banner-icon
+        font-size: .24rem
+</style>
+```
+
+pages/home/components/Recommend.vue
+
+```vue
+<template>
+  <div>
+    <div class="title">热销推荐</div>
+    <ul>
+      <!-- 此时vue不会将router-link渲染成a标签，而是li标签 -->
+      <router-link
+        tag="li"
+        class="item border-bottom"
+        v-for="item of list"
+        :key="item.key"
+        :to="'/detail/' + item.id"
+      >
+          <img class="item-img" :src="item.imgUrl">
+          <div class="item-info">
+            <p class="item-title">{{ item.title }}</p>
+            <p class="item-desc">{{ item.desc }}</p>
+            <button class="item-button">查看详情</button>
+          </div>
+      </router-link>
+    </ul>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'HomeRecommend',
+  props: {
+    list: Array
+  }
+}
+</script>
+
+<style lang="stylus" scoped>
+@import '~styles/varibles.styl'
+@import '~styles/mixins.styl'
+
+.title
+  margin-top: .2rem
+  line-height: .8rem
+  background: #eee
+  text-indent: .2rem
+.item
+  overflow: hidden
+  display: flex
+  height: 1.9rem
+  .item-img
+    width: 1.7rem
+    height: 1.7rem
+    padding: .1rem
+  .item-info
+    flex: 1
+    padding: .1rem
+    min-width: 0
+    .item-title
+      line-height: 0.54rem
+      font-size: .32rem
+      ellipsis()
+    .item-desc
+      line-height: 0.4rem
+      color: #ccc
+      ellipsis()
+    .item-button
+      line-height: .44rem
+      margin-top: .16rem
+      background: #ff9300
+      padding: 0 .2rem
+      border-radius: .06rem
+      color: #fff
+
+</style>
+```
+
+## 公共图片画廊组件拆分
+
+build/webpack.base.conf
+
+```js
+resolve: {
+    extensions: ['.js', '.vue', '.json'],
+    alias: {
+      'vue$': 'vue/dist/vue.esm.js',
+      '@': resolve('src'),
+      'styles': resolve('src/assets/styles'),
+      // 简写
+      'common': resolve('src/common')
+    }
+  },
+```
+
+pages/detail/Detail.vue
+
+```vue
+<template>
+    <div>
+      <detail-banner></detail-banner>
+    </div>
+</template>
+
+<script>
+import DetailBanner from './components/Banner'
+export default {
+  name: 'Detail',
+  components: {
+    DetailBanner
+  }
+}
+</script>
+
+<style lang="stylus" scoped>
+
+</style>
+```
+
+pages/detail/components/Banner.vue
+
+```vue
+<template>
+  <div>
+    <div class="banner" @click="handleBannerClick">
+      <img class="banner-img" src="http://img1.qunarzz.com/sight/p0/201404/23/04b92c99462687fa1ba45c1b5ba4ad77.jpg_600x330_bf9c4904.jpg">
+      <div class="banner-info">
+        <div class="banner-tittle">大连圣亚海洋世界(AAAA景区)</div>
+        <div class="banner-number">
+          <span class="iconfont banner-icon">&#xe731;</span>
+        </div>
+      </div>
+    </div>
+    <common-gallary
+     :imgs="imgs"
+     v-show="showGallary"
+     @close="handleGallaryClose"
+    ></common-gallary>
+  </div>
+</template>
+
+<script>
+import CommonGallary from 'common/gallary/Gallary'
+export default {
+  name: 'Banner',
+  components: {
+    CommonGallary
+  },
+  data () {
+    return {
+      showGallary: false,
+      imgs: ['http://img1.qunarzz.com/sight/p0/201404/23/04b92c99462687fa1ba45c1b5ba4ad77.jpg_800x800_70debc93.jpg',
+        'http://img1.qunarzz.com/sight/p0/1709/76/7691528bc7d7ad3ca3.img.png_800x800_9ef05ee7.png']
+    }
+  },
+  methods: {
+    handleBannerClick () {
+      this.showGallary = true
+    },
+    handleGallaryClose () {
+      this.showGallary = false
+    }
+  }
+}
+</script>
+
+<style lang="stylus" scoped>
+.banner
+  position: relative
+  overflow hidden
+  height: 0
+  padding-bottom: 55%
+  .banner-img
+    width: 100%
+  .banner-info
+    display: flex
+    position: absolute
+    left: 0
+    right: 0
+    bottom: 0
+    line-height: .6rem
+    color: #fff
+    background-image: linear-gradient(top, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.8))
+    .banner-tittle
+      flex: 1
+      font-size: .32rem
+      padding: 0 .2rem
+    .banner-number
+      height: .32rem
+      line-height: .32rem
+      margin-top: .14rem
+      padding: 0 .4rem
+      border-radius: .2rem
+      background: rgba(0, 0, 0, .8)
+      font-size: .24rem
+      .banner-icon
+        font-size: .24rem
+</style>
+```
+
+src/common/gallary/Gallary.vue
+
+```vue
+<template>
+  <div class="container" @click="handleGallaryClick">
+    <div class="wrapper">
+      <swiper :options="swiperOptions">
+        <swiper-slide v-for="(item, key) of imgs" :key="key">
+          <img  class="gallary-image" :src="item">
+        </swiper-slide>
+        <div class="swiper-pagination"  slot="pagination"></div>
+    </swiper>
+    </div>
+  </div>
+</template>
+
+<script>
+
+export default {
+  name: 'CommonGallary',
+  props: {
+    imgs: {
+      type: Array,
+      default () {
+        return []
+      }
+    }
+  },
+  data: function () {
+    return {
+      swiperOptions: {
+        // swiper的配置属性可以去swiper官网进行搜索配置 http://3.swiper.com.cn 、https://www.swiper.com.cn/index.html
+        pagination: '.swiper-pagination',
+        paginationType: 'fraction',
+        // swapper插件如果监听到observer或者父级元素observerParents的DOM元素结构变化的时候，就会自我刷新一次，解决因为v-show造成的宽度计算问题而导致的滑动失败问题
+        observeParents: true,
+        observer: true
+      }
+    }
+  },
+  methods: {
+    handleGallaryClick () {
+      this.$emit('close')
+    }
+  }
+}
+</script>
+
+<style lang="stylus" scoped>
+.container >>> .swiper-container
+  overflow: inherit
+.container
+  display: flex
+  flex-direction: column
+  justify-content: center
+  z-index: 99
+  position: fixed
+  left: 0
+  right: 0
+  top: 0
+  bottom: 0
+  background: #000
+  .wrapper
+    height: 0
+    width: 100%
+    padding-bottom: 100%
+    .gallary-image
+      width: 100%
+    .swiper-pagination
+      color: #fff
+      bottom: -1rem
+</style>
+```
+
+## 实现Header渐隐渐现效果
+
+pages/detail/Detail.vue
+
+```vue
+<template>
+    <div>
+      <detail-banner></detail-banner>
+      <detail-header></detail-header>
+      <div class="content"></div>
+    </div>
+</template>
+
+<script>
+import DetailBanner from './components/Banner'
+import DetailHeader from './components/Header'
+
+export default {
+  name: 'Detail',
+  components: {
+    DetailBanner,
+    DetailHeader
+  }
+}
+</script>
+
+<style lang="stylus" scoped>
+.content
+  height: 50rem
+</style>
+```
+
+pages/detail/components/Banner.vue
+
+```vue
+<template>
+  <div>
+    <div class="banner" @click="handleBannerClick">
+      <img class="banner-img" src="http://img1.qunarzz.com/sight/p0/201404/23/04b92c99462687fa1ba45c1b5ba4ad77.jpg_600x330_bf9c4904.jpg">
+      <div class="banner-info">
+        <div class="banner-tittle">大连圣亚海洋世界(AAAA景区)</div>
+        <div class="banner-number">
+          <span class="iconfont banner-icon">&#xe731;</span>
+        </div>
+      </div>
+    </div>
+    <common-gallary
+     :imgs="imgs"
+     v-show="showGallary"
+     @close="handleGallaryClose"
+    ></common-gallary>
+  </div>
+</template>
+
+<script>
+import CommonGallary from 'common/gallary/Gallary'
+export default {
+  name: 'DetailBanner',
+  components: {
+    CommonGallary
+  },
+  data () {
+    return {
+      showGallary: false,
+      imgs: ['http://img1.qunarzz.com/sight/p0/201404/23/04b92c99462687fa1ba45c1b5ba4ad77.jpg_800x800_70debc93.jpg',
+        'http://img1.qunarzz.com/sight/p0/1709/76/7691528bc7d7ad3ca3.img.png_800x800_9ef05ee7.png']
+    }
+  },
+  methods: {
+    handleBannerClick () {
+      this.showGallary = true
+    },
+    handleGallaryClose () {
+      this.showGallary = false
+    }
+  }
+}
+</script>
+
+<style lang="stylus" scoped>
+.banner
+  position: relative
+  overflow hidden
+  height: 0
+  padding-bottom: 55%
+  .banner-img
+    width: 100%
+  .banner-info
+    display: flex
+    position: absolute
+    left: 0
+    right: 0
+    bottom: 0
+    line-height: .6rem
+    color: #fff
+    background-image: linear-gradient(top, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.8))
+    .banner-tittle
+      flex: 1
+      font-size: .32rem
+      padding: 0 .2rem
+    .banner-number
+      height: .32rem
+      line-height: .32rem
+      margin-top: .14rem
+      padding: 0 .4rem
+      border-radius: .2rem
+      background: rgba(0, 0, 0, .8)
+      font-size: .24rem
+      .banner-icon
+        font-size: .24rem
+</style>
+```
+
+pages/detail/components/Header.vue
+
+```vue
+
+<template>
+  <div>
+    <router-link
+     tag="div"
+     to="/"
+     class="header-abs"
+     v-show="showAbs"
+    >
+      <div class="iconfont header-abs-back">&#xe624;</div>
+    </router-link>
+    <div
+      class="header-fixed"
+      v-show="!showAbs"
+      :style="opacityStyle"
+    >
+      <router-link to="/">
+        <div class="iconfont header-fixed-back">&#xe624;</div>
+      </router-link>
+      景点详情
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'DetailHeader',
+  data () {
+    return {
+      showAbs: true,
+      opacityStyle: {
+        opacity: 0
+      }
+    }
+  },
+  methods: {
+    handleScroll () {
+      const top = document.documentElement.scrollTop
+      if (top > 60) {
+        let opacity = top / 140
+        opacity = opacity > 1 ? 1 : opacity
+        this.opacityStyle = {
+          opacity
+        }
+        this.showAbs = false
+      } else {
+        this.showAbs = true
+      }
+    }
+  },
+  activated () {
+    window.addEventListener('scroll', this.handleScroll)
+  }
+}
+</script>
+
+<style lang="stylus" scoped>
+@import '~styles/varibles.styl'
+@import '~styles/mixins.styl'
+.header-abs
+  position: absolute
+  left: .2rem
+  top: .2rem
+  width: .8rem
+  height: .8rem
+  border-radius: .4rem
+  text-align: center
+  line-height: .8rem
+  background: rgba(0, 0, 0, .8)
+  .header-abs-back
+    color: #fff
+    font-size: .4rem
+.header-fixed
+  position: fixed
+  top: 0
+  left: 0
+  right: 0
+  height: $headerHeight
+  line-height: $headerHeight
+  text-align: center
+  color: #fff
+  background: $bgColor
+  font-size: .32rem
+  .header-fixed-back
+    position: absolute
+    width: .64rem
+    text-align: center
+    font-size: .4rem
+    top: 0
+    left: 0
+    color: #fff
+</style>
+```
+
+## 对全局事件的解绑
+
+pages/detail/components/Header.vue
+
+```vue
+<template>
+  <div>
+    <router-link
+     tag="div"
+     to="/"
+     class="header-abs"
+     v-show="showAbs"
+    >
+      <div class="iconfont header-abs-back">&#xe624;</div>
+    </router-link>
+    <div
+      class="header-fixed"
+      v-show="!showAbs"
+      :style="opacityStyle"
+    >
+      <router-link to="/">
+        <div class="iconfont header-fixed-back">&#xe624;</div>
+      </router-link>
+      景点详情
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'DetailHeader',
+  data () {
+    return {
+      showAbs: true,
+      opacityStyle: {
+        opacity: 0
+      }
+    }
+  },
+  methods: {
+    handleScroll () {
+      const top = document.documentElement.scrollTop
+      if (top > 60) {
+        let opacity = top / 140
+        opacity = opacity > 1 ? 1 : opacity
+        this.opacityStyle = {
+          opacity
+        }
+        this.showAbs = false
+      } else {
+        this.showAbs = true
+      }
+    }
+  },
+  // 每次页面展示的时候执行，此钩子函数会被执行
+  activated () {
+    window.addEventListener('scroll', this.handleScroll)
+  },
+  // 每次页面即将被替换成新的页面的时候，此钩子函数会被执行
+  deactivated () {
+    window.removeEventListener('scroll', this.handleScroll)
+  }
+}
+</script>
+
+<style lang="stylus" scoped>
+@import '~styles/varibles.styl'
+@import '~styles/mixins.styl'
+.header-abs
+  position: absolute
+  left: .2rem
+  top: .2rem
+  width: .8rem
+  height: .8rem
+  border-radius: .4rem
+  text-align: center
+  line-height: .8rem
+  background: rgba(0, 0, 0, .8)
+  .header-abs-back
+    color: #fff
+    font-size: .4rem
+.header-fixed
+  position: fixed
+  top: 0
+  left: 0
+  right: 0
+  height: $headerHeight
+  line-height: $headerHeight
+  text-align: center
+  color: #fff
+  background: $bgColor
+  font-size: .32rem
+  .header-fixed-back
+    position: absolute
+    width: .64rem
+    text-align: center
+    font-size: .4rem
+    top: 0
+    left: 0
+    color: #fff
+</style>
+```
+
+## 使用递归组件实现详情页列表
+
+pages/detail/Detail.vue
+
+```vue
+<template>
+    <div>
+      <detail-banner></detail-banner>
+      <detail-header></detail-header>
+      <div class="content">
+        <detail-list :list="list"></detail-list>
+      </div>
+    </div>
+</template>
+
+<script>
+import DetailBanner from './components/Banner'
+import DetailHeader from './components/Header'
+import DetailList from './components/List'
+export default {
+  name: 'Detail',
+  components: {
+    DetailBanner,
+    DetailHeader,
+    DetailList
+  },
+  data () {
+    return {
+      list: [{
+        title: '成人票',
+        children: [{
+          title: '成人三馆联票',
+          children: [{
+            title: '成人三馆联票 - 某一连锁店销售'
+          }]
+        }, {
+          title: '成人五馆联票'
+        }]
+      }, {
+        title: '学生票'
+      }, {
+        title: '儿童票'
+      }, {
+        title: '特惠票'
+      }]
+    }
+  }
+}
+</script>
+
+<style lang="stylus" scoped>
+.content
+  height: 50rem
+</style>
+```
+
+pages/detail/components/List.vue
+
+```vue
+<template>
+  <div>
+    <div
+      class="item"
+      v-for="(item, index) of list"
+      :key="index"
+    >
+      <div class="item-title border-bottom">
+        <span class="item-title-icon"></span>
+        {{item.title}}
+      </div>
+      <div v-if="item.children" class="item-chilren">
+        <detail-list :list="item.children"></detail-list>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'DetailList',
+  props: {
+    list: Array
+  }
+}
+</script>
+
+<style lang="stylus" scoped>
+  .item-title-icon
+    position: relative
+    left: .06rem
+    top: .06rem
+    display: inline-block
+    width: .36rem
+    height: .36rem
+    background: url(http://s.qunarzz.com/piao/image/touch/sight/detail.png) 0 -.45rem no-repeat
+    margin-right: .1rem
+    background-size: .4rem 3rem
+  .item-title
+    line-height: .8rem
+    font-size: .32rem
+    padding: 0 .2rem
+  .item-chilren
+    padding: 0 .2rem
+</style>
+```
+
+pages/detail/components/Header.vue
+
+```vue
+<template>
+  <div>
+    <router-link
+     tag="div"
+     to="/"
+     class="header-abs"
+     v-show="showAbs"
+    >
+      <div class="iconfont header-abs-back">&#xe624;</div>
+    </router-link>
+    <div
+      class="header-fixed"
+      v-show="!showAbs"
+      :style="opacityStyle"
+    >
+      <router-link to="/">
+        <div class="iconfont header-fixed-back">&#xe624;</div>
+      </router-link>
+      景点详情
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'DetailHeader',
+  data () {
+    return {
+      showAbs: true,
+      opacityStyle: {
+        opacity: 0
+      }
+    }
+  },
+  methods: {
+    handleScroll () {
+      const top = document.documentElement.scrollTop
+      if (top > 60) {
+        let opacity = top / 140
+        opacity = opacity > 1 ? 1 : opacity
+        this.opacityStyle = {
+          opacity
+        }
+        this.showAbs = false
+      } else {
+        this.showAbs = true
+      }
+    }
+  },
+  // 每次页面展示的时候执行，此钩子函数会被执行
+  activated () {
+    window.addEventListener('scroll', this.handleScroll)
+  },
+  // 每次页面即将被替换成新的页面的时候，此钩子函数会被执行
+  deactivated () {
+    window.removeEventListener('scroll', this.handleScroll)
+  }
+}
+</script>
+
+<style lang="stylus" scoped>
+@import '~styles/varibles.styl'
+@import '~styles/mixins.styl'
+.header-abs
+  position: absolute
+  left: .2rem
+  top: .2rem
+  width: .8rem
+  height: .8rem
+  border-radius: .4rem
+  text-align: center
+  line-height: .8rem
+  background: rgba(0, 0, 0, .8)
+  .header-abs-back
+    color: #fff
+    font-size: .4rem
+.header-fixed
+  z-index: 2
+  position: fixed
+  top: 0
+  left: 0
+  right: 0
+  height: $headerHeight
+  line-height: $headerHeight
+  text-align: center
+  color: #fff
+  background: $bgColor
+  font-size: .32rem
+  .header-fixed-back
+    position: absolute
+    width: .64rem
+    text-align: center
+    font-size: .4rem
+    top: 0
+    left: 0
+    color: #fff
+</style>
+```
+
+## 使用ajax获取动态数据
+
+/src/static/mock/detail.json
+
+```json
+{
+  "ret": true,
+  "data": {
+    "sightName": "大连圣亚海洋世界(AAAA景区)",
+    "bannerImg": "http://img1.qunarzz.com/sight/p0/201404/23/04b92c99462687fa1ba45c1b5ba4ad77.jpg_600x330_bf9c4904.jpg",
+    "gallaryImgs": ["http://img1.qunarzz.com/sight/p0/201404/23/04b92c99462687fa1ba45c1b5ba4ad77.jpg_800x800_70debc93.jpg", "http://img1.qunarzz.com/sight/p0/1709/76/7691528bc7d7ad3ca3.img.png_800x800_9ef05ee7.png"],
+    "categoryList": [{
+        "title": "成人票",
+        "children": [{
+          "title": "成人三馆联票",
+          "children": [{
+            "title": "成人三馆联票 - 某一连锁店销售"
+          }]
+        },{
+          "title": "成人五馆联票"
+        }]
+      }, {
+        "title": "学生票"
+      }, {
+        "title": "儿童票"
+      }, {
+        "title": "特惠票"
+      }]
+  }
+}
+```
+
+pages/detail/Detail.vue
+
+```vue
+<template>
+    <div>
+      <detail-banner
+       :sightName="sightName"
+       :bannerImg="bannerImg"
+       :gallaryImgs="gallaryImgs"
+      ></detail-banner>
+      <detail-header></detail-header>
+      <div class="content">
+        <detail-list :list="list"></detail-list>
+      </div>
+    </div>
+</template>
+
+<script>
+import DetailBanner from './components/Banner'
+import DetailHeader from './components/Header'
+import DetailList from './components/List'
+import axios from 'axios'
+export default {
+  // 思考：name组件名称的作用
+  // 1、递归组件的使用会用到
+  // 2、对某个页面取消缓存的时候会用到
+  name: 'Detail',
+  components: {
+    DetailBanner,
+    DetailHeader,
+    DetailList
+  },
+  data () {
+    return {
+      sightName: '',
+      bannerImg: '',
+      gallaryImgs: [],
+      list: []
+    }
+  },
+  methods: {
+    getDetailInfo () {
+      axios.get('/api/detail.json', {
+        params: {
+          id: this.$route.params.id
+        }
+      }).then(this.handleGetDataSucc)
+    },
+    handleGetDataSucc (res) {
+      res = res.data
+      if (res.ret && res.data) {
+        const data = res.data
+        this.sightName = data.sightName
+        this.bannerImg = data.bannerImg
+        this.gallaryImgs = data.gallaryImgs
+        this.list = data.categoryList
+      }
+    }
+  },
+  mounted () {
+    this.getDetailInfo()
+  }
+}
+</script>
+
+<style lang="stylus" scoped>
+.content
+  height: 50rem
+</style>
+```
+
+pages/detail/components/Banner.vue
+
+```vue
+<template>
+  <div>
+    <div class="banner" @click="handleBannerClick">
+      <img class="banner-img" :src="bannerImg">
+      <div class="banner-info">
+        <div class="banner-tittle">{{ this.sightName }}</div>
+        <div class="banner-number">
+          <span class="iconfont banner-icon">&#xe731;</span>
+          {{ this.gallaryImgs.length }}
+        </div>
+      </div>
+    </div>
+    <common-gallary
+     :imgs="gallaryImgs"
+     v-show="showGallary"
+     @close="handleGallaryClose"
+    ></common-gallary>
+  </div>
+</template>
+
+<script>
+import CommonGallary from 'common/gallary/Gallary'
+export default {
+  name: 'DetailBanner',
+  props: {
+    sightName: String,
+    bannerImg: String,
+    gallaryImgs: Array
+  },
+  components: {
+    CommonGallary
+  },
+  data () {
+    return {
+      showGallary: false
+    }
+  },
+  methods: {
+    handleBannerClick () {
+      this.showGallary = true
+    },
+    handleGallaryClose () {
+      this.showGallary = false
+    }
+  }
+}
+</script>
+
+<style lang="stylus" scoped>
+.banner
+  position: relative
+  overflow hidden
+  height: 0
+  padding-bottom: 55%
+  .banner-img
+    width: 100%
+  .banner-info
+    display: flex
+    position: absolute
+    left: 0
+    right: 0
+    bottom: 0
+    line-height: .6rem
+    color: #fff
+    background-image: linear-gradient(top, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.8))
+    .banner-tittle
+      flex: 1
+      font-size: .32rem
+      padding: 0 .2rem
+    .banner-number
+      height: .32rem
+      line-height: .32rem
+      margin-top: .14rem
+      padding: 0 .4rem
+      border-radius: .2rem
+      background: rgba(0, 0, 0, .8)
+      font-size: .24rem
+      .banner-icon
+        font-size: .24rem
+</style>
+```
+
+/src/App.vue
+
+```vue
+<template>
+  <div id="app">
+    <!--
+      keep-alive: 路由的内容被加载过一次后就把路由中的内容放在内存中，下载再进这个路由的时候，
+                  不需要重新渲染这个组件和重新执行钩子函数，只需要从内存中把之前的内容拿出来显示在页面上就可以了
+      exclude: 除了Detail页面，其他页面都要缓存
+    -->
+    <keep-alive exclude="Detail">
+      <router-view/>
+    </keep-alive>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'App'
+}
+</script>
+
+<style>
+
+</style>
+```
+
+/src/router/index.js
+
+```js
+import Vue from 'vue'
+import Router from 'vue-router'
+import Home from '@/pages/home/Home'
+import City from '@/pages/city/City'
+import Detail from '@/pages/detail/Detail'
+Vue.use(Router)
+
+export default new Router({
+  routes: [
+    {
+      path: '/',
+      name: 'Home',
+      component: Home
+    },
+    {
+      path: '/city',
+      name: 'City',
+      component: City
+    },
+    // 动态路由
+    {
+      path: '/detail/:id',
+      name: 'Detail',
+      component: Detail
+    }
+  ],
+  scrollBehavior (to, from, savedPosition) {
+    // return 期望滚动到哪个的位置,每次做路由切换的时候，目标页面使x和y轴初始位置为0，让页面切换的时候始终回到最顶部
+    return {x: 0, y: 0}
+  }
+})
+```
+
+## 在项目中加入基础动画
+
+/src/common/fade/FadeAnimation.vue
+
+```vue
+<template>
+  <transition>
+    <slot></slot>
+  </transition>
+</template>
+
+<script>
+export default {
+  name: 'FadeAnimation'
+}
+</script>
+
+<style lang="stylus" scoped>
+  .v-enter, .v-leave-to
+    opacity: 0
+  .v-enter-active, .v-leave-active
+    transition: opacity .5s
+</style>
+```
+
+pages/detail/components/Banner.vue
+
+```vue
+<template>
+  <div>
+    <div class="banner" @click="handleBannerClick">
+      <img class="banner-img" :src="bannerImg">
+      <div class="banner-info">
+        <div class="banner-tittle">{{ this.sightName }}</div>
+        <div class="banner-number">
+          <span class="iconfont banner-icon">&#xe731;</span>
+          {{ this.gallaryImgs.length }}
+        </div>
+      </div>
+    </div>
+    <fade-animation>
+      <common-gallary
+      :imgs="gallaryImgs"
+      v-show="showGallary"
+      @close="handleGallaryClose"
+      ></common-gallary>
+    </fade-animation>
+  </div>
+</template>
+
+<script>
+import CommonGallary from 'common/gallary/Gallary'
+import FadeAnimation from 'common/fade/FadeAnimation'
+export default {
+  name: 'DetailBanner',
+  props: {
+    sightName: String,
+    bannerImg: String,
+    gallaryImgs: Array
+  },
+  components: {
+    CommonGallary,
+    FadeAnimation
+  },
+  data () {
+    return {
+      showGallary: false
+    }
+  },
+  methods: {
+    handleBannerClick () {
+      this.showGallary = true
+    },
+    handleGallaryClose () {
+      this.showGallary = false
+    }
+  }
+}
+</script>
+
+<style lang="stylus" scoped>
+.banner
+  position: relative
+  overflow hidden
+  height: 0
+  padding-bottom: 55%
+  .banner-img
+    width: 100%
+  .banner-info
+    display: flex
+    position: absolute
+    left: 0
+    right: 0
+    bottom: 0
+    line-height: .6rem
+    color: #fff
+    background-image: linear-gradient(top, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.8))
+    .banner-tittle
+      flex: 1
+      font-size: .32rem
+      padding: 0 .2rem
+    .banner-number
+      height: .32rem
+      line-height: .32rem
+      margin-top: .14rem
+      padding: 0 .4rem
+      border-radius: .2rem
+      background: rgba(0, 0, 0, .8)
+      font-size: .24rem
+      .banner-icon
+        font-size: .24rem
+</style>
+```
+
+## Vue项目的接口联调
+
+在 `config/index.js` 配置文件中修改配置项`proxyTable`，进行修改转发配置
+
+```js
+// 真实开发环境下的前后端联调配置
+// proxyTable: {
+//   '/api': {
+//     输入后端接口地址，pathRewrite：如果地址路径需要转换，就加此配置，如果一致，则可以省略掉
+//     target: 'http://xxx.xxx.xxx.xxx:80'
+//   }
+// },
+```
+
+## Vue项目的真机测试
+
+我们的前端的项目是通过`webpack-dev-server`启动的，`webpack-dev-server`默认不支持通过IP的形式进行页面访问，所以我们需要将`webpack-dev-server`的默认配置项进行修改
+
+修改package.json文件
+
+```json
+// 修改dev属性，添加 --host 0.0.0.0 配置，支持通过IP的形式进行访问
+"scripts": {
+    "dev": "webpack-dev-server --host 0.0.0.0 --inline --progress --config build/webpack.dev.conf.js",
+    "start": "npm run dev",
+    "lint": "eslint --ext .js,.vue src",
+    "build": "node build/build.js"
+  },
+```
+
+修改手机真机测试中在滑动选择城市时，整个屏幕都跟着滚动的bug
+
+pages/city/components/Alphabet.vue
+
+```vue
+<!-- @touchstart.prevent：事件修饰符，阻止@touchstart的默认行为，然后再滚动字母表，就不会出现整个页面跟着上下拖动的这种效果了-->
+<template>
+  <div class="list">
+      <li class="item"
+        v-for="item of letters"
+        :key="item"
+        :ref="item"
+        @touchstart.prevent="handleTouchStart"
+        @touchmove="handleTouchMove"
+        @touchend="handleTouchEnd"
+        @click="handleLetterClick"
+        >
+        {{ item }}
+      </li>
+  </div>
+</template>
+```
+
+真机测试中，为了防止因为手机安卓版本过低，导致出现不支持es6语法而导致白屏等问题，可以用下面的方式解决
+
+```shell
+## 安装babel-polyfill，在真机测试中，解决项目如果不支持es6导致白屏等问题，此插件会自动引入es6语法内容，如: Promise
+(base) PS D:\learn\vue_learn_travel> npm install babel-polyfill@6.26.0 --save
+npm WARN update-browserslist-db@1.0.13 requires a peer of browserslist@>= 4.21.0 but none is installed. You must install peer dependencies yourself.
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@2.3.3 (node_modules\fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@2.3.3: wanted {"os":"darwin","arch":"any"} (current: {"os":"win32","arch":"x64"})
+npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@1.2.13 (node_modules\webpack-dev-server\node_modules\fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@1.2.13: wanted {"os":"darwin","arch":"any"} (current: {"os":"win3npm WARN optional SKIPPING OPTIONAL DEPENDENCY: fsevents@1.2.13 (node_modules\watchpack-chokidar2\node_modules\fsevents):
+npm WARN notsup SKIPPING OPTIONAL DEPENDENCY: Unsupported platform for fsevents@1.2.13: wanted {"os":"darwin","arch":"any"} (current: {"os":"win32","arch":"x64"})
+
++ babel-polyfill@6.26.0
+added 2 packages from 2 contributors in 18.361s
+
+95 packages are looking for funding
+  run `npm fund` for details
+```
+
+修改 `src/main.js` 文件，引入包
+
+```js
+// 引入 babel-polyfill 模块，解决安卓版本过低不支持es6语法而导致的白屏等问题,如: Promise
+import 'babel-polyfill'
+```
+
+## 异步组件实现按需加载
+
+打包生成的 dist 文件夹包含了：static 文件夹和 index.html 文件。
+
+index.html就是前段代码的入口文件。
+
+static 目录下：
+
+1.首先有一个 css 文件夹，里面包含了一个XXX.css.map 文件，它是帮助我们调试被压缩过的 css 代码，一般在开发做调试的时候使用。真正打包在线上有用的文件是 XXX.css 文件，打包的时候把所以用到的样式打包到了这里。
+
+2.然后有一个 js 文件夹，里面一些 .js.map 的文件，依然是辅助文件，而真正有用的文件有三个：分别是 app.xxx.js 、manifest.xxx.js 、vendor.xxx.js 。
+
+其中 manifest.xxx.js 可以理解为 webpack 打包生生的一个配置文件。可以不关心里面的代码。
+
+vendor.xxx.js 里面放的是各个页面、各个组件公用的一些代码。
+
+app.xxx.js 里面放的是项目各个页面的业务逻辑代码。
+
+而我们说异步组件，主要说的是 app.xxx.js 这部分的内容。
+
+当我们访问项目首页的时候，实际上是不需要列表页的内容，只需要加载首页的内容代码就可以了。但是当你现在以默认的形式打包后，访问首页的时候，app.xxx.js 把首页包括城市列表页、详情页的所有的代码都进行了加载。现在我们的文件比较少，所以看不出什么问题，当我们的项目大，文件多的时候，app.xxx.js 文件就变得越来越大，甚至达到1M以上，这个时候就需要我们通过异步组件来对代码进行优化。
+
+当我们运行服务，浏览器打开 http://localhost:8080/#/ ，在dev环境运行代码的时候，浏览器 Network 下的 JS 中，只有 app.js ，没有 manifest 和 vendor，
+
+此时dev环境下app.js中有包括manifest.js和vendor.js的内容和业务逻辑
+
+![image-20231225130510212](Vue笔记/image-20231225130510212.png)
+
+安装babel插件，需要添加 syntax-dynamic-import 插件，才能使 Babel 可以正确地解析语法。
+
+```shell
+npm install babel-plugin-syntax-dynamic-import --save-dev
+```
+
+build/webpack.base.conf.js
+
+```js
+module: {
+    rules: [
+      ...(config.dev.useEslint ? [createLintingRule()] : []),
+      {
+        test: /\.vue$/,
+        loader: 'vue-loader',
+        options: vueLoaderConfig
+      },
+      {
+        test: /\.js$/,
+        loader: 'babel-loader',
+        include: [resolve('src'), resolve('test'), resolve('node_modules/webpack-dev-server/client')],
+        // 增加了option选项，至此，能识别我们：const App = () => import('../component/xxx.vue')的语法。
+        options:{
+          plugins:['syntax-dynamic-import']    
+        }
+      },
+      ... ...
+```
+
+要实现异步加载：打开 router 目录下的 index.js 文件，修改代码
+
+```js
+import Vue from 'vue'
+import Router from 'vue-router'
+Vue.use(Router)
+
+export default new Router({
+  routes: [
+    {
+      path: '/',
+      name: 'Home',
+      // component: Home
+      // 修改成异步组件加载的形式
+      component: () => import('@/pages/home/Home')
+    },
+    {
+      path: '/city',
+      name: 'City',
+      // component: City
+      component: () => import('@/pages/city/City')
+    },
+    // 动态路由
+    {
+      path: '/detail/:id',
+      name: 'Detail',
+      // component: Detail
+      component: () => import('@/pages/detail/Detail')
+    }
+  ],
+  scrollBehavior (to, from, savedPosition) {
+    // return 期望滚动到哪个的位置,每次做路由切换的时候，目标页面使x和y轴初始位置为0，让页面切换的时候始终回到最顶部
+    return {x: 0, y: 0}
+  }
+})
+```
+
+保存后，重新刷新页面，可以看到首页多出了一个js文件，此时首页对应的业务逻辑就不在app.js里面了，而是单独的拆出来一个1.js文件来存放
+
+![image-20231225130705343](Vue笔记/image-20231225130705343.png)
+
+清空控制台，点击城市列表，同理，发现这时候才加载列表页组件对应的代码：
+
+![image-20231225130726663](Vue笔记/image-20231225130726663.png)
+
+然后返回首页，可以看到不会加载任何的js文件了，因为首页在一进来的时候已经加载过一次，所以再次访问的时候，直接用的缓存内部的js文件。
+
+再点击详情页，同理发现会加载详情页组件的代码：
+
+![image-20231225130740990](Vue笔记/image-20231225130740990.png)
+
+注意：这样写代码有一个好处，就是我们访问那个页面，只加载这个页面对应的js逻辑，不会加载其他的js逻辑。但是当我们项目的app.js 文件很小的时候，就不需要做这个异步组件加载了。因为做了这个异步拆分后，这个页面加载的代码少了，但是当你访问下一个页面时，会额外的发起一个 http 请求。所以当 app.js 很小的时候，发一个 http 请求的代价，远比首页多加载一个js代码的代价要高。这个情况下，就不建议对 app.js 进行拆分，去用异步组件。只有在 app.js 文件很大的时候，我们才考虑用异步组件，对 app.js 进行拆分。
+
+回到代码中，不仅仅是在路由里可以使用异步组件这种形式，只要是Vue中的组件都可以进行异步的加载。比如说首页的Header.vue组件，在Home.vue中都是直接使用的，我们也可以把这个组件换成异步组件，修改为：
+
+pages/home/Home.vue
+
+```js
+<template>
+  <div>
+    <home-header></home-header>
+    <home-swiper :list="swiperList"></home-swiper>
+    <home-icons :list="iconList"></home-icons>
+    <home-recommend :list="recommendList"></home-recommend>
+    <home-weekend :list="weekendList"></home-weekend>
+  </div>
+</template>
+
+<script>
+// import HomeHeader from './components/Header'
+import HomeSwiper from './components/Swiper'
+import HomeIcons from './components/Icons'
+import HomeRecommend from './components/Recommend'
+import HomeWeekend from './components/Weekend'
+import axios from 'axios'
+import { mapState } from 'vuex'
+export default {
+  name: 'Home',
+  components: {
+    // 不仅仅是在路由里可以使用异步组件的形式，在组件中也可以直接使用异步组件进行加载
+    HomeHeader: () => import('./components/Header'),
+    // HomeHeader,
+    HomeSwiper,
+    HomeIcons,
+    HomeRecommend,
+    HomeWeekend
+  },
+  computed: {
+    ...mapState(['city'])
+  },
+  mounted () {
+    this.lastCity = this.city
+    this.getHomeInfo()
+  },
+  data () {
+    return {
+      lastCity: '',
+      swiperList: [],
+      iconList: [],
+      recommendList: [],
+      weekendList: []
+    }
+  },
+  methods: {
+    getHomeInfo () {
+      axios.get('/api/index.json?city=' + this.city).then(this.getHomeInfoSucc)
+    },
+    getHomeInfoSucc (res) {
+      res = res.data
+      if (res.ret && res.data) {
+        const data = res.data
+        this.swiperList = data.swiperList
+        this.iconList = data.iconList
+        this.recommendList = data.recommendList
+        this.weekendList = data.weekendList
+      }
+    }
+  },
+  // 当使用了keep-alive，则会多出来一个生命周期函数，表示页面每次重新被显示的时候，activated会被执行
+  // 结合lastCity这个临时缓冲变量，实现首页代码性能优化的调整
+  activated () {
+    if (this.lastCity !== this.city) {
+      this.lastCity = this.city
+      this.getHomeInfo()
+    }
+  }
+}
+</script>
+<style>
+
+</style>
+```
+
+保存后，回到首页刷新，会发现HomeHeader也会单独加载一个js。
+
+注意：app.js 很小的时候，不建议使用异步组件加载，当项目很大，app.js 至少超过1mb的时候，才使用异步组件加载。
+
+所以对我们这个项目来说，可以恢复到修改前，不适用异步组件加载。
+
+## Vue项目的打包与上线
+
+```shell
+## vue的脚手架工具，会自动对src目录下的源代码进行打包编译，生成一个压缩的能被浏览器运行的代码，生成的代码在dist目录中
+npm run build
+```
+
+如果想将生成代码放在某个目录下，则修改文件`config/index.js`
+
+```js
+build: {
+    // Template for index.html
+    index: path.resolve(__dirname, '../dist/index.html'),
+
+    // Paths
+    assetsRoot: path.resolve(__dirname, '../dist'),
+    assetsSubDirectory: 'static',
+    // 修改此处配置为对应的目录名称，如 “/project”, 然后重新执行 npm run build 进行打包重新构建引用关系，然后将生成的目录dist拉出来，修改dist目录名称为project, 将project目录上线即可
+    assetsPublicPath: '/',
+```
 
