@@ -255,6 +255,7 @@ object TestCharType {
         println(s"${age}岁的$name")
 	    val num = 2.3443252
         // 文字 'f' 插值器允许创建一个格式化的字符串模板, 类似c语言中的printf
+        // 前2表示整个数的长度，超过无事，不够需要补空格 .2表示小数长度
         println(f"The num is ${num}%2.2f")
         // 文字 'raw' 能让字符串原原本本的输出来，而不是产生控制效果
     	println(raw"The num is ${num}%2.2f")
@@ -565,7 +566,7 @@ object TestValueTransfer {
         var n6 : Byte = 1
         var c2 : Char = 1
         // var n: Short = n6 + c2 //当 n6 + c2 结果类型就是 int
-        // var n7: Short = 10 + 90 //错误
+        // var n7: Short = 10 + 90 //注意：这里涉及自动类型提升，其实编译器可以自定判断是否超出范围，不过 idea 提示报错
     }
 }
 ```
@@ -607,7 +608,7 @@ object TestForceTransfer {
 2）案例实操  
 
 （1）基本类型转 String 类型（语法： 将基本类型的值+"" 即可）
-（2） String 类型转基本数值类型（语法： s1.toInt、 s1.toFloat、 s1.toDouble、 s1.toByte、  s1.toLong、 s1.toShort）  
+（2）String 类型转基本数值类型（语法： s1.toInt、 s1.toFloat、 s1.toDouble、 s1.toByte、  s1.toLong、 s1.toShort）  
 
 ```scala
 object TestStringTransfer {
@@ -663,8 +664,7 @@ Scala 运算符的使用和 Java 运算符的使用基本相同， 只有个别�
 ```scala
 object TestArithmetic {
     def main(args: Array[String]): Unit = {
-        //（1）对于除号“/”，它的整数除和小数除是有区别的：整数之间做除法
-        时，只保留整数部分而舍弃小数部分。
+        //（1）对于除号“/”，它的整数除和小数除是有区别的：整数之间做除法时，只保留整数部分而舍弃小数部分
         var r1: Int = 10 / 3 // 3
         println("r1=" + r1)
         var r2: Double = 10 / 3 // 3.0
@@ -712,9 +712,9 @@ object TestRelation {
 }
 ```
 
-（2）需求 2： Java 和 Scala 中关于==的区别  
+（2）需求 2： Java 和 Scala 中关于 == 的区别  
 
-Java：==比较两个变量本身的值，即两个对象在内存中的首地址；equals 比较字符串中所包含的内容是否相同。  
+Java：== 比较两个变量本身的值，即两个对象在内存中的首地址；equals 比较字符串中所包含的内容是否相同。  
 
 ```java
 public static void main(String[] args) {
@@ -728,7 +728,7 @@ public static void main(String[] args) {
 // true
 ```
 
-Scala： ==更加类似于 Java 中的 equals， 参照 jd 工具  
+Scala： == 更加类似于 Java 中的 equals， 参照 jd 工具  
 
 ```scala
 def main(args: Array[String]): Unit = {
@@ -837,18 +837,18 @@ object TestPosition {
 
 ## 3.6 Scala 运算符本质  
 
-在 Scala 中其实是没有运算符的， 所有运算符都是方法。
-1） 当调用对象的方法时， 点.可以省略
-2） 如果函数参数只有一个，或者没有参数， ()可以省略  
+在 Scala 中其实是没有运算符的，所有运算符都是方法。
+1） 当调用对象的方法时，点 "." 可以省略
+2） 如果函数参数只有一个，或者没有参数，() 可以省略  
 
 ```scala
 object TestOpt {
     def main(args: Array[String]): Unit = {
         // 标准的加法运算
-        val i:Int = 1.+(1) // 将运算法当做成方法进行计算 ,合成方法，编译器自动生成，绕开JVM的限制
-        //（1）当调用对象的方法时， .可以省略
+        val i:Int = 1.+(1) // 将运算法当做成方法进行计算, 合成方法, 编译器自动生成, 绕开JVM的限制
+        //（1）当调用对象的方法时，"." 可以省略
         val j:Int = 1 + (1)
-        //（2）如果函数参数只有一个，或者没有参数， ()可以省略
+        //（2）如果函数参数只有一个，或者没有参数，() 可以省略
         val k:Int = 1 + 1
         println(1.toString())
         println(1 toString())
@@ -1080,7 +1080,7 @@ println()
 
 2）案例实操  
 
-需求： 输出 5 句 "宋宋，告别海狗人参丸吧"  
+需求： 输出 5 句 "宋宋，告别海狗人参丸吧"
 
 ```scala
 object TestFor {
@@ -1104,9 +1104,9 @@ println()
 ```
 
 （1）这种方式和前面的区别在于 i 是从 1 到 3-1
-（2）前闭后开 
+（2）前闭后开
 
-2）案例实操  
+2）案例实操
 
 需求： 输出 5 句 "宋宋，告别海狗人参丸吧"  
 
@@ -1200,7 +1200,7 @@ for(i <- 1 to 3; j <- 1 to 3) {
 }
 ```
 
-说明： 没有关键字，所以范围后一定要加； 来隔断逻辑  
+说明： 没有关键字，所以范围后一定要加；来隔断逻辑  
 
 2）基本语法  
 
@@ -1263,7 +1263,7 @@ println(res)
 
 2）案例实操  
 
-需求：将原数据中所有值乘以 2， 并把数据返回到一个新的集合中  
+需求：将原数据中所有值乘以 2， 并把数据返回到一个新的集合中
 
 ```scala
 object TestFor {
@@ -1408,7 +1408,7 @@ object TestBreak {
         breakable {
             for (elem <- 1 to 10) {
                 println(elem)
-                if (elem == 5) break
+                if (elem == 5) break()
             }
         }
         println("正常结束循环")
@@ -1434,14 +1434,14 @@ object TestBreak {
 
 ## 4.7 多重循环  
 
-1）基本说明  
+1）基本说明
 
 （1）将一个循环放在另一个循环体内，就形成了嵌套循环。其中， for， while， do…while均可以作为外层循环和内层循环。【建议一般使用两层，最多不要超过 3 层】
-（2）设外层循环次数为 m 次，内层为 n 次，则内层循环体实际上需要执行 m*n 次。  
+（2）设外层循环次数为 m 次，内层为 n 次，则内层循环体实际上需要执行 m * n 次。
 
-2）案例实操  
+2）案例实操
 
-需求：打印出九九乘法表  
+需求：打印出九九乘法表
 
 ```scala
 object TestWhile {
@@ -1475,7 +1475,7 @@ Scala 语言是一个完全面向对象编程语言。万物皆对象
 
 解决问题时，将问题分解成一个一个的步骤，将每个步骤进行封装（函数），通过调用这些封装好的步骤，解决问题。
 例如： 请求->用户名、密码->连接 JDBC->读取数据库
-Scala 语言是一个完全函数式编程语言。 万物皆函数。
+Scala 语言是一个完全函数式编程语言。 万物皆函数
 函数的本质：函数可以当做一个值进行传递  
 
 3）在 Scala 中函数式编程和面向对象编程完美融合在一起了  
@@ -1549,6 +1549,7 @@ object TestFunction {
 练习与测试
 
 ```scala
+package chapter05
 object Test01_FunctionAndMethod {
   def main(args: Array[String]): Unit = {
     // 定义函数
@@ -1622,6 +1623,66 @@ object TestFunctionDeclare {
 }
 ```
 
+练习与测试
+
+```scala
+package chapter05
+object Test02_FunctionDefine {
+  def main(args: Array[String]): Unit = {
+    //    （ 1）函数 1：无参，无返回值
+    def f1(): Unit = {
+      println("f1")
+    }
+
+    f1()
+    println(f1())
+
+    //    （ 2）函数 2：无参，有返回值
+    def f2(): Int = {
+      println("f2")
+      return 12
+    }
+
+    f2()
+    println(f2())
+
+    //    （ 3）函数 3：有参，无返回值
+    def f3(name: String): Unit = {
+      println(name)
+    }
+
+    f3("rui")
+    println(f3("rui"))
+
+    //    （ 4）函数 4：有参，有返回值
+    def f4(name: String): String = {
+      println("f4: " + name)
+      return name
+    }
+
+    f4("rui")
+    println(f4("rui"))
+
+    //    （ 5）函数 5：多参，无返回值
+    def d5(name: String, age: Int): Unit = {
+      println(s"${name},${age}")
+    }
+
+    d5("rui", 18)
+    println(d5("rui", 18))
+
+    //    （ 6）函数 6：多参，有返回值
+    def d6(name: String, age: Int): String = {
+      println(s"${name},${age}")
+      return name + "," + age
+    }
+
+    d6("rui", 18)
+    println(d6("rui", 18))
+  }
+}
+```
+
 ### 5.1.4 函数参数  
 
 1） 案例实操  
@@ -1667,18 +1728,60 @@ object TestFunction {
 }
 ```
 
+练习与测试
+
+```scala
+package chapter05
+object Test03_FunctionParameter {
+  def main(args: Array[String]): Unit = {
+    //    （1）可变参数
+    def f1(str: String*): Unit = {
+      println(str)
+    }
+
+    f1("1", "2")
+
+    //    （2）如果参数列表中存在多个参数，那么可变参数一般放置在最后
+    def f2(str1: String, str2: String*): Unit = {
+      println("str1:" + str1)
+      println("str2:" + str2)
+    }
+
+    f2("str1")
+    f2("str1", "str2", "str22")
+
+    //    （3）参数默认值，一般将有默认值的参数放置在参数列表的后面
+    def f3(name: String = "atguigu"): Unit = {
+      println(name)
+    }
+
+    f3()
+    f3("nihao")
+
+    //    （4）带名参数
+    def f4(name: String = "atguigu", age: Int): Unit = {
+      println(s"${name},${age}")
+    }
+
+    f4("rui", 18)
+    f4(age = 18, name = "rui")
+    f4(age = 21)
+  }
+}
+```
+
 ### 5.1.5 函数至简原则（重点）  
 
 函数至简原则：能省则省  
 
 1） 至简原则细节  
 
-（1） return 可以省略， Scala 会使用函数体的最后一行代码作为返回值
+（1）return 可以省略， Scala 会使用函数体的最后一行代码作为返回值
 （2）如果函数体只有一行代码，可以省略花括号
 （3）返回值类型如果能够推断出来，那么可以省略（ :和返回值类型一起省略）
 （4）如果有 return，则不能省略返回值类型，必须指定
 （5）如果函数明确声明 unit，那么即使函数体中使用 return 关键字也不起作用
-（6） Scala 如果期望是无返回值类型，可以省略等号
+（6）Scala 如果期望是无返回值类型，可以省略等号
 （7）如果函数无参，但是声明了参数列表，那么调用时，小括号，可加可不加
 （8）如果函数没有参数列表，那么小括号可以省略，调用时小括号必须省略
 （9）如果不关心名称，只关心逻辑处理，那么函数名（ def）可以省略  
@@ -1705,30 +1808,26 @@ object TestFunction {
         def f3( s : String ) = s + " jinlian"
         println(f3("Hello3"))
         //（4）如果有 return，则不能省略返回值类型，必须指定。
-        def f4() :String = {
-        	return "ximenqing4"
-        }
+        def f4() :String = return "ximenqing4"
         println(f4())
         //（5）如果函数明确声明 unit，那么即使函数体中使用 return 关键字也不起作用
-        def f5(): Unit = {
-        	return "dalang5"
-        }
+        def f5(): Unit = return "dalang5"
         println(f5())
-        //（6） Scala 如果期望是无返回值类型,可以省略等号
+        //（6） Scala 如果期望是无返回值类型,可以省略等号,但是不能省略大括号了
         // 将无返回值的函数称之为过程
-        def f6() {
-        	"dalang6"
-        }
-        println(f6())
+        def f6(name: String) {
+      		println(name)
+    	}
+        println(f6("rui"))
         //（7）如果函数无参，但是声明了参数列表，那么调用时，小括号，可加可不加
-        def f7() = "dalang7"
+        def f7() = println("dalang7")
         println(f7())
         println(f7)
         //（8）如果函数没有参数列表，那么小括号可以省略,调用时小括号必须省略
-        def f8 = "dalang"
-        //println(f8())
+        def f8 = println("dalang8")
+        // println(f8())
         println(f8)
-        //（9）如果不关心名称，只关心逻辑处理，那么函数名（ def）可以省略
+        //（9）如果不关心名称，只关心逻辑处理，那么函数名（def）可以省略
         def f9 = (x:String)=>{println("wusong")}
         def f10(f:String=>Unit) = {
         	f("")
@@ -1737,15 +1836,279 @@ object TestFunction {
         println(f10((x:String)=>{println("wusong")}))
         // 或者
         () => println("test")
-    	(name: String) => println("test") //匿名函数，lambda表达式
-        
+    	(name: String) => println("test") // 匿名函数，lambda表达式
     }
+}
+```
+
+练习与测试
+
+```scala
+package chapter05
+object Test04_Simplify {
+  def main(args: Array[String]): Unit = {
+    def f0(name: String): String = {
+      return name
+    }
+
+    println(f0("rui"))
+
+    //（1） return 可以省略， Scala 会使用函数体的最后一行代码作为返回值
+    def f1(name: String): String = {
+      name
+    }
+
+    println(f1("rui"))
+
+    //（2）如果函数体只有一行代码，可以省略花括号
+    def f2(name: String): String = name
+
+    println(f2("rui"))
+
+    //（3）返回值类型如果能够推断出来，那么可以省略（ :和返回值类型一起省略）
+    def f3(name: String) = name
+
+    println(f3("rui"))
+
+    //（4）如果有 return，则不能省略返回值类型，必须指定
+    def f4(name: String): String = return name
+
+    println(f4("rui"))
+
+    //（5）如果函数明确声明 unit，那么即使函数体中使用 return，关键字也不起作用
+    def f5(name: String): Unit = return name
+
+    println(f5("rui"))
+
+    //（6）Scala 如果期望是无返回值类型，可以省略等号,但是不能省略大括号了
+    def f6(name: String) {
+      println(name)
+    }
+
+    println(f6("rui"))
+
+    //（7）如果函数无参，但是声明了参数列表，那么调用时，小括号，可加可不加
+    def f7() = println("rui")
+
+    f7()
+    f7
+
+    //（8）如果函数没有参数列表，那么小括号可以省略，调用时小括号必须省略
+    def f8 = println("rui")
+
+    f8
+
+    //（9）如果不关心名称，只关心逻辑处理，那么函数名（ def）可以省略
+    // () => println("rui")
+
+    (name: String) => println("rui") // 匿名函数，lambda表达式
+  }
 }
 ```
 
 ## 5.2 函数高级  
 
-### 5.2.1 高阶函数  
+### 5.2.1 匿名函数  
+
+1）说明
+
+没有名字的函数就是匿名函数。
+(x: Int) => {函数体}
+x： 表示输入参数类型； Int：表示输入参数类型； 函数体： 表示具体代码逻辑  
+
+2） 案例实操
+
+需求 1：传递的函数有一个参数
+传递匿名函数至简原则：
+（1）参数的类型可以省略，会根据形参进行自动的推导
+（2）类型省略之后，发现只有一个参数，则圆括号可以省略； 其他情况：没有参数和参数超过 1 的永远不能省略圆括号。
+（3）匿名函数如果只有一行， 则大括号也可以省略
+（4）如果参数只出现一次，则参数省略且后面参数可以用_代替
+
+```scala
+def main(args: Array[String]): Unit = {
+    //（1）定义一个函数：参数包含数据和逻辑函数
+    def operation(arr: Array[Int], op: Int => Int) = {
+        for (elem <- arr) yield op(elem)
+    }
+    //（2）定义逻辑函数
+    def op(ele: Int): Int = {
+        ele + 1
+    }
+    //（3）标准函数调用
+    val arr = operation(Array(1, 2, 3, 4), op)
+    println(arr.mkString(","))
+    //（4）采用匿名函数
+    val arr1 = operation(Array(1, 2, 3, 4), (ele: Int) => {
+    	ele + 1
+    })
+    println(arr1.mkString(","))
+    //（4.1）参数的类型可以省略，会根据形参进行自动的推导;
+    val arr2 = operation(Array(1, 2, 3, 4), (ele) => {
+    	ele + 1
+    })
+    println(arr2.mkString(","))
+    //（4.2）类型省略之后，发现只有一个参数，则圆括号可以省略；其他情况：没有参数和参数超过 1 的永远不能省略圆括号。
+    val arr3 = operation(Array(1, 2, 3, 4), ele => {
+    	ele + 1
+    })
+    println(arr3.mkString(","))
+    //（4.3） 匿名函数如果只有一行，则大括号也可以省略
+    val arr4 = operation(Array(1, 2, 3, 4), ele => ele + 1)
+    println(arr4.mkString(","))
+    //（4.4）如果参数只出现一次，则参数省略且后面参数可以用_代替
+    val arr5 = operation(Array(1, 2, 3, 4), _ + 1)
+    println(arr5.mkString(","))
+}
+```
+
+需求 2：传递的函数有两个参数  
+
+```scala
+object TestFunction {
+    def main(args: Array[String]): Unit = {
+        def calculator(a: Int, b: Int, op: (Int, Int) => Int): Int= {
+        	op(a, b)
+        }
+        // （1）标准版
+        println(calculator(2, 3, (x: Int, y: Int) => {x + y}))
+        // （2）如果只有一行，则大括号也可以省略
+        println(calculator(2, 3, (x: Int, y: Int) => x + y))
+        // （3）参数的类型可以省略，会根据形参进行自动的推导;
+        println(calculator(2, 3, (x , y) => x + y))
+        // （4）如果参数只出现一次，则参数省略且后面参数可以用_代替
+        println(calculator(2, 3, _ + _))
+    }
+}
+```
+
+练习与测试
+
+```scala
+package chapter05
+object Test05_Lambda {
+  def main(args: Array[String]): Unit = {
+    val fun = (name: String) => println(name) // 返回函数类型
+    fun("atguigu")
+
+    //定义一个函数，以函数作为参数输入
+    def f(func: String => Unit): Unit = {
+      func("atguigu")
+    }
+
+    f(fun)
+    f((name: String) => {
+      println(name)
+    })
+
+    // 匿名函数的简化原则
+    //（1）参数的类型可以省略，会根据形参进行自动的推导
+    f((name) => {
+      println(name)
+    })
+    //（2）类型省略之后，发现只有一个参数，则圆括号可以省略； 其他情况：没有参数和参
+    //    数超过 1 的永远不能省略圆括号。
+    f(name => {
+      println(name)
+    })
+    //（3）匿名函数如果只有一行， 则大括号也可以省略
+    f(name => println(name))
+    //（4）如果参数只出现一次，则参数省略且后面参数可以用_代替
+    f(println(_))
+    //（5）如果可以推断出，当前传入的println是一个函数体，而不是一个调用语句，可以直接省略下划线,直接写要执行的函数名称
+    f(println)
+
+    // 实际示例，定义一个“二元运算”函数，只操作1和2两个数，但是具体运算通过参数传入
+    def dualFunctionOneAndTwo(fun: (Int, Int) => Int): Int = {
+      fun(1, 2)
+    }
+
+    val add = (a: Int, b: Int) => a + b
+    val minus = (a: Int, b: Int) => a - b
+    println(dualFunctionOneAndTwo(add))
+    println(dualFunctionOneAndTwo(minus))
+    // 匿名函数简化
+    println(dualFunctionOneAndTwo((a: Int, b: Int) => a + b))
+    println(dualFunctionOneAndTwo((a: Int, b: Int) => a - b))
+
+    println(dualFunctionOneAndTwo((a, b) => a + b))
+    println(dualFunctionOneAndTwo((a, b) => a - b))
+
+    println(dualFunctionOneAndTwo(_ + _))
+    println(dualFunctionOneAndTwo(_ - _))
+
+    // 如果是顺序颠倒，就不能用下划线了，但是可以颠倒下划线来简化
+    println(dualFunctionOneAndTwo((a, b) => b - a))
+    println(dualFunctionOneAndTwo(-_ + _))
+  }
+}
+```
+
+扩展练习
+
+练习 1：定义一个匿名函数，并将它作为值赋给变量 fun。函数有三个参数，类型分别为 Int， String， Char，返回值类型为 Boolean。
+
+要求调用函数 fun(0, “”, ‘0’)得到返回值为 false，其它情况均返回 true。  
+
+练习 2： 定义一个函数 func，它接收一个 Int 类型的参数，返回一个函数（记作 f1）。它返回的函数 f1，接收一个 String 类型的参数，同样返回一个函数（记作 f2）。函数 f2 接收一个 Char 类型的参数，返回一个 Boolean 的值。  
+
+要求调用函数 func(0) (“”) (‘0’)得到返回值为 false，其它情况均返回 true。  
+
+```scala
+package chapter05
+object Test08_Practicec {
+  def main(args: Array[String]): Unit = {
+    // 练习1
+    val fun = (a: Int, b: String, c: Char) => {
+      if (0 == a && "" == b && '0' == c) false else true
+    }
+    println(fun(0, "", '0'))
+    println(fun(0, "", '1'))
+    println(fun(1, "", '0'))
+    println(fun(0, "hello", '0'))
+
+    // 练习2
+    def func(a: Int) = {
+      def f1(b: String) = {
+        def f2(c: Char) = {
+          if (0 == a && "" == b && '0' == c) false else true
+        }
+
+        f2 _ // 将函数直接返回
+      }
+
+      f1 _
+    }
+
+    println(func(0)("")('0'))
+    println(func(0)("")('1'))
+    println(func(1)("")('0'))
+    println(func(0)("hello")('0'))
+
+    // 匿名函数简写 （闭包）
+    def func1(a: Int): String => (Char => Boolean) = {
+      b => c => if (0 == a && "" == b && '0' == c) false else true
+    }
+
+    println(func1(0)("")('0'))
+    println(func1(0)("")('1'))
+    println(func1(1)("")('0'))
+    println(func1(0)("hello")('0'))
+
+    // 柯里化，闭包的另外一种形式
+    def func2(a: Int)(b: String)(c: Char): Boolean = {
+      if (0 == a && "" == b && '0' == c) false else true
+    }
+
+    println(func2(0)("")('0'))
+    println(func2(0)("")('1'))
+    println(func2(1)("")('0'))
+    println(func2(0)("hello")('0'))
+  }
+}
+```
+
+### 5.2.2 高阶函数  
 
 在 Scala 中，函数是一等公民。 怎么体现的呢？
 对于一个函数我们可以： **定义函数、调用函数**  
@@ -1788,7 +2151,7 @@ object TestFunction {
 }
 ```
 
-2）函数可以作为参数进行传递  
+2）函数可以作为参数进行传递
 
 ```scala
 def main(args: Array[String]): Unit = {
@@ -1825,6 +2188,7 @@ def main(args: Array[String]): Unit = {
 练习与测试
 
 ```scala
+package chapter05
 object Test06_HighOrderFunction {
   def main(args: Array[String]): Unit = {
     def f(n: Int): Int = {
@@ -1913,204 +2277,6 @@ object Test06_HighOrderFunction {
 }
 ```
 
-### 5.2.2 匿名函数  
-
-1） 说明  
-
-没有名字的函数就是匿名函数。
-(x:Int)=>{函数体}
-x： 表示输入参数类型； Int：表示输入参数类型； 函数体： 表示具体代码逻辑  
-
-2） 案例实操  
-
-需求 1：传递的函数有一个参数
-传递匿名函数至简原则：
-（1）参数的类型可以省略，会根据形参进行自动的推导
-（2）类型省略之后，发现只有一个参数，则圆括号可以省略； 其他情况：没有参数和参数超过 1 的永远不能省略圆括号。
-（3）匿名函数如果只有一行， 则大括号也可以省略
-（4）如果参数只出现一次，则参数省略且后面参数可以用_代替
-
-```scala
-def main(args: Array[String]): Unit = {
-    //（1）定义一个函数：参数包含数据和逻辑函数
-    def operation(arr: Array[Int], op: Int => Int) = {
-        for (elem <- arr) yield op(elem)
-    }
-        //（2）定义逻辑函数
-    def op(ele: Int): Int = {
-        ele + 1
-    }
-    //（3）标准函数调用
-    val arr = operation(Array(1, 2, 3, 4), op)
-    println(arr.mkString(","))
-    //（4）采用匿名函数
-    val arr1 = operation(Array(1, 2, 3, 4), (ele: Int) => {
-    	ele + 1
-    })
-    println(arr1.mkString(","))
-    //（4.1）参数的类型可以省略，会根据形参进行自动的推导;
-    val arr2 = operation(Array(1, 2, 3, 4), (ele) => {
-    	ele + 1
-    })
-    println(arr2.mkString(","))
-    //（4.2）类型省略之后，发现只有一个参数，则圆括号可以省略；其他情况：没有参数和参数超过 1 的永远不能省略圆括号。
-    val arr3 = operation(Array(1, 2, 3, 4), ele => {
-    	ele + 1
-    })
-    println(arr3.mkString(","))
-    //（4.3） 匿名函数如果只有一行，则大括号也可以省略
-    val arr4 = operation(Array(1, 2, 3, 4), ele => ele + 1)
-    println(arr4.mkString(","))
-    //（4.4）如果参数只出现一次，则参数省略且后面参数可以用_代替
-    val arr5 = operation(Array(1, 2, 3, 4), _ + 1)
-    println(arr5.mkString(","))
-}
-```
-
-需求 2：传递的函数有两个参数  
-
-```scala
-object TestFunction {
-    def main(args: Array[String]): Unit = {
-        def calculator(a: Int, b: Int, op: (Int, Int) => Int): Int= {
-        	op(a, b)
-        }
-        // （1）标准版
-        println(calculator(2, 3, (x: Int, y: Int) => {x + y}))
-        // （2）如果只有一行，则大括号也可以省略
-        println(calculator(2, 3, (x: Int, y: Int) => x + y))
-        // （3）参数的类型可以省略，会根据形参进行自动的推导;
-        println(calculator(2, 3, (x , y) => x + y))
-        // （4）如果参数只出现一次，则参数省略且后面参数可以用_代替
-        println(calculator(2, 3, _ + _))
-    }
-}
-```
-
-练习与测试
-
-```scala
-object Test05_Lambda {
-  def main(args: Array[String]): Unit = {
-    val fun = (name: String) => println(name) // 返回函数类型
-    fun("atguigu")
-
-    //定义一个函数，以函数作为参数输入
-    def f(func: String => Unit): Unit = {
-      func("atguigu")
-    }
-
-    f(fun)
-    f((name: String) => {
-      println(name)
-    })
-
-    // 匿名函数的简化原则
-    //（1）参数的类型可以省略，会根据形参进行自动的推导
-    f((name) => {
-      println(name)
-    })
-    //（2）类型省略之后，发现只有一个参数，则圆括号可以省略； 其他情况：没有参数和参
-    //    数超过 1 的永远不能省略圆括号。
-    f(name => {
-      println(name)
-    })
-    //（3）匿名函数如果只有一行， 则大括号也可以省略
-    f(name => println(name))
-    //（4）如果参数只出现一次，则参数省略且后面参数可以用_代替
-    f(println(_))
-    //（5）如果可以推断出，当前传入的println是一个函数体，而不是一个调用语句，可以直接省略下划线,直接写要执行的函数名称
-    f(println)
-
-    // 实际示例，定义一个“二元运算”函数，只操作1和2两个数，但是具体运算通过参数传入
-    def dualFunctionOneAndTwo(fun: (Int, Int) => Int): Int = {
-      fun(1, 2)
-    }
-
-    val add = (a: Int, b: Int) => a + b
-    val minus = (a: Int, b: Int) => a - b
-    println(dualFunctionOneAndTwo(add))
-    println(dualFunctionOneAndTwo(minus))
-    // 匿名函数简化
-    println(dualFunctionOneAndTwo((a: Int, b: Int) => a + b))
-    println(dualFunctionOneAndTwo((a: Int, b: Int) => a - b))
-
-    println(dualFunctionOneAndTwo((a, b) => a + b))
-    println(dualFunctionOneAndTwo((a, b) => a - b))
-
-    println(dualFunctionOneAndTwo(_ + _))
-    println(dualFunctionOneAndTwo(_ - _))
-
-    // 如果是顺序颠倒，就不能用下划线了，但是可以颠倒下划线来简化
-    println(dualFunctionOneAndTwo((a, b) => b - a))
-    println(dualFunctionOneAndTwo(-_ + _))
-  }
-}
-```
-
-扩展练习
-
-练习 1：定义一个匿名函数，并将它作为值赋给变量 fun。函数有三个参数，类型分别为 Int， String， Char，返回值类型为 Boolean。
-
-要求调用函数 fun(0, “”, ‘0’)得到返回值为 false，其它情况均返回 true。  
-
-练习 2： 定义一个函数 func，它接收一个 Int 类型的参数，返回一个函数（记作 f1）。它返回的函数 f1，接收一个 String 类型的参数，同样返回一个函数（记作 f2）。函数 f2 接收一个 Char 类型的参数，返回一个 Boolean 的值。  
-
-要求调用函数 func(0) (“”) (‘0’)得到返回值为 false，其它情况均返回 true。  
-
-```scala
-object Test08_Practicec {
-  def main(args: Array[String]): Unit = {
-    // 练习1
-    val fun = (a: Int, b: String, c: Char) => {
-      if (0 == a && "" == b && '0' == c) false else true
-    }
-    println(fun(0, "", '0'))
-    println(fun(0, "", '1'))
-    println(fun(1, "", '0'))
-    println(fun(0, "hello", '0'))
-
-    // 练习2
-    def func(a: Int) = {
-      def f1(b: String) = {
-        def f2(c: Char) = {
-          if (0 == a && "" == b && '0' == c) false else true
-        }
-
-        f2 _ // 将函数直接返回
-      }
-
-      f1 _
-    }
-
-    println(func(0)("")('0'))
-    println(func(0)("")('1'))
-    println(func(1)("")('0'))
-    println(func(0)("hello")('0'))
-
-    // 匿名函数简写 （闭包）
-    def func1(a: Int): String => (Char => Boolean) = {
-      b => c => if (0 == a && "" == b && '0' == c) false else true
-    }
-
-    println(func1(0)("")('0'))
-    println(func1(0)("")('1'))
-    println(func1(1)("")('0'))
-    println(func1(0)("hello")('0'))
-
-    // 柯里化，闭包的另外一种形式
-    def func2(a: Int)(b: String)(c: Char): Boolean = {
-      if (0 == a && "" == b && '0' == c) false else true
-    }
-
-    println(func2(0)("")('0'))
-    println(func2(0)("")('1'))
-    println(func2(1)("")('0'))
-    println(func2(0)("hello")('0'))
-  }
-}
-```
-
 ### 5.2.3 高阶函数案例  
 
 需求：模拟 Map 映射、 Filter 过滤、 Reduce 聚合  
@@ -2152,6 +2318,7 @@ object TestFunction {
 练习与测试
 
 ```scala
+package chapter05
 object Test07_Practice_CollectionOperation {
   def main(args: Array[String]): Unit = {
 
@@ -2186,9 +2353,9 @@ object Test07_Practice_CollectionOperation {
 
 函数柯里化：把一个参数列表的多个参数，变成多个参数列表。  
 
-2） 案例实操  
+2） 案例实操
 
-（ 1）闭包  
+（1）闭包  
 
 ```scala
 object TestFunction {
@@ -2205,7 +2372,7 @@ object TestFunction {
         // 但是在此处，变量 a 其实并没有释放，而是包含在了 f2 函数的内部，形成了闭合的效果
         println(f(3))
         println(f1()(3))
-        // 函数柯里化，其实就是将复杂的参数逻辑变得简单化,函数柯里化一定存在闭包
+        // 函数柯里化，其实就是将复杂的参数逻辑变得简单化, 函数柯里化一定存在闭包
         def f3()(b:Int)={
         	a + b
         }
@@ -2287,8 +2454,6 @@ object Test09_ClosureAndCurrying {
 }
 ```
 
-
-
 ### 5.2.5 递归  
 
 1） 说明  
@@ -2313,7 +2478,7 @@ object TestFunction {
         if (i == 1) {
             1
         } else {
-            i * test(I - 1)
+            i * test(i - 1)
         }
     }
 }
@@ -2350,8 +2515,6 @@ object Test10_Recursion {
 }
 ```
 
-
-
 ### 5.2.6 控制抽象  
 
 1）值调用： 把计算后的值传递过去  
@@ -2383,17 +2546,17 @@ object TestControl {
         }
         foo(f())
     }
-        //def foo(a: Int):Unit = {
+    //def foo(a: Int):Unit = {
     def foo(a: =>Int):Unit = {//注意这里变量 a 没有小括号了
         println(a)
         println(a)	
 	}
 }
-输出结果：
-f...
-10
-f...
-10
+// 输出结果：
+// f...
+// 10
+// f...
+// 10
 ```
 
 注意： Java 只有值调用； Scala 既有值调用，又有名调用。  
@@ -2441,11 +2604,11 @@ object Test11_ControlAbstraction {
 ```scala
 object TestFunction {
     def main(args: Array[String]): Unit = {
-        // （1）传递代码块
+        //（1）传递代码块
         foo({
         	println("aaa")
         })
-        // （2） 小括号可以省略
+        //（2） 小括号可以省略
         foo{
         	println("aaa")
         }
@@ -2465,7 +2628,7 @@ object TestFunction {
         var i:Int = 1
         myWhile(i <= 10){
         	println(i)
-        	i +=1
+        	i += 1
         }
     }
     def myWhile(condition: =>Boolean)(op: =>Unit):Unit={
@@ -2549,8 +2712,6 @@ object Test12_MyWhile {
 }
 ```
 
-
-
 ### 5.2.7 惰性加载  
 
 1） 说明  
@@ -2573,7 +2734,7 @@ def sum(n1: Int, n2: Int): Int = {
 
 输出结果：  
 
-```
+```properties
 ------------------
 sum 被执行。。。
 res=40
@@ -2606,13 +2767,13 @@ Scala 的面向对象思想和 Java 的面向对象思想和概念是一致的
 
 Scala 中语法和 Java 不同，补充了更多的功能。  
 
-## 6.1 Scala 包  
+## 6.1 Scala 包
 
-**1）基本语法**  
+**1）基本语法**
 
-package 包名  
+package 包名
 
-**2） Scala 包的三大作用（和 Java 一样）**  
+**2） Scala 包的三大作用（和 Java 一样）**
 
 （1）区分相同名字的类
 （2）当类很多时，可以很好的管理类
@@ -2654,7 +2815,7 @@ Scala 有两种包的管理风格，一种方式和 Java 的包管理风格相�
 package com{
     package test{
         package scala{
-        }	
+        }
     }
 }
 ```
@@ -2662,7 +2823,7 @@ package com{
 第二种风格有以下特点：  
 
 （1）一个源文件中可以声明多个 package
-（2）子包中的类可以直接访问父包中的内容，而无需导包  
+（2）子包中的类可以直接访问父包中的内容，而无需导包
 
 **2） 案例实操**  
 
@@ -2730,8 +2891,6 @@ package aaa {
   }
 }
 ```
-
-
 
 ### 6.1.3 包对象  
 
@@ -2844,7 +3003,7 @@ package java {
 | new _root_.java.util.HashMap       | 引入的 Java 的绝对路径                                   |
 
 8）注意
-Scala 中的三个默认导入分别是
+Scala 中的**三个默认导入**分别是
 import java.lang._
 import scala._
 import scala.Predef._  
@@ -2857,7 +3016,7 @@ import scala.Predef._
 （2）提供一个公共的 set 方法，用于对属性赋值
 （3）提供一个公共的 get 方法，用于获取属性的值  
 
-Scala 中的 public 属性，底层实际为 private，并通过 get 方法（ obj.field()）和 set 方法（obj.field_=(value)）对其进行操作。所以 Scala 并不推荐将属性设为 private，再为其设置public 的 get 和 set 方法的做法。但由于很多 Java 框架都利用反射调用 getXXX 和 setXXX 方法，有时候为了和这些框架兼容，也会为 Scala 的属性设置 getXXX 和 setXXX 方法（通过@BeanProperty 注解实现）。  
+Scala 中的 public 属性，底层实际为 private，并通过 get 方法 obj.field() 和 set 方法 obj.field_=(value) 对其进行操作。所以 Scala 并不推荐将属性设为 private，再为其设置public 的 get 和 set 方法的做法。但由于很多 Java 框架都利用反射调用 getXXX 和 setXXX 方法，有时候为了和这些框架兼容，也会为 Scala 的属性设置 getXXX 和 setXXX 方法（通过@BeanProperty 注解实现）。
 
 练习与测试
 
@@ -2890,18 +3049,16 @@ class Student {
 }
 ```
 
-
-
 ### 6.1.6 访问权限  
 
 **1） 说明**  
 
 在 Java 中，访问权限分为： public， private， protected 和默认。在 Scala 中，你可以通过类似的修饰符达到同样的效果。但是使用上有区别。  
 
-（1） Scala 中属性和方法的默认访问权限为 public，但 Scala 中无 public 关键字。
-（2） private 为私有权限，只在类的内部和伴生对象中可用。
-（3） protected 为受保护权限， Scala 中受保护权限比 Java 中更严格，同类、子类可以访问，同包无法访问。
-（4） private[包名]增加包访问权限，包名下的其他类也可以使用  
+（1） Java 中属性和方法的默认访问权限为 public，但 Scala 中无 public 关键字
+（2） private 为私有权限，只在类的内部和伴生对象中可用
+（3） protected 为受保护权限，Scala 中受保护权限比 Java 中更严格，同类、子类可以访问，同包无法访问
+（4） private[包名] 增加包访问权限，包名下的其他类也可以使用
 
 **2） 案例实操**  
 
@@ -3004,7 +3161,7 @@ class Person {
 **2）基本语法**  
 
 [修饰符] class 类名 {
-		类体
+	类体
 }  
 
 说明  
@@ -3509,8 +3666,6 @@ class Student8 extends Person8 {
 }
 ```
 
-
-
 ## 6.4 抽象类  
 
 ### 6.4.1 抽象属性和抽象方法  
@@ -3518,8 +3673,8 @@ class Student8 extends Person8 {
 1）基本语法  
 
 （1）定义抽象类： abstract class Person{} //通过 abstract 关键字标记抽象类
-（2）定义抽象属性： val|var name:String //一个属性没有初始化，就是抽象属性
-（3）定义抽象方法： def hello():String //只声明而没有实现的方法，就是抽象方法  
+（2）定义抽象属性： val | var name:String //一个属性没有初始化，就是抽象属性
+（3）定义抽象方法： def hello():String //只声明而没有实现的方法，就是抽象方法
 
 案例实操  
 
@@ -3539,9 +3694,9 @@ class Teacher extends Person {
 2）继承&重写  
 
 （1）如果父类为抽象类，那么子类需要将抽象的属性和方法实现，否则子类也需声明为抽象类
-（2）重写非抽象方法、属性需要用 override 修饰，重写抽象方法、属性则可以不加 override。
+（2）重写非抽象方法、属性需要用 override 修饰，重写抽象方法、属性则可以不加 override
 （3）子类中调用父类的方法使用 super 关键字
-（4）子类对抽象属性进行实现，父类抽象属性可以用 var 修饰；子类对非抽象属性重写，父类非抽象属性只支持 val 类型，而不支持 var。因为 var 修饰的为可变变量，子类继承之后就可以直接使用，没有必要重写  
+（4）子类对抽象属性进行实现，父类抽象属性可以用 var 修饰；子类对非抽象属性重写，父类非抽象属性只支持 val 类型，而不支持 var。因为 var 修饰的为可变变量，子类继承之后就可以直接使用，没有必要重写
 
 练习与测试
 
@@ -3691,7 +3846,7 @@ object Test {
 （4）Scala 中 obj(arg)的语句实际是在调用该对象的 apply 方法，即 obj.apply(arg)。用以统一面向对象编程和函数式编程的风格。
 （5）当使用 new 关键字构建对象时，调用的其实是类的构造方法，当直接使用类名构建对象时，调用的其实时伴生对象的 apply 方法。  
 
-2） 案例实操  
+2） 案例实操
 
 ```scala
 object Test {
@@ -3802,7 +3957,7 @@ object Student12 {
 
 Scala 语言中，采用特质 trait（特征）来代替接口的概念，也就是说，多个类具有相同的特质（特征）时，就可以将这个特质（特征）独立出来，采用关键字 trait 声明。 
 
-Scala 中的 trait 中即可以有抽象属性和方法，也可以有具体的属性和方法， 一个类可以混入（ mixin）多个特质。这种感觉类似于 Java 中的抽象类。  
+Scala 中的 trait 中即可以有抽象属性和方法，也可以有具体的属性和方法， 一个类可以混入（mixin）多个特质。这种感觉类似于 Java 中的抽象类。  
 
 Scala 引入 trait 特征，第一可以替代 Java 的接口，第二个也是对单继承机制的一种补充。  
 
@@ -3840,22 +3995,22 @@ trait PersonTrait {
 1） 基本语法：  
 
 没有父类： class 类名 extends 特质 1 with 特质 2 with 特质 3 …
-有父类：class 类名 extends 父类 with 特质 1 with 特质 2 with 特质 3…  
+有父类：class 类名 extends 父类 with 特质 1 with 特质 2 with 特质 3…
 
 2）说明  
 
 （1）类和特质的关系：使用继承的关系。
 （2）当一个类去继承特质时，第一个连接词是 extends，后面是 with。
-（3）如果一个类在同时继承特质和父类时，应当把父类写在 extends 后。  
+（3）如果一个类在同时继承特质和父类时，应当把父类写在 extends 后。
 
-3） 案例实操  
+3） 案例实操
 
 （1）特质可以同时拥有抽象方法和具体方法
 （2）一个类可以混入（mixin）多个特质
 （3）所有的 Java 接口都可以当做 Scala 特质使用
 （4）动态混入：可灵活的扩展类的功能
-		（4.1）动态混入：创建对象时混入 trait，而无需使类混入该 trait
-		（4.2）如果混入的 trait 中有未实现的方法，则需要实现
+	（4.1）动态混入：创建对象时混入 trait，而无需使类混入该 trait
+	（4.2）如果混入的 trait 中有未实现的方法，则需要实现
 
 ```scala
 trait PersonTrait {
@@ -4022,21 +4177,18 @@ class Student14 extends Person13 with Young with Knowledge {
     println(s"student $name knowledge increased: $amount")
   }
 }
-
 ```
-
-
 
 ### 6.6.3 特质叠加  
 
 由于一个类可以混入（mixin）多个 trait，且 trait 中可以有具体的属性和方法，若混入的特质中具有相同的方法（方法名，参数列表，返回值均相同），必然会出现继承冲突问题。
-冲突分为以下两种：  
+冲突分为以下两种：
 
-第一种，一个类（Sub）混入的两个 trait（TraitA，TraitB）中具有相同的具体方法，且两个 trait 之间没有任何关系，解决这类冲突问题，直接在类（Sub）中重写冲突方法。  
+第一种，一个类（Sub）混入的两个 trait（TraitA，TraitB）中具有相同的具体方法，且两个 trait 之间没有任何关系，解决这类冲突问题，直接在类（Sub）中重写冲突方法。
 
 ![image-20230328150248105](Scala学习教程/image-20230328150248105.png)
 
-第二种，一个类（Sub）混入的两个 trait（TraitA， TraitB）中具有相同的具体方法，且两个 trait 继承自相同的 trait（TraitC），及所谓的“钻石问题”，解决这类冲突问题，Scala采用了特质叠加的策略。  
+第二种，一个类（Sub）混入的两个 trait（TraitA， TraitB）中具有相同的具体方法，且两个 trait 继承自相同的 trait（TraitC），及所谓的“钻石问题”，解决这类冲突问题，Scala采用了特质叠加的策略。
 
 ![image-20230328150313167](Scala学习教程/image-20230328150313167.png)
 
@@ -4165,11 +4317,13 @@ class MyFootBall extends CategoryBall with ColorBall {
 
 ```scala
 class User(val name: String, val age: Int)
+
 trait Dao {
     def insert(user: User) = {
     	println("insert into database :" + user.name)
     }
 }
+
 trait APP {
     _: Dao =>
     def login(user: User): Unit = {
@@ -4177,6 +4331,7 @@ trait APP {
         insert(user)
     }
 }
+
 object MyApp extends APP with Dao {
     def main(args: Array[String]): Unit = {
     	login(new User("bobo", 11))
@@ -4209,8 +4364,6 @@ trait UserDao {
 // 定义注册用户类
 class RegisterUser(name: String, password: String) extends User(name, password) with UserDao
 ```
-
-
 
 ### 6.6.6 特质和抽象类的区别  
 
@@ -4361,7 +4514,7 @@ object TestApp extends App {
 
 ## 7.1 集合简介  
 
-1）Scala 的集合有三大类：序列 Seq、集 Set、 映射 Map， 所有的集合都扩展自 Iterable特质。
+1）Scala 的集合有三大类：序列 Seq、集合 Set、 映射 Map， 所有的集合都扩展自 Iterable特质
 2）对于几乎所有的集合类， Scala 都同时提供了可变和不可变的版本，分别位于以下两个包：不可变集合： scala.collection.immutable，可变集合： scala.collection.mutable
 3）Scala 不可变集合，就是指该集合对象不可修改，每次修改就会返回一个新对象，而不会对原对象进行修改。类似于 java 中的 String 对象
 4）可变集合，就是这个集合可以直接对原对象进行修改，而不会返回新的对象。类似于 java 中 StringBuilder 对象  
@@ -5127,8 +5280,8 @@ object TestMap {
         val map = Map( "a"->1, "b"->2, "c"->3 )
         //（2）访问数据
         for (elem <- map.keys) {
-        // 使用 get 访问 map 集合的数据，会返回特殊类型 Option(选项):有值（ Some），无值(None)
-        println(elem + "=" + map.get(elem).get)
+        	// 使用 get 访问 map 集合的数据，会返回特殊类型 Option(选项):有值（Some），无值(None)
+        	println(elem + "=" + map.get(elem).get)
         }
         //（3）如果 key 不存在，返回 0
         println(map.get("d").getOrElse(0))
@@ -5286,9 +5439,9 @@ object TestTuple {
         println(tuple.productElement(0))
         //（2.3）通过迭代器访问数据
         for (elem <- tuple.productIterator) {
-        println(elem)
+        	println(elem)
         }
-        //（3） Map 中的键值对其实就是元组,只不过元组的元素个数为 2，称之为对偶
+        //（3）Map 中的键值对其实就是元组,只不过元组的元素个数为 2，称之为对偶
         val map = Map("a"->1, "b"->2, "c"->3)
         val map1 = Map(("a",1), ("b",2), ("c",3))
         map.foreach(tuple=>{println(tuple._1 + "=" + tuple._2)})
@@ -5616,7 +5769,7 @@ object Test13_SimpleFunction {
 1）说明  
 
 （1）过滤 ：遍历一个集合并从中获取满足指定条件的元素组成一个新的集合
-（2）转化/映射（ map）：将集合中的每一个元素映射到某一个函数  
+（2）转化/映射（ map）：将集合中的每一个元素映射到某一个函数
 （3）扁平化
 （4）扁平化+映射 注： flatMap 相当于先进行 map 操作，在进行 flatten 操作集合中的每个元素的子元素映射到某个函数并返回新集合
 （5）分组(group)：按照指定的规则对集合的元素进行分组
@@ -6525,7 +6678,7 @@ case class Person (name: String, age: Int)
 
 3）实操  
 
-上述匹配对象的案例使用样例类会节省大量代码  
+上述匹配对象的案例使用样例类会节省大量代码
 
 ```scala
 case class User(name: String, age: Int)
@@ -6711,11 +6864,11 @@ val second = new PartialFunction[List[Int], Option[Int]] {
 second.applyOrElse(List(1,2,3), (_: List[Int]) => None)
 ```
 
-applyOrElse 方法的逻辑为 if (ifDefinedAt(list)) apply(list) else default。如果输入参数满足条件，即 isDefinedAt 返回 true，则执行 apply 方法，否则执行 defalut 方法， default 方法为参数不满足要求的处理逻辑。  
+applyOrElse 方法的逻辑为 if (ifDefinedAt(list)) apply(list) else default。如果输入参数满足条件，即 isDefinedAt 返回 true，则执行 apply 方法，否则执行 defalut 方法， default 方法为参数不满足要求的处理逻辑。
 
 4） 案例实操  
 
-（1）需求  
+（1）需求
 
 将该 List(1,2,3,4,5,6,"test")中的 Int 类型的元素加一，并去掉字符串  
 
@@ -6957,7 +7110,7 @@ object TestImplicitParameter {
 1）隐式类说明  
 
 （1）其所带的构造参数有且只能有一个
-（2）隐式类必须被定义在“类”或“伴生对象”或“包对象”里，即隐式类不能是顶级的。  
+（2）隐式类必须被定义在“类”或“伴生对象”或“包对象”里，即隐式类不能是顶级的。
 
 2） 案例实操  
 

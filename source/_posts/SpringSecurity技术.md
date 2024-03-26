@@ -169,8 +169,7 @@ protected void configure(HttpSecurity http) throws Exception {
  SpringSecurity 本质是一个过滤器链： 从启动是可以获取到过滤器链：
 
  ```java
- org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFil
- ter
+ org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter
  org.springframework.security.web.context.SecurityContextPersistenceFilter
  org.springframework.security.web.header.HeaderWriterFilter
  org.springframework.security.web.csrf.CsrfFilter
@@ -204,8 +203,6 @@ ExceptionTranslationFilter：是个异常过滤器，用来处理在认证授权
 UsernamePasswordAuthenticationFilter ：对/login 的 POST 请求做拦截，校验表单中用户名，密码。
 
 ![image-20220217101051441](SpringSecurity技术/image-20220217101051441.png)
-
-
 
 ##  2.6 UserDetailsService 接口讲解  
 

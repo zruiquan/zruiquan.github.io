@@ -53,9 +53,9 @@ Spark 是一种基于内存的快速、通用、可扩展的大数据分析计�
 * Spark SQL 是 Spark 用来操作结构化数据的组件。通过 Spark SQL，用户可以使用SQL 或者 Apache Hive 版本的 SQL 方言（HQL）来查询数据。
 * Spark Streaming 是 Spark 平台上针对实时数据进行流式计算的组件，提供了丰富的处理数据流的 API。  
 
-由上面的信息可以获知，Spark 出现的时间相对较晚，并且主要功能主要是用于数据计算，所以其实 Spark 一直被认为是 Hadoop 框架的升级版。  
+由上面的信息可以获知，Spark 出现的时间相对较晚，并且主要功能主要是用于数据计算，所以其实 Spark 一直被认为是 Hadoop 框架的升级版。
 
-## 1.3 Spark or Hadoop 
+## 1.3 Spark or Hadoop
 
 Hadoop 的 MR 框架和 Spark 框架都是数据处理框架，那么我们在使用时如何选择呢？  
 
@@ -86,7 +86,7 @@ MLlib 是 Spark 提供的一个机器学习算法库。 MLlib 不仅提供了模
 ➢ Spark GraphX
 GraphX 是 Spark 面向图计算提供的框架与算法库。  
 
-# 第2章 Spark 快速上手  
+# 第2章 Spark 快速上手
 
 在大数据早期的课程中我们已经学习了 MapReduce 框架的原理及基本使用，并了解了其底层数据处理的实现方式。接下来，就让咱们走进 Spark 的世界，了解一下它是如何带领我们完成数据处理的。  
 
@@ -331,7 +331,7 @@ log4j.logger.org.apache.hadoop.hive.ql.exec.FunctionRegistry=ERROR
 
 # 第3章 Spark 运行环境  
 
-Spark 作为一个数据处理框架和计算引擎，被设计在所有常见的集群环境中运行, 在国内工作中主流的环境为 Yarn，不过逐渐容器式环境也慢慢流行起来。接下来，我们就分别看看不同环境下 Spark 的运行  
+Spark 作为一个数据处理框架和计算引擎，被设计在所有常见的集群环境中运行, 在国内工作中主流的环境为 Yarn，不过逐渐容器式环境也慢慢流行起来。接下来，我们就分别看看不同环境下 Spark 的运行
 
 ![image-20230703104007807](SparkCore笔记/image-20230703104007807.png)
 
@@ -351,7 +351,7 @@ mv spark-3.0.0-bin-hadoop3.2 spark-local
 
 ### 3.1.2 启动 Local 环境  
 
-1) 进入解压缩后的路径，执行如下指令  
+1) 进入解压缩后的路径，执行如下指令
 
 ```shell
 bin/spark-shell
@@ -368,14 +368,14 @@ bin/spark-shell
 在解压缩文件夹下的 data 目录中，添加 word.txt 文件。在命令行工具中执行如下代码指令（和 IDEA 中代码简化版一致）  
 
 ```scala
-sc.textFile("data/word.txt").flatMap(_.split("")).map((_,1)).reduceByKey(_+_).collect
+sc.textFile("data/word.txt").flatMap(_.split(" ")).map((_,1)).reduceByKey(_+_).collect
 ```
 
 ![image-20230703105636460](SparkCore笔记/image-20230703105636460.png)
 
 ### 3.1.4 退出本地模式  
 
-按键 Ctrl+C 或输入 Scala 指令  `:quit  `
+按键 Ctrl+C 或 输入 Scala 指令  `:quit  `
 
 ### 3.1.5 提交应用  
 
@@ -597,7 +597,7 @@ bin/spark-submit \
 
 ### 3.2.7 配置高可用（ HA）
 
-所谓的高可用是因为当前集群中的 Master 节点只有一个，所以会存在单点故障问题。 所以为了解决单点故障问题，需要在集群中配置多个 Master 节点，一旦处于活动状态的 Master发生故障时，由备用 Master 提供服务，保证作业可以继续执行。 这里的高可用一般采用Zookeeper 设置  
+所谓的高可用是因为当前集群中的 Master 节点只有一个，所以会存在单点故障问题。 所以为了解决单点故障问题，需要在集群中配置多个 Master 节点，一旦处于活动状态的 Master发生故障时，由备用 Master 提供服务，保证作业可以继续执行。 这里的高可用一般采用Zookeeper 设置。
 
 集群规划:  
 
@@ -678,7 +678,7 @@ bin/spark-submit \
 
 ### 3.3.1 解压缩文件  
 
-将 spark-3.0.0-bin-hadoop3.2.tgz 文件上传到 linux 并解压缩，放置在指定位置。 
+将 spark-3.0.0-bin-hadoop3.2.tgz 文件上传到 linux 并解压缩，放置在指定位置。
 ```shell
 tar -zxvf spark-3.0.0-bin-hadoop3.2.tgz -C /opt/module
 cd /opt/module
@@ -851,7 +851,7 @@ spark-submit --class org.apache.spark.examples.SparkPi --master local[2] ../exam
 * Spark Master 内部通信服务端口号： 7077
 * Standalone 模式下， Spark Master Web 端口号： 8080（资源）
 * Spark 历史服务器端口号： 18080
-* Hadoop YARN 任务运行情况查看端口号： 8088  
+* Hadoop YARN 任务运行情况查看端口号： 8088
 
 # 第4章 Spark 运行架构
 
@@ -864,7 +864,7 @@ Spark 框架的核心是一个计算引擎，整体来说，它采用了标准 m
 
 ## 4.2 核心组件  
 
-由上图可以看出，对于 Spark 框架有两个核心组件：  
+由上图可以看出，对于 Spark 框架有两个核心组件：
 
 ### 4.2.1 Driver  
 
@@ -875,7 +875,7 @@ Spark 驱动器节点，用于执行 Spark 任务中的 main 方法，负责实�
 * 跟踪 Executor 的执行情况
 * 通过 UI 展示查询运行情况  
 
-实际上，我们无法准确地描述 Driver 的定义，因为在整个的编程过程中没有看到任何有关Driver 的字眼。所以简单理解，所谓的 Driver 就是驱使整个应用运行起来的程序，也称之为Driver 类。  
+实际上，我们无法准确地描述 Driver 的定义，因为在整个的编程过程中没有看到任何有关Driver 的字眼。所以简单理解，所谓的 Driver 就是驱使整个应用运行起来的程序，也称之为 Driver 类。
 
 ### 4.2.2 Executor  
 
@@ -884,9 +884,7 @@ Spark Executor 是集群中工作节点（Worker）中的一个 JVM 进程，负
 Executor 有两个核心功能：  
 
 * 负责运行组成 Spark 应用的任务，并将结果返回给驱动器进程
-* 它们通过自身的块管理器（Block Manager）为用户程序中要求缓存的 RDD 提供内存
-  式存储。 RDD 是直接缓存在 Executor 进程内的，因此任务可以在运行时充分利用缓存
-  数据加速运算。  
+* 它们通过自身的块管理器（Block Manager）为用户程序中要求缓存的 RDD 提供内存式存储。 RDD 是直接缓存在 Executor 进程内的，因此任务可以在运行时充分利用缓存数据加速运算。  
 
 ### 4.2.3 Master & Worker  
 
@@ -896,7 +894,7 @@ Spark 集群的独立部署环境中，不需要依赖其他的资源调度框�
 
 Hadoop 用户向 YARN 集群提交应用程序时,提交程序中应该包含 ApplicationMaster，用于向资源调度器申请执行任务的资源容器 Container，运行用户自己的程序任务 job，监控整个任务的执行，跟踪整个任务的状态，处理任务失败等异常情况。
 
-说的简单点就是， ResourceManager（资源）和 Driver（计算）之间的解耦合靠的就是ApplicationMaster。  
+说的简单点就是， ResourceManager（资源）和 Driver（计算）之间的解耦合靠的就是ApplicationMaster。
 
 ## 4.3 核心概念  
 
@@ -914,13 +912,13 @@ Spark Executor 是集群中运行在工作节点（Worker）中的一个 JVM 进
 
 ### 4.3.2 并行度（ Parallelism）  
 
-在分布式计算框架中一般都是多个任务同时执行，由于任务分布在不同的计算节点进行计算，所以能够真正地实现多任务并行执行，记住，这里是并行，而不是并发。这里我们将整个集群并行执行任务的数量称之为并行度。那么一个作业到底并行度是多少呢？这个取决于框架的默认配置。应用程序也可以在运行过程中动态修改。  
+在分布式计算框架中一般都是多个任务同时执行，由于任务分布在不同的计算节点进行计算，所以能够真正地实现多任务并行执行，记住，这里是并行，而不是并发。这里我们将整个集群并行执行任务的数量称之为并行度。那么一个作业到底并行度是多少呢？这个取决于框架的默认配置。应用程序也可以在运行过程中动态修改。
 
 ### 4.3.3 有向无环图（ DAG）  
 
 ![image-20230710163412215](SparkCore笔记/image-20230710163412215.png)
 
-大数据计算引擎框架我们根据使用方式的不同一般会分为四类，其中第一类就是Hadoop 所承载的 MapReduce,它将计算分为两个阶段，分别为 Map 阶段 和 Reduce 阶段。对于上层应用来说，就不得不想方设法去拆分算法，甚至于不得不在上层应用实现多个 Job的串联，以完成一个完整的算法，例如迭代计算。 由于这样的弊端，催生了支持 DAG 框架的产生。 因此，支持 DAG 的框架被划分为第二代计算引擎。如 Tez 以及更上层的Oozie。这里我们不去细究各种 DAG 实现之间的区别，不过对于当时的 Tez 和 Oozie 来说，大多还是批处理的任务。接下来就是以 Spark 为代表的第三代的计算引擎。第三代计算引擎的特点主要是 Job 内部的 DAG 支持（不跨越 Job），以及实时计算。
+大数据计算引擎框架我们根据使用方式的不同一般会分为四类，其中第一类就是Hadoop 所承载的 MapReduce,它将计算分为两个阶段，分别为 Map 阶段 和Reduce 阶段。对于上层应用来说，就不得不想方设法去拆分算法，甚至于不得不在上层应用实现多个 Job的串联，以完成一个完整的算法，例如迭代计算。 由于这样的弊端，催生了支持 DAG 框架的产生。 因此，支持 DAG 的框架被划分为第二代计算引擎。如 Tez 以及更上层的Oozie。这里我们不去细究各种 DAG 实现之间的区别，不过对于当时的 Tez 和 Oozie 来说，大多还是批处理的任务。接下来就是以 Spark 为代表的第三代的计算引擎。第三代计算引擎的特点主要是 Job 内部的 DAG 支持（不跨越 Job），以及实时计算。
 
 这里所谓的有向无环图，并不是真正意义的图形，而是由 Spark 程序直接映射成的数据流的高级抽象模型。简单理解就是将整个程序计算的执行过程用图形表示出来,这样更直观，更便于理解，可以用于表示程序的拓扑结构。  
 
@@ -950,8 +948,7 @@ Driver 在任务提交的本地机器上运行
 
 Cluster 模式将用于监控和调度的 Driver 模块启动在 Yarn 集群资源中执行。一般应用于实际生产环境。  
 
-在 YARN Cluster 模式下，任务提交后会和 ResourceManager 通讯申请启动 ApplicationMaster
-
+* 在 YARN Cluster 模式下，任务提交后会和 ResourceManager 通讯申请启动 ApplicationMaster
 * 随后 ResourceManager 分配 container，在合适的 NodeManager 上启动 ApplicationMaster，此时的 ApplicationMaster 就是 Driver
 * Driver 启动后向 ResourceManager 申请 Executor 内存，ResourceManager 接到 ApplicationMaster 的资源申请后会分配 container，然后在合适的 NodeManager 上启动Executor 进程
 * Executor 进程启动后会向 Driver 反向注册， Executor 全部注册完成后 Driver 开始执行main 函数
@@ -1018,7 +1015,7 @@ RDD是不保存数据的，但是IO流可以临时保存一部分数据
 
   ![image-20230710181819982](SparkCore笔记/image-20230710181819982.png)
 
-* RDD 之间的依赖关系  
+* RDD 之间的依赖关系
 
   RDD 是计算模型的封装，当需求中需要将多个计算模型进行组合时，就需要将多个 RDD 建立依赖关系
 
@@ -1589,7 +1586,7 @@ def mapPartitions[U: ClassTag](f: Iterator[T] => Iterator[U],preservesPartitioni
 
 * 小功能：获取每个数据分区的最大值
 
-* 思考一个问题： map 和 mapPartitions 的区别？  
+* 思考一个问题： map 和 mapPartitions 的区别？
 
   * 数据处理角度
     Map 算子是分区内一个数据一个数据的执行，类似于串行操作。而 mapPartitions 算子是以分区为单位进行批处理操作。
@@ -2507,7 +2504,7 @@ def mapPartitions[U: ClassTag](f: Iterator[T] => Iterator[U],preservesPartitioni
 
 * 思考一个问题：如果重分区的分区器和当前 RDD 的分区器一样怎么办？
 
-* 思考一个问题： Spark 还有其他分区器吗？
+* 思考一个问题：Spark 还有其他分区器吗？
 
 * 思考一个问题：如果想按照自己的方法进行数据分区怎么办？
 
@@ -3557,7 +3554,7 @@ def mapPartitions[U: ClassTag](f: Iterator[T] => Iterator[U],preservesPartitioni
       println(result1)
       sc.stop()
     }
-  }
+  }  
   ```
 
 ##### fold  
@@ -4334,7 +4331,7 @@ RDD数据持久化
 * RDD对象的持久化操作不一定是为了重用
 * 在数据执行较长，或数据比较重要的场合也可以采用持久化操作
 
-##### RDD Cache 缓存  
+##### RDD Cache 缓存
 
 RDD 通过 Cache 或者 Persist 方法将前面的计算结果缓存，默认情况下会把数据以缓存在 JVM 的堆内存中。但是并不是这两个方法被调用时立即缓存，而是触发后面的 action 算子时，该 RDD 将会被缓存在计算节点的内存中，并供后面重用。
 
@@ -5079,7 +5076,7 @@ object Spark04_Acc {
 
 ### 5.3.1 实现原理
 
-广播变量用来高效分发较大的对象。向所有工作节点发送一个较大的只读值，以供一个或多个 Spark 操作使用。比如，如果你的应用需要向所有节点发送一个较大的只读查询表，广播变量用起来都很顺手。在多个并行操作中使用同一个变量，但是 Spark 会为每个任务分别发送。
+广播变量用来高效分发较大的对象。向所有工作节点发送一个较大的只读值，以供一个或多个 Spark 操作使用。比如，如果你的应用需要向所有节点发送一个较大的只读查询表，广播变量用起来都很顺手。在多个并行操作中使用同一个变量，但是 Spark 默认会为每个任务分别发送闭包数据
 
 ![image-20231010154250327](SparkCore笔记/image-20231010154250327.png)
 
@@ -5175,4 +5172,736 @@ object Spark06_Bc {
   }
 }
 ```
+
+# 第6章 Spark 案例实操
+
+在之前的学习中，我们已经学习了 Spark 的基础编程方式，接下来，我们看看在实际的工作中如何使用这些 API 实现具体的需求。这些需求是电商网站的真实需求，所以在实现功能前，咱们必须先将数据准备好。
+
+![image-20240318154740609](SparkCore笔记/image-20240318154740609.png)
+
+上面的数据图是从数据文件中截取的一部分内容，表示为电商网站的用户行为数据，主要包含用户的 4 种行为： 搜索，点击，下单，支付。 数据规则如下：  
+
+数据文件中每行数据采用下划线分隔数据
+
+* 每一行数据表示用户的一次行为，这个行为只能是 4 种行为的一种
+* 如果搜索关键字为 null,表示数据不是搜索数据
+* 如果点击的品类 ID 和产品 ID 为-1，表示数据不是点击数据
+* 针对于下单行为，一次可以下单多个商品，所以品类 ID 和产品 ID 可以是多个， id 之间采用逗号分隔，如果本次不是下单行为，则数据采用 null 表示
+* 支付行为和下单行为类似
+
+详细字段说明：
+
+| 编号 | 字段名称           | 字段类型 | 字段含义                     |
+| ---- | ------------------ | -------- | ---------------------------- |
+| 1    | date               | String   | 用户点击行为的日期           |
+| 2    | user_id            | Long     | 用户的 ID                    |
+| 3    | session_id         | String   | Session 的 ID                |
+| 4    | page_id            | Long     | 某个页面的 ID                |
+| 5    | action_time        | String   | 动作的时间点                 |
+| 6    | search_keyword     | String   | 用户搜索的关键词             |
+| 7    | click_category_id  | Long     | 某一个商品品类的 ID          |
+| 8    | click_product_id   | Long     | 某一个商品的 ID              |
+| 9    | order_category_ids | String   | 一次订单中所有品类的 ID 集合 |
+| 10   | order_product_ids  | String   | 一次订单中所有商品的 ID 集合 |
+| 11   | pay_category_ids   | String   | 一次支付中所有品类的 ID 集合 |
+| 12   | pay_product_ids    | String   | 一次支付中所有商品的 ID 集合 |
+| 13   | city_id            | Long     | 城市 id                      |
+
+样例类：
+
+```scala
+//用户访问动作表
+case class UserVisitAction(
+    date: String,//用户点击行为的日期
+    user_id: Long,//用户的 ID
+    session_id: String,//Session 的 ID
+    page_id: Long,//某个页面的 ID
+    action_time: String,//动作的时间点
+    search_keyword: String,//用户搜索的关键词
+    click_category_id: Long,//某一个商品品类的 ID
+    click_product_id: Long,//某一个商品的 ID
+    order_category_ids: String,//一次订单中所有品类的 ID 集合
+    order_product_ids: String,//一次订单中所有商品的 ID 集合
+    pay_category_ids: String,//一次支付中所有品类的 ID 集合
+    pay_product_ids: String,//一次支付中所有商品的 ID 集合
+    city_id: Long //城市 id
+)
+```
+
+## 6.1 需求 1：Top10 热门品类
+
+![image-20240318155127794](SparkCore笔记/image-20240318155127794.png)
+
+### 6.1.1 需求说明
+
+品类是指产品的分类，大型电商网站品类分多级，咱们的项目中品类只有一级，不同的公司可能对热门的定义不一样。我们按照每个品类的点击、下单、支付的量来统计热门品类。
+
+鞋 点击数 下单数 支付数
+衣服 点击数 下单数 支付数
+电脑 点击数 下单数 支付数
+
+例如，综合排名 = 点击数*20%+下单数*30%+支付数*50%  
+
+本项目需求优化为： **先按照点击数排名，靠前的就排名高；如果点击数相同，再比较下单数；下单数再相同，就比较支付数。**  
+
+思路图解：
+
+![image-20240319101749536](SparkCore笔记/image-20240319101749536.png)
+
+### 6.1.2 实现方案一  
+
+#### 6.1.2.1 需求分析  
+
+分别统计每个品类点击的次数，下单的次数和支付的次数：
+（品类，点击总数）（品类，下单总数）（品类，支付总数）
+
+#### 6.1.2.2 需求实现
+
+```scala
+package com.atguigu.spark.core.req
+import org.apache.spark.rdd.RDD
+import org.apache.spark.{SparkConf, SparkContext}
+
+object Spark01_Req01_HotCategoryTop10Analysis {
+  def main(args: Array[String]): Unit = {
+    // TODO 案例实操-电商网站的真实需求-user_visit_action.txt
+    // TODO Top10热门品类
+    val sparkConf = new SparkConf().setMaster("local[*]").setAppName("WordCount")
+    val sc = new SparkContext(sparkConf)
+    // 1. 读取原始日志数据
+    val actionRDD = sc.textFile("datas/user_visit_action.txt")
+
+    // 2. 读取品类的点击数量：(品类ID, 点击数量)
+    val clickActionRDD = actionRDD.filter(
+      action => {
+        val datas = action.split("_")
+        datas(6) != "-1"
+      })
+    val clickCountRDD = clickActionRDD.map(action => {
+      val datas = action.split("_")
+      (datas(6), 1)
+    }).reduceByKey(_ + _)
+
+    // 3. 读取品类的下单数量：(品类ID, 下单数量)
+    val orderActionRDD = actionRDD.filter(
+      action => {
+        val datas = action.split("_")
+        datas(8) != "null"
+      })
+    val orderCountRDD = orderActionRDD.flatMap(action => {
+      val datas = action.split("_")
+      val cid = datas(8)
+      val cids = cid.split(",")
+      cids.map(id => (id, 1))
+    }).reduceByKey(_ + _)
+
+    // 4. 读取品类的支付数量：(品类ID, 支付数量)
+    val payActionRDD = actionRDD.filter(
+      action => {
+        val datas = action.split("_")
+        datas(10) != "null"
+      })
+    val payCountRDD = payActionRDD.flatMap(action => {
+      val datas = action.split("_")
+      val cid = datas(10)
+      val cids = cid.split(",")
+      cids.map(id => (id, 1))
+    }).reduceByKey(_ + _)
+
+    // 5. 将品类进行排序，并且取前10名
+    //    1) 点击数量排序 2) 下单数量排序 3) 支付数量排序
+    //    元组排序：先比较第一个，在比较第二个，再比较第三个，以此类推
+    //    先形成：(品类ID, (点击数量, 下单数量, 支付数量))
+    //    join, zip, leftOuterJoin, cogroup 经过对比，使用cogroup = connect + group
+    val cogroupRDD: RDD[(String, (Iterable[Int], Iterable[Int], Iterable[Int]))] = clickCountRDD.cogroup(orderCountRDD, payCountRDD)
+
+    val analysisRDD = cogroupRDD.mapValues {
+      case (clickIter, orderIter, payIter) => {
+        var clickCnt = 0
+        val iter1 = clickIter.iterator
+        if (iter1.hasNext) {
+          clickCnt = iter1.next()
+        }
+
+        var orderCnt = 0
+        val iter2 = orderIter.iterator
+        if (iter2.hasNext) {
+          orderCnt = iter2.next()
+        }
+
+        var payCnt = 0
+        val iter3 = payIter.iterator
+        if (iter3.hasNext) {
+          payCnt = iter3.next()
+        }
+        (clickCnt, orderCnt, payCnt)
+      }
+    }
+
+    val resultRDD = analysisRDD.sortBy(_._2, false).take(10)
+    // 6. 将结果采集到控制台打印
+    resultRDD.foreach(println)
+
+    sc.stop()
+  }
+}
+```
+
+### 6.1.3 实现方案二
+
+#### 6.1.3.1 需求分析  
+
+一次性统计每个品类点击的次数，下单的次数和支付的次数：
+（品类，（点击总数，下单总数，支付总数））  
+
+#### 6.1.3.2 需求实现
+
+```scala
+package com.atguigu.spark.core.req
+import org.apache.spark.{SparkConf, SparkContext}
+
+object Spark02_Req01_HotCategoryTop10Analysis {
+  def main(args: Array[String]): Unit = {
+    // TODO 案例实操-电商网站的真实需求-user_visit_action.txt
+    // TODO Top10热门品类-第二种方案
+    val sparkConf = new SparkConf().setMaster("local[*]").setAppName("WordCount")
+    val sc = new SparkContext(sparkConf)
+    // Q1：actionRDD重复使用
+    // Q2：cogroup性能可能较低，因为cogroup 有可能存在shuffle
+
+    // 1. 读取原始日志数据
+    val actionRDD = sc.textFile("datas/user_visit_action.txt")
+    // 解决Q1的问题
+    actionRDD.cache()
+
+    // 2. 读取品类的点击数量：(品类ID, 点击数量)
+    val clickActionRDD = actionRDD.filter(
+      action => {
+        val datas = action.split("_")
+        datas(6) != "-1"
+      })
+    val clickCountRDD = clickActionRDD.map(action => {
+      val datas = action.split("_")
+      (datas(6), 1)
+    }).reduceByKey(_ + _)
+
+    // 3. 读取品类的下单数量：(品类ID, 下单数量)
+    val orderActionRDD = actionRDD.filter(
+      action => {
+        val datas = action.split("_")
+        datas(8) != "null"
+      })
+    val orderCountRDD = orderActionRDD.flatMap(action => {
+      val datas = action.split("_")
+      val cid = datas(8)
+      val cids = cid.split(",")
+      cids.map(id => (id, 1))
+    }).reduceByKey(_ + _)
+
+    // 4. 读取品类的支付数量：(品类ID, 支付数量)
+    val payActionRDD = actionRDD.filter(
+      action => {
+        val datas = action.split("_")
+        datas(10) != "null"
+      })
+    val payCountRDD = payActionRDD.flatMap(action => {
+      val datas = action.split("_")
+      val cid = datas(10)
+      val cids = cid.split(",")
+      cids.map(id => (id, 1))
+    }).reduceByKey(_ + _)
+
+    // 5. 将品类进行排序，并且取前10名
+    //    1) 点击数量排序 2) 下单数量排序 3) 支付数量排序
+
+    //    (品类ID, 点击数量) => (品类ID, (点击数量, 0, 0))
+    //    (品类ID, 下单数量) => (品类ID, (0, 下单数量, 0))
+    //                合并 => (品类ID, (点击数量, 下单数量, 0))
+    //    (品类ID, 支付数量) => (品类ID, (0, 0, 支付数量))
+    //                合并 => (品类ID, (点击数量, 下单数量, 支付数量))
+    //    最终得到：(品类ID, (点击数量, 下单数量, 支付数量))
+
+    val rdd1 = clickCountRDD.map {
+      case (cid, cnt) => {
+        (cid, (cnt, 0, 0))
+      }
+    }
+
+    val rdd2 = orderCountRDD.map {
+      case (cid, cnt) => {
+        (cid, (0, cnt, 0))
+      }
+    }
+
+    val rdd3 = payCountRDD.map {
+      case (cid, cnt) => {
+        (cid, (0, 0, cnt))
+      }
+    }
+
+    // 将三个数据源合并在一起，统一进行聚合计算
+    // 解决Q2的问题
+    val sourceRDD = rdd1.union(rdd2).union(rdd3)
+
+    val analysisRDD = sourceRDD.reduceByKey(
+      (t1, t2) => {
+        (t1._1 + t2._1, t1._2 + t2._2, t1._3 + t2._3)
+      }
+    )
+
+    val resultRDD = analysisRDD.sortBy(_._2, false).take(10)
+    // 6. 将结果采集到控制台打印
+    resultRDD.foreach(println)
+
+    sc.stop()
+  }
+}
+```
+
+```scala
+package com.atguigu.spark.core.req
+import org.apache.spark.rdd.RDD
+import org.apache.spark.{SparkConf, SparkContext}
+
+object Spark03_Req01_HotCategoryTop10Analysis {
+  def main(args: Array[String]): Unit = {
+    // TODO 案例实操-电商网站的真实需求-user_visit_action.txt
+    // TODO Top10热门品类-第三种方案
+    val sparkConf = new SparkConf().setMaster("local[*]").setAppName("WordCount")
+    val sc = new SparkContext(sparkConf)
+    // Q1：还是存在大量的shuffle操作（reduceByKey）
+    // reduceByKey 聚合算子，spark底层本身会提供优化（预聚合、缓存）
+
+    // 1. 读取原始日志数据
+    val actionRDD = sc.textFile("datas/user_visit_action.txt")
+
+    // 2. 将数据转换结构
+    // 点击的场合：(品类ID, (1, 0, 0))
+    // 下单的场合：(品类ID, (0, 1, 0))
+    // 支付的场合：(品类ID, (0, 0, 1))
+
+    // 解决Q1的问题
+    val flatRDD: RDD[(String, (Int, Int, Int))] = actionRDD.flatMap(action => {
+      val datas = action.split("_")
+      if (datas(6) != "-1") {
+        // 点击场合
+        List((datas(6), (1, 0, 0)))
+      }
+      else if (datas(8) != "null") {
+        // 下单场合
+        val ids = datas(8).split(",")
+        ids.map(id => (id, (0, 1, 0)))
+      }
+      else if (datas(10) != "null") {
+        // 支付场合
+        val ids = datas(10).split(",")
+        ids.map(id => (id, (0, 0, 1)))
+      }
+      else {
+        Nil
+      }
+    })
+
+    // 3. 将相同的品类ID的数据进行分组聚合
+    // 得到：(品类ID, (点击数量, 下单数量, 支付数量))
+    val analysisRDD = flatRDD.reduceByKey(
+      (t1, t2) => {
+        (t1._1 + t2._1, t1._2 + t2._2, t1._3 + t2._3)
+      }
+    )
+    // 4. 将统计结果根据数量进行降序排列，取前10名
+    val resultRDD = analysisRDD.sortBy(_._2, false).take(10)
+    // 5. 将结果采集到控制台打印
+    resultRDD.foreach(println)
+
+    sc.stop()
+  }
+}
+```
+
+### 6.1.4 实现方案三  
+
+#### 6.1.4.1 需求分析  
+
+使用累加器的方式聚合数据
+
+#### 6.1.4.2 需求实现
+
+```scala
+package com.atguigu.spark.core.req
+
+import org.apache.spark.util.AccumulatorV2
+import org.apache.spark.{SparkConf, SparkContext}
+import scala.collection.mutable
+
+object Spark04_Req01_HotCategoryTop10Analysis {
+  def main(args: Array[String]): Unit = {
+    // TODO 案例实操-电商网站的真实需求-user_visit_action.txt
+    // TODO Top10热门品类-第四种方案
+    val sparkConf = new SparkConf().setMaster("local[*]").setAppName("WordCount")
+    val sc = new SparkContext(sparkConf)
+    // Q1：能不能彻底去掉shuffle
+
+    // 1. 读取原始日志数据
+    val actionRDD = sc.textFile("datas/user_visit_action.txt")
+
+    // 2. 注册累加器
+    val acc = new HotCategoryAccumulator()
+    sc.register(acc, "hotCategory")
+
+    actionRDD.foreach(action => {
+      val datas = action.split("_")
+      if (datas(6) != "-1") {
+        // 点击场合
+        acc.add((datas(6), "click"))
+      }
+      else if (datas(8) != "null") {
+        // 下单场合
+        val ids = datas(8).split(",")
+        ids.foreach(id => acc.add(id, "order"))
+      }
+      else if (datas(10) != "null") {
+        // 支付场合
+        val ids = datas(10).split(",")
+        ids.foreach(id => acc.add(id, "pay"))
+      }
+    })
+
+    // 3. 将结果采集到控制台打印
+    val accVal: mutable.Map[String, HostCategory] = acc.value
+    val categories: mutable.Iterable[HostCategory] = accVal.map(_._2)
+
+    val sort: List[HostCategory] = categories.toList.sortWith(
+      (left, right) => {
+        if (left.clickCnt > right.clickCnt) {
+          true
+        }
+        else if (left.clickCnt == right.clickCnt) {
+          if (left.orderCnt > right.orderCnt) {
+            true
+          }
+          else if (left.orderCnt == right.orderCnt) {
+            left.payCnt > right.payCnt
+          }
+          else {
+            false
+          }
+        }
+        else {
+          false
+        }
+      }
+    )
+    sort.take(10).foreach(println)
+    sc.stop()
+  }
+
+  /*
+  * 自定义累加器
+  * 1、继承AccumulatorV2，定义泛型
+  *   IN：累加器输入的数据类型：(品类ID, 行为类型)
+  *   OUT：累加器返回的数据类型：mutable.Map[String,HostCategory]
+  * 2、重写方法（6个）
+  * */
+  // 解决Q1的问题
+  class HotCategoryAccumulator extends AccumulatorV2[(String, String), mutable.Map[String, HostCategory]] {
+
+    private val hcMap = mutable.Map[String, HostCategory]()
+
+    override def isZero: Boolean = {
+      hcMap.isEmpty
+    }
+
+    override def copy(): AccumulatorV2[(String, String), mutable.Map[String, HostCategory]] = {
+      new HotCategoryAccumulator()
+    }
+
+    override def reset(): Unit = {
+      hcMap.clear()
+    }
+
+    override def add(v: (String, String)): Unit = {
+      val cid = v._1
+      val actionType = v._2
+      val category: HostCategory = hcMap.getOrElse(cid, HostCategory(cid, 0, 0, 0))
+      if (actionType == "click") {
+        category.clickCnt += 1
+      }
+      else if (actionType == "order") {
+        category.orderCnt += 1
+      }
+      else if (actionType == "pay") {
+        category.payCnt += 1
+      }
+      hcMap.update(cid, category)
+    }
+
+    override def merge(other: AccumulatorV2[(String, String), mutable.Map[String, HostCategory]]): Unit = {
+      val map1 = this.hcMap
+      val map2 = other.value
+      map2.foreach {
+        case (cid, hc) => {
+          val category = map1.getOrElse(cid, HostCategory(cid, 0, 0, 0))
+          category.clickCnt += hc.clickCnt
+          category.orderCnt += hc.orderCnt
+          category.payCnt += hc.payCnt
+          map1.update(cid, category)
+        }
+      }
+    }
+
+    override def value: mutable.Map[String, HostCategory] = {
+      hcMap
+    }
+  }
+
+  case class HostCategory(var cid: String, var clickCnt: Int, var orderCnt: Int, var payCnt: Int)
+}
+```
+
+## 6.2 需求 2：Top10 热门品类中每个品类的 Top10 活跃 Session 统计
+
+### 6.2.1 需求说明  
+
+在需求一的基础上，增加每个品类用户 session 的点击统计
+
+### 6.2.2 需求分析  
+
+### 6.2.3 功能实现  
+
+```scala
+package com.atguigu.spark.core.req
+import org.apache.spark.rdd.RDD
+import org.apache.spark.{SparkConf, SparkContext}
+
+object Spark05_Req02_HotCategoryTop10SessionAnalysis {
+  def main(args: Array[String]): Unit = {
+    // TODO 案例实操-电商网站的真实需求-user_visit_action.txt
+    // TODO Top10 热门品类中每个品类的 Top10 活跃 Session 统计 - 在需求一的基础上，增加每个品类用户 session 的点击统计
+    val sparkConf = new SparkConf().setMaster("local[*]").setAppName("WordCount")
+    val sc = new SparkContext(sparkConf)
+
+    val actionRDD = sc.textFile("datas/user_visit_action.txt")
+
+    actionRDD.cache()
+
+    val top10Ids: Array[String] = top10Category(actionRDD)
+
+    // 1. 过滤原始数据,保留点击和前10品类ID
+    val filterActionRDD = actionRDD.filter(
+      action => {
+        val datas = action.split("_")
+        if (datas(6) != "-1") {
+          top10Ids.contains(datas(6))
+        } else {
+          false
+        }
+      }
+    )
+
+    // 2. 根据品类ID和sessionid进行点击量的统计
+    val reduceRDD: RDD[((String, String), Int)] = filterActionRDD.map(action => {
+      val datas = action.split("_")
+      ((datas(6), datas(2)), 1)
+    }).reduceByKey(_ + _)
+
+    // 3. 将统计的结果进行结构的转换
+    // ((品类ID, sessionId), sum) => (品类ID, (sessionId, sum))
+    val mapRDD = reduceRDD.map{
+      case ((cid, sid),sum) => {
+        (cid, (sid,sum))
+      }
+    }
+
+    // 4. 相同的品类进行分组
+    val groupRDD: RDD[(String, Iterable[(String, Int)])] = mapRDD.groupByKey()
+
+    // 5. 将分组后的数据进行点击量的排序，取前10名
+    val resultRDD = groupRDD.mapValues(_.toList.sortBy(_._2)(Ordering.Int.reverse).take(10))
+
+    resultRDD.collect().foreach(println)
+
+    sc.stop()
+  }
+
+  def top10Category(actionRDD: RDD[String]) = {
+    val flatRDD: RDD[(String, (Int, Int, Int))] = actionRDD.flatMap(action => {
+      val datas = action.split("_")
+      if (datas(6) != "-1") {
+        // 点击场合
+        List((datas(6), (1, 0, 0)))
+      }
+      else if (datas(8) != "null") {
+        // 下单场合
+        val ids = datas(8).split(",")
+        ids.map(id => (id, (0, 1, 0)))
+      }
+      else if (datas(10) != "null") {
+        // 支付场合
+        val ids = datas(10).split(",")
+        ids.map(id => (id, (0, 0, 1)))
+      }
+      else {
+        Nil
+      }
+    })
+    val analysisRDD = flatRDD.reduceByKey(
+      (t1, t2) => {
+        (t1._1 + t2._1, t1._2 + t2._2, t1._3 + t2._3)
+      }
+    )
+    analysisRDD.sortBy(_._2, false).take(10).map(_._1)
+  }
+}
+```
+
+## 6.3 需求 3：页面单跳转换率统计  
+
+### 6.3.1 需求说明  
+
+1）页面单跳转化率  
+
+计算页面单跳转化率，什么是页面单跳转换率，比如一个用户在一次 Session 过程中访问的页面路径 3,5,7,9,10,21，那么页面 3 跳到页面 5 叫一次单跳， 7-9 也叫一次单跳，那么单跳转化率就是要统计页面点击的概率。
+
+比如：计算 3-5 的单跳转化率，先获取符合条件的 Session 对于页面 3 的访问次数（PV）为 A，然后获取符合条件的 Session 中访问了页面 3 又紧接着访问了页面 5 的次数为 B，那么 B/A 就是 3-5 的页面单跳转化率。  
+
+![image-20240318155648375](SparkCore笔记/image-20240318155648375.png)
+
+2）统计页面单跳转化率意义
+
+产品经理和运营总监，可以根据这个指标，去尝试分析，整个网站，产品，各个页面的表现怎么样，是不是需要去优化产品的布局；吸引用户最终可以进入最后的支付页面。  
+数据分析师，可以此数据做更深一步的计算和分析。
+企业管理层，可以看到整个公司的网站，各个页面的之间的跳转的表现如何，可以适当调整公司的经营战略或策略。
+
+### 6.3.2 需求分析
+
+### 6.3.3 功能实现
+
+```scala
+package com.atguigu.spark.core.req
+import org.apache.spark.rdd.RDD
+import org.apache.spark.{SparkConf, SparkContext}
+
+object Spark06_Req03_PageflowAnalysis {
+  def main(args: Array[String]): Unit = {
+    // TODO 案例实操-电商网站的真实需求-user_visit_action.txt
+    // TODO 页面单跳转换率统计
+    val sparkConf = new SparkConf().setMaster("local[*]").setAppName("WordCount")
+    val sc = new SparkContext(sparkConf)
+
+    val actionRDD = sc.textFile("datas/user_visit_action.txt")
+
+    val actionDataRDD = actionRDD.map(
+      action => {
+        val datas = action.split("_")
+        UserVisitAction(
+          datas(0),
+          datas(1).toLong,
+          datas(2),
+          datas(3).toLong,
+          datas(4),
+          datas(5),
+          datas(6).toLong,
+          datas(7).toLong,
+          datas(8),
+          datas(9),
+          datas(10),
+          datas(11),
+          datas(12).toLong
+        )
+      }
+    )
+    actionDataRDD.cache()
+
+    // TODO 对指定的页面连续跳转进行统计单挑转换率
+    // 1-2 2-3 3-4 4-5 5-6 6-7
+    val ids = List[Long](1,2,3,4,5,6,7)
+    val okflowIds: List[(Long, Long)] = ids.zip(ids.tail)
+
+
+    // TODO  计算分母
+    val pageIdToCountMap: Map[Long, Long] = actionDataRDD
+    .filter(
+      action => {
+        // init: 去除7页面，7页面没有作为分母的机会
+        ids.init.contains(action.page_id)
+      })
+    .map(
+      action => {
+        (action.page_id, 1L)
+      }
+    ).reduceByKey(_ + _).collect().toMap
+
+    // TODO 计算分子
+    // 根据session进行分组
+    val sessionRDD: RDD[(String, Iterable[UserVisitAction])] = actionDataRDD.groupBy(_.session_id)
+    // 分组后，根据访问时间进行排序（升序）
+    val mvRDD: RDD[(String, List[((Long, Long), Int)])] = sessionRDD.mapValues(
+      iter => {
+        val sortList = iter.toList.sortBy(_.action_time)
+        val flowIds: List[Long] = sortList.map(_.page_id)
+        // 使用滑动窗口或者zip拉链
+        // Sliding: 滑窗
+        // [1,2,3,4]
+        // [1,2], [2,3], [3,4]
+        // zip: 拉链
+        // [1,2,3,4]
+        // [2,3,4]
+
+        // val iterator: Iterator[List[Long]] = flowIds.sliding(2)
+        val pageflowIds: List[(Long, Long)] = flowIds.zip(flowIds.tail)
+        // 将不合法的页面跳转进行过滤
+        pageflowIds.filter(
+          t => okflowIds.contains(t)
+        )
+        .map(
+          t => (t, 1)
+        )
+      }
+    )
+    // ((1,2),1)
+    val flatRDD: RDD[((Long, Long), Int)] = mvRDD.map(_._2).flatMap(list => list)
+    // ((1,2),1) => ((1,2),sum)
+    val dataRDD: RDD[((Long, Long), Int)] = flatRDD.reduceByKey(_ + _)
+
+    // TODO 计算单挑转换率
+    // 分子除以分母
+    dataRDD.foreach {
+      case ((pageId1, pageId2),sum) => {
+        val lon = pageIdToCountMap.getOrElse(pageId1, 0L)
+        println(s"页面${pageId1}跳转到页面${pageId2}单挑转换率为：" + (sum.toDouble / lon))
+      }
+    }
+
+    sc.stop()
+  }
+
+  //用户访问动作表
+  case class UserVisitAction(
+    date: String, //用户点击行为的日期
+    user_id: Long, //用户的 ID
+    session_id: String, //Session 的 ID
+    page_id: Long, //某个页面的 ID
+    action_time: String, //动作的时间点
+    search_keyword: String, //用户搜索的关键词
+    click_category_id: Long, //某一个商品品类的 ID
+    click_product_id: Long, //某一个商品的 ID
+    order_category_ids: String, //一次订单中所有品类的 ID 集合
+    order_product_ids: String, //一次订单中所有商品的 ID 集合
+    pay_category_ids: String, //一次支付中所有品类的 ID 集合
+    pay_product_ids: String, //一次支付中所有商品的 ID 集合
+    city_id: Long //城市 id
+  )
+}
+```
+
+# 第七章 三层架构
+
+三层架构（不涉及前端，且不同于MVC的开发过程中的普遍架构）
+
+![image-20240319153521432](SparkCore笔记/image-20240319153521432.png)
+
+分层案例，查阅个人练习项目
+
+
 
