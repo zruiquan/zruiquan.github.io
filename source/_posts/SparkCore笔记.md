@@ -5101,7 +5101,7 @@ val resultRDD: RDD[(String, (Int, Int))] = rdd1.map {
     for ((k, v) <- broadcast.value) {
         if (k == key) {
         	num2 = v
-        }
+        } 
     }
     (key, (num, num2))
     }
@@ -5116,7 +5116,7 @@ import org.apache.spark.{SparkConf, SparkContext}
 import scala.collection.mutable
 
 object Spark05_Bc {
-  def main(args: Array[String]): Unit = {
+  def main(args: Array[String]): Unit =  {
     val sparkConf = new SparkConf().setMaster("local").setAppName("WordCount")
     val sc = new SparkContext(sparkConf)
     // TODO 出现内存数据过多问题
