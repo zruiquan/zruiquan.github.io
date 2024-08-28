@@ -443,7 +443,7 @@ SPARK_MASTER_HOST=linux1
 SPARK_MASTER_PORT=7077
 ```
 
-注意： 7077 端口，相当于 hadoop3 内部通信的 8020 端口，此处的端口需要确认自己的 Hadoop配置  
+注意： 7077 端口，相当于 hadoop 内部通信的 8020 端口，此处的端口需要确认自己的 Hadoop配置  
 
 5) 分发 spark-standalone 目录  
 
