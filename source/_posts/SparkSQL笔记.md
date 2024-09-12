@@ -41,7 +41,7 @@ Shark 的出现，使得 SQL-on-Hadoop 的性能比 Hive 有了 10-100 倍的提
 
 ![image-20240521113939827](SparkSQL笔记/image-20240521113939827.png)
 
-2014 年 6 月 1 日 Shark 项目和 SparkSQL 项目的主持人 Reynold Xin 宣布：停止对 Shark 的开发，团队将所有资源放 SparkSQL 项目上，至此， Shark 的发展画上了句话，但也因此发展出两个支线： SparkSQL 和 Hive on Spark。  
+2014 年 6 月 1 日 Shark 项目和 SparkSQL 项目的主持人 Reynold Xin 宣布：停止对 Shark 的开发，团队将所有资源放 SparkSQL 项目上，至此， Shark 的发展画上了句话，但也因此发展出两个支线： SparkSQL（Spark on Hive） 和 Hive on Spark。  
 
 ![image-20240521114046580](SparkSQL笔记/image-20240521114046580.png)
 
@@ -1400,7 +1400,7 @@ Apache Hive 是 Hadoop 上的 SQL 引擎， Spark SQL 编译时可以包含 Hive
 
 若要把 Spark SQL 连接到一个部署好的 Hive 上，你必须把 hive-site.xml 复制到Spark 的配置文件目录中($SPARK_HOME/conf)。即使没有部署好 Hive， Spark SQL 也可以运行。 需要注意的是，如果你没有部署好 Hive， Spark SQL 会在当前的工作目录中创建出自己的 Hive 元数据仓库，叫作 metastore_db。此外，如果你尝试使用 HiveQL 中的CREATE TABLE (并非 CREATE EXTERNAL TABLE)语句来创建表，这些表会被放在你默认的文件系统中的 /user/hive/warehouse 目录中(如果你的 classpath 中有配好的hdfs-site.xml，默认的文件系统就是 HDFS，否则就是本地文件系统)。
 
-spark-shell 默认是 Hive 支持的；代码中是默认不支持的，需要手动指定（加一个参数即可）。  
+`spark-shell 默认是 Hive 支持的；代码中是默认不支持的，需要手动指定（加一个参数即可）。  
 
 1） 内嵌的 HIVE  
 
@@ -1487,7 +1487,7 @@ Spark Thrift Server 是 Spark 社区基于 HiveServer2 实现的一个 Thrift �
 
 * 如果访问不到 hdfs，则需要把 core-site.xml 和 hdfs-site.xml 拷贝到 conf/目录下
 
-* 启动 Thrift Server  
+* 启动 Thrift Server
 
   ```shell
   sbin/start-thriftserver.sh
