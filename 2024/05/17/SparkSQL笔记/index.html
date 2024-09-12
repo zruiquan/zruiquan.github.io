@@ -45,7 +45,7 @@
 <meta property="og:image" content="http://yoursite.com/2024/05/17/SparkSQL%E7%AC%94%E8%AE%B0/image-20240614154934307.png">
 <meta property="og:image" content="http://yoursite.com/2024/05/17/SparkSQL%E7%AC%94%E8%AE%B0/image-20240614155220015.png">
 <meta property="article:published_time" content="2024-05-17T08:00:32.000Z">
-<meta property="article:modified_time" content="2024-07-04T03:03:23.560Z">
+<meta property="article:modified_time" content="2024-09-06T04:42:17.849Z">
 <meta property="article:author" content="Rui Zhang">
 <meta property="article:tag" content="Spark">
 <meta name="twitter:card" content="summary">
@@ -144,17 +144,17 @@
   </li>
         <li class="menu-item menu-item-tags">
 
-    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">18</span></a>
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">19</span></a>
 
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">18</span></a>
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">19</span></a>
 
   </li>
         <li class="menu-item menu-item-archives">
 
-    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">42</span></a>
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">44</span></a>
 
   </li>
   </ul>
@@ -213,7 +213,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-07-04 11:03:23" itemprop="dateModified" datetime="2024-07-04T11:03:23+08:00">2024-07-04</time>
+                <time title="修改时间：2024-09-06 12:42:17" itemprop="dateModified" datetime="2024-09-06T12:42:17+08:00">2024-09-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -271,7 +271,7 @@
 <li>组件扩展方面 无论是 SQL 的语法解析器、分析器还是优化器都可以重新定义，进行扩展。  </li>
 </ul>
 <p><img src="/2024/05/17/SparkSQL%E7%AC%94%E8%AE%B0/image-20240521113939827.png" alt="image-20240521113939827"></p>
-<p>2014 年 6 月 1 日 Shark 项目和 SparkSQL 项目的主持人 Reynold Xin 宣布：停止对 Shark 的开发，团队将所有资源放 SparkSQL 项目上，至此， Shark 的发展画上了句话，但也因此发展出两个支线： SparkSQL 和 Hive on Spark。  </p>
+<p>2014 年 6 月 1 日 Shark 项目和 SparkSQL 项目的主持人 Reynold Xin 宣布：停止对 Shark 的开发，团队将所有资源放 SparkSQL 项目上，至此， Shark 的发展画上了句话，但也因此发展出两个支线： SparkSQL（Spark on Hive） 和 Hive on Spark。  </p>
 <p><img src="/2024/05/17/SparkSQL%E7%AC%94%E8%AE%B0/image-20240521114046580.png" alt="image-20240521114046580"></p>
 <p>其中 SparkSQL 作为 Spark 生态的一员继续发展，而不再受限于 Hive，只是兼容 Hive；而Hive on Spark 是一个 Hive 的发展计划，该计划将 Spark 作为 Hive 的底层引擎之一，也就是说， Hive 将不再受限于一个引擎，可以采用 Map-Reduce、 Tez、 Spark 等引擎。</p>
 <p>对于开发人员来讲， SparkSQL 可以简化 RDD 的开发，提高开发效率，且执行效率非常快，所以实际工作中，基本上采用的就是 SparkSQL。 Spark SQL 为了简化 RDD 的开发，提高开发效率， 提供了 2 个编程抽象，类似 Spark Core 中的 RDD  </p>
@@ -596,7 +596,7 @@
 
 <h3 id="2-8-6-Hive"><a href="#2-8-6-Hive" class="headerlink" title="2.8.6 Hive"></a>2.8.6 Hive</h3><p>Apache Hive 是 Hadoop 上的 SQL 引擎， Spark SQL 编译时可以包含 Hive 支持，也可以不包含。包含 Hive 支持的 Spark SQL 可以支持 Hive 表访问、 UDF (用户自定义函数)  以及 Hive 查询语言(HiveQL/HQL)等。需要强调的一点是，如果要在 Spark SQL 中包含Hive 的库，并不需要事先安装 Hive。一般来说，最好还是在编译 Spark SQL 时引入 Hive支持，这样就可以使用这些特性了。如果你下载的是二进制版本的 Spark，它应该已经在编译时添加了 Hive 支持。  </p>
 <p>若要把 Spark SQL 连接到一个部署好的 Hive 上，你必须把 hive-site.xml 复制到Spark 的配置文件目录中($SPARK_HOME/conf)。即使没有部署好 Hive， Spark SQL 也可以运行。 需要注意的是，如果你没有部署好 Hive， Spark SQL 会在当前的工作目录中创建出自己的 Hive 元数据仓库，叫作 metastore_db。此外，如果你尝试使用 HiveQL 中的CREATE TABLE (并非 CREATE EXTERNAL TABLE)语句来创建表，这些表会被放在你默认的文件系统中的 /user/hive/warehouse 目录中(如果你的 classpath 中有配好的hdfs-site.xml，默认的文件系统就是 HDFS，否则就是本地文件系统)。</p>
-<p>spark-shell 默认是 Hive 支持的；代码中是默认不支持的，需要手动指定（加一个参数即可）。  </p>
+<p>`spark-shell 默认是 Hive 支持的；代码中是默认不支持的，需要手动指定（加一个参数即可）。  </p>
 <p>1） 内嵌的 HIVE  </p>
 <p>如果使用 Spark 内嵌的 Hive, 则什么都不用做, 直接使用即可.<br>Hive 的元数据存储在 derby 中, 默认仓库地址:$SPARK_HOME/spark-warehouse  </p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">scala&gt;</span><span class="bash"> spark.sql(<span class="string">"show tables"</span>).show</span></span><br><span class="line">。。。</span><br><span class="line">+--------+---------+-----------+</span><br><span class="line">|database|tableName|isTemporary|</span><br><span class="line">+--------+---------+-----------+</span><br><span class="line">+--------+---------+-----------+</span><br><span class="line"><span class="meta">scala&gt;</span><span class="bash"> spark.sql(<span class="string">"create table aa(id int)"</span>)</span></span><br><span class="line">。。。</span><br><span class="line"><span class="meta">scala&gt;</span><span class="bash"> spark.sql(<span class="string">"show tables"</span>).show</span></span><br><span class="line">+--------+---------+-----------+</span><br><span class="line">|database|tableName|isTemporary|</span><br><span class="line">+--------+---------+-----------+</span><br><span class="line">| default| aa| false|</span><br><span class="line">+--------+---------+-----------+</span><br></pre></td></tr></table></figure>
@@ -629,7 +629,7 @@
 </li>
 <li><p>如果访问不到 hdfs，则需要把 core-site.xml 和 hdfs-site.xml 拷贝到 conf/目录下</p>
 </li>
-<li><p>启动 Thrift Server  </p>
+<li><p>启动 Thrift Server</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sbin/start-thriftserver.sh</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>使用 beeline 连接 Thrift Server  </p>
@@ -831,20 +831,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">42</span>
+          <span class="site-state-item-count">44</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-count">19</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">18</span>
+        <span class="site-state-item-count">19</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -888,7 +888,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">19:22</span>
+    <span title="站点阅读时长">19:36</span>
 </div>
 
 
