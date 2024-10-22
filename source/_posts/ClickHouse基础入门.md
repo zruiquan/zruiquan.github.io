@@ -712,7 +712,7 @@ hadoop102 :) select * from t_order_rmt;
 * 实际上是使用 order by 字段作为唯一键
 * 去重不能跨分区
 * **只有同一批插入（新版本）或合并分区时才会进行去重**
-* 认定重复的数据保留，版本字段值最大的
+* 认定重复的数据保留版本字段值最大的
 * 如果版本字段相同则按插入顺序保留最后一笔  
 
 ## 4.6 SummingMergeTree
@@ -841,11 +841,11 @@ alter table t_order_smt update total_amount=toDecimal32(2000.00,2) where id
 **实现高性能update或delete的思路：**
 create table  A
 (
-a xxx,
-b xxx,
-c xxx,
-_sign UInt8,
-_version UInt32
+	a xxx,
+	b xxx,
+	c xxx,
+	_sign UInt8,
+	_version UInt32
 )
 
 ==> 更新 ：  插入一条新的数据，   _version + 1 

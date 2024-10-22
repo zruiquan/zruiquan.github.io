@@ -1238,3 +1238,303 @@ GROUP BY UserID,EventDate
 SELECT * FROM hits_mv;
 ```
 
+# 第 7 章 MaterializeMySQL 引擎  
+
+## 7.1 概述  
+
+MySQL 的用户群体很大， 为了能够增强数据的实时性， 很多解决方案会利用 binlog 将数据写入到 ClickHouse。为了能够监听 binlog 事件，我们需要用到类似 canal 这样的第三方中间件，这无疑增加了系统的复杂度。
+
+ClickHouse 20.8.2.3 版本新增加了 MaterializeMySQL 的 database 引擎，该 database 能映 射 到 MySQL 中 的 某 个 database ， 并 自 动 在 ClickHouse 中 创 建 对 应 的ReplacingMergeTree。 ClickHouse 服务做为 MySQL 副本，读取 Binlog 并执行 DDL 和 DML 请求，实现了基于 MySQL Binlog 机制的业务数据库实时同步功能。  
+
+### 7.1.1 特点  
+
+（1） MaterializeMySQL 同时支持全量和增量同步， 在 database 创建之初会全量同步MySQL 中的表和数据， 之后则会通过 binlog 进行增量同步。
+（2） MaterializeMySQL database 为其所创建的每张 ReplacingMergeTree 自动增加了_sign 和 _version 字段。
+
+其中， _version 用作 ReplacingMergeTree 的 ver 版本参数， 每当监听到 insert、 update和 delete 事件时， 在 databse 内全局自增。而 _sign 则用于标记是否被删除，取值 1 或者 -1。
+
+目前 MaterializeMySQL 支持如下几种 binlog 事件:  
+
+* MYSQL_WRITE_ROWS_EVENT: _sign = 1， _version ++_
+* MYSQL_DELETE_ROWS_EVENT: _sign = -1， _version ++
+* MYSQL_UPDATE_ROWS_EVENT: sign = 1，_version ++
+* MYSQL_QUERY_EVENT: 支持 CREATE TABLE 、 DROP TABLE 、 RENAME TABLE 等。  
+
+### 7.1.2 使用细则  
+
+（1） DDL 查询
+MySQL DDL 查询被转换成相应的 ClickHouse DDL 查询（ALTER, CREATE, DROP, RENAME）。如果 ClickHouse 不能解析某些 DDL 查询，该查询将被忽略。
+
+（2） 数据复制
+MaterializeMySQL 不支持直接插入、删除和更新查询，而是将 DDL 语句进行相应转换：
+MySQL INSERT 查询被转换为 INSERT with _sign=1。
+MySQL DELETE 查询被转换为 INSERT with _sign=-1。
+MySQL UPDATE 查询被转换成 INSERT with _sign=1 和 INSERT with _sign=-1。
+（3） SELECT 查询
+如果在 SELECT 查询中没有指定_version，则使用 FINAL 修饰符，返回_version 的最大值对应的数据，即最新版本的数据。
+如果在 SELECT 查询中没有指定_sign，则默认使用 WHERE _sign=1，即返回未删除状态（_sign=1)的数据。
+
+（4） 索引转换
+ClickHouse 数据库表会自动将 MySQL 主键和索引子句转换为 ORDER BY 元组。  
+
+ClickHouse 只有一个物理顺序，由 ORDER BY 子句决定。如果需要创建新的物理顺序，请使用物化视图。  
+
+## 7.2 案例实操  
+
+### 7.2.1 MySQL 开启 binlog 和 GTID 模式  
+
+（1） 确保 MySQL 开启了 binlog 功能，且格式为 ROW  
+
+打开/etc/my.cnf,在[mysqld]下添加：  
+
+```properties
+server-id=1
+log-bin=mysql-bin
+binlog_format=ROW
+```
+
+（2）开启 GTID 模式  
+
+如果 clickhouse 使用的是 20.8 prestable 之后发布的版本，那么 MySQL 还需要配置开启 GTID 模式, 这种方式在 mysql 主从模式下可以确保数据同步的一致性(主从切换时)。  
+
+```properties
+gtid-mode=on
+enforce-gtid-consistency=1 # 设置为主从强一致性
+log-slave-updates=1 # 记录日志
+```
+
+GTID 是 MySQL 复制增强版，从 MySQL 5.6 版本开始支持，目前已经是 MySQL 主流复制模式。它为每个 event 分配一个全局唯一 ID 和序号，我们可以不用关心 MySQL 集群主从拓扑结构，直接告知 MySQL 这个 GTID 即可。
+
+  （3） 重启 MySQL  
+
+```shell
+sudo systemctl restart mysqld
+```
+
+### 7.2.2 准备 MySQL 表和数据  
+
+（1） 在 MySQL 中创建数据表并写入数据  
+
+```sql
+CREATE DATABASE testck;
+	
+CREATE TABLE `testck`.`t_organization` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `code` int NOT NULL,
+    `name` text DEFAULT NULL,
+    `updatetime` datetime DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY (`code`)
+) ENGINE=InnoDB;
+
+INSERT INTO testck.t_organization (code, name,updatetime)
+VALUES(1000,'Realinsight',NOW());
+INSERT INTO testck.t_organization (code, name,updatetime)
+VALUES(1001, 'Realindex',NOW());
+INSERT INTO testck.t_organization (code, name,updatetime)
+VALUES(1002,'EDT',NOW());
+```
+
+（2） 创建第二张表  
+
+```sql
+CREATE TABLE `testck`.`t_user` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `code` int,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+INSERT INTO testck.t_user (code) VALUES(1);
+```
+
+### 7.2.3 开启 ClickHouse 物化引擎  
+
+```shell
+set allow_experimental_database_materialize_mysql=1;
+```
+
+### 7.2.4 创建复制管道  
+
+（1） ClickHouse 中创建 MaterializeMySQL 数据库  
+
+```sql
+CREATE DATABASE test_binlog ENGINE = MaterializeMySQL('hadoop1:3306','testck','root','000000');
+```
+
+其中 4 个参数分别是 MySQL 地址、 databse、 username 和 password。  
+
+（2） 查看 ClickHouse 的数据  
+
+```sql
+use test_binlog;
+show tables;
+select * from t_organization;
+select * from t_user;
+```
+
+### 7.2.5 修改数据  
+
+（1） 在 MySQL 中修改数据:  
+
+```sql
+update t_organization set name = CONCAT(name,'-v1') where id = 1
+```
+
+（2） 查看 clickhouse 日志可以看到 binlog 监听事件，查询 clickhouse  
+
+```sql
+select * from t_organization;
+```
+
+### 7.2.6 删除数据  
+
+（1） MySQL 删除数据:  
+
+```sql
+DELETE FROM t_organization where id = 2;
+```
+
+（2） ClicKHouse， 日志有 DeleteRows 的 binlog 监听事件，查看数据：  
+
+```sql
+select * from t_organization;
+```
+
+（3） 在刚才的查询中增加 _sign 和 _version 虚拟字段  
+
+```sql
+select *,_sign,_version from t_organization order by _sign desc, _version desc;
+```
+
+![image-20241022102453303](ClickHouse高级进阶/image-20241022102453303.png)
+
+在查询时，对于已经被删除的数据， _sign=-1， ClickHouse 会自动重写 SQL，将 _sign = -1 的数据过滤掉
+
+对于修改的数据，则自动重写 SQL，为其增加 FINAL 修饰符。  
+
+```sql
+select * from t_organization
+# 等同于
+select * from t_organization final where _sign = 1
+```
+
+### 7.2.7 删除表  
+
+（1） 在 mysql 执行删除表  
+
+```sql
+drop table t_user;
+```
+
+（2） 此时在 clickhouse 处会同步删除对应表，如果查询会报错  
+
+```sql
+show tables;
+select * from t_user;
+DB::Exception: Table scene_mms.scene doesn't exist..
+```
+
+（3） mysql 新建表， clickhouse 可以查询到  
+
+```sql
+CREATE TABLE `testck`.`t_user` (
+    `id` int(11) NOT NULL AUTO_INCREMENT,
+    `code` int,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB;
+
+INSERT INTO testck.t_user (code) VALUES(1);
+#ClickHouse 查询
+show tables;
+select * from t_user;	
+```
+
+# 第 8 章 常见问题排查  
+
+## 8.1 分布式 DDL 某数据节点的副本不执行  
+
+（1） 问题： 使用分布式 ddl 执行命令 create table on cluster xxxx 某个节点上没有创建表，但是 client 返回正常，查看日志有如下报错。  
+
+```shell
+<Error> xxx.xxx: Retrying createReplica(), because some other replicas were created at the same time
+```
+
+（2） 解决办法： 重启该不执行的节点。  
+
+## 8.2 数据副本表和数据不一致  
+
+（1） 问题： 由于某个数据节点副本异常，导致两数据副本表不一致，某个数据副本缺少表，需要将两个数据副本调整一致。  
+
+（2） 解决办法：  
+
+在缺少表的数据副本节点上创建缺少的表，创建为本地表，表结构可以在其他数据副本通过 show crete table xxxx 获取。
+
+表结构创建后， clickhouse 会自动从其他副本同步该表数据，验证数据量是否一致即可。  
+
+## 8.3 副本节点全量恢复  
+
+（1）问题： 某个数据副本异常无法启动，需要重新搭建副本。
+
+（2）解决办法：
+清空异常副本节点的 metadata 和 data 目录。
+
+从另一个正常副本将 metadata 目录拷贝过来（这一步之后可以启动数据库，但是只有表结构没有数据）。
+
+执行 sudo -u clickhouse touch /data/clickhouse/flags/force_restore_data
+
+启动数据库。  
+
+## 8.4 数据副本启动缺少 zk 表  
+
+（1）问题： 某个数据副本表在 zk 上丢失数据，或者不存在，但是 metadata 元数据里存在，导致启动异常，报错：  
+
+```shell
+Can’ t get data for node /clickhouse/tables/01-
+02/xxxxx/xxxxxxx/replicas/xxx/metadata: node doesn’ t exist (No node):
+Cannot attach table xxxxxxx
+```
+
+（2）解决办法：  
+
+metadata 中移除该表的结构文件，如果多个表报错都移除
+
+mv metadata/xxxxxx/xxxxxxxx.sql /tmp/
+
+启动数据库
+
+手工创建缺少的表，表结构从其他节点 show create table 获取。
+
+创建后会自动同步数据，验证数据是否一致。  
+
+## 8.5 ZK table replicas 数据未删除，导致重建表报错  
+
+（1）问题： 重建表过程中，先使用 drop table xxx on cluster xxx ,各节点在 clickhouse 上table 已物理删除，但是 zk 里面针对某个 clickhouse 节点的 table meta 信息未被删除（低概率事件），因 zk 里仍存在该表的 meta 信息，导致再次创建该表 create table xxx on cluster, 该节点无法创建表(其他节点创建表成功)，报错：
+
+Replica /clickhouse/tables/01-03/xxxxxx/xxx/replicas/xxx already exists..
+
+（2）解决办法：
+从其他数据副本 cp 该 table 的 metadata sql 过来.
+
+重启节点。  
+
+## 8.6 Clickhouse 节点意外关闭  
+
+（1）问题： 模拟其中一个节点意外宕机，在大量 insert 数据的情况下，关闭某个节点。
+
+（2） 现象： 数据写入不受影响、数据查询不受影响、建表 DDL 执行到异常节点会卡住，
+报错：  
+
+```shell
+Code: 159. DB::Exception: Received from localhost:9000. DB::Exception:
+Watching task /clickhouse/task_queue/ddl/query-0000565925 is executing
+longer than distributed_ddl_task_timeout (=180) seconds. There are 1
+unfinished hosts (0 of them are currently active), they are going to
+execute the query in background.
+```
+
+（3）解决办法： 启动异常节点，期间其他副本写入数据会自动同步过来，其他副本的建表 DDL 也会同步。  
+
+## 8.7 其他问题参考
+
+[点击跳转其他问题参考链接](https://help.aliyun.com/document_detail/162815.html?spm=a2c4g.11186623.6.652.312e7
+9bd17U8IO)
