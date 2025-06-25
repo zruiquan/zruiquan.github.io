@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="基于Flink的电商用户行为数据分析（5）恶意登录检测模块创建和数据准备继续在UserBehaviorAnalysis下新建一个 maven module作为子项目，命名为LoginFailDetect。在这个子模块中，我们将会用到flink的CEP库来实现事件流的模式匹配，所以需要在pom文件中引入CEP的相关依赖： 12345&lt;dependency&gt;	&lt;groupId&gt;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于Flink的电商用户行为数据分析（5）">
+<meta property="og:url" content="http://yoursite.com/2021/11/28/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-5/index.html">
+<meta property="og:site_name" content="没有尾巴的小驴">
+<meta property="og:description" content="基于Flink的电商用户行为数据分析（5）恶意登录检测模块创建和数据准备继续在UserBehaviorAnalysis下新建一个 maven module作为子项目，命名为LoginFailDetect。在这个子模块中，我们将会用到flink的CEP库来实现事件流的模式匹配，所以需要在pom文件中引入CEP的相关依赖： 12345&lt;dependency&gt;	&lt;groupId&gt;">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-11-27T16:39:31.000Z">
+<meta property="article:modified_time" content="2025-06-25T08:08:46.203Z">
+<meta property="article:author" content="Rui Zhang">
+<meta property="article:tag" content="Flink">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2021/11/28/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-5/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true
+  };
+</script>
+
+  <title>基于Flink的电商用户行为数据分析（5） | 没有尾巴的小驴</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">没有尾巴的小驴</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">记录生活</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">22</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">22</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">52</span></a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/11/28/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/head.jpg">
+      <meta itemprop="name" content="Rui Zhang">
+      <meta itemprop="description" content="不在沉默中爆发，就在沉默中灭亡">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="没有尾巴的小驴">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          基于Flink的电商用户行为数据分析（5）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-11-28 00:39:31" itemprop="dateCreated datePublished" datetime="2021-11-28T00:39:31+08:00">2021-11-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-06-25 16:08:46" itemprop="dateModified" datetime="2025-06-25T16:08:46+08:00">2025-06-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Flink/" itemprop="url" rel="index"><span itemprop="name">Flink</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>10k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>9 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="基于Flink的电商用户行为数据分析（5）"><a href="#基于Flink的电商用户行为数据分析（5）" class="headerlink" title="基于Flink的电商用户行为数据分析（5）"></a>基于Flink的电商用户行为数据分析（5）</h2><h3 id="恶意登录检测"><a href="#恶意登录检测" class="headerlink" title="恶意登录检测"></a>恶意登录检测</h3><h4 id="模块创建和数据准备"><a href="#模块创建和数据准备" class="headerlink" title="模块创建和数据准备"></a>模块创建和数据准备</h4><p>继续在UserBehaviorAnalysis下新建一个 maven module作为子项目，命名为LoginFailDetect。在这个子模块中，我们将会用到flink的CEP库来实现事件流的模式匹配，所以需要在pom文件中引入CEP的相关依赖：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.flink<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>flink-cep-scala_$&#123;scala.binary.version&#125;<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;flink.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h4><p>对于网站而言，用户登录并不是频繁的业务操作。如果一个用户短时间内频繁登录失败，就有可能是出现了程序的恶意攻击，比如密码暴力破解。因此我们考虑，应该对用户的登录失败动作进行统计，具体来说，如果同一用户（可以是不同 IP） 在 2 秒之内连续两次登录失败，就认为存在恶意登录的风险，输出相关的信息进行报警提示。这是电商网站、也是几乎所有网站风控的基本一环。</p>
+<h4 id="状态编程"><a href="#状态编程" class="headerlink" title="状态编程"></a>状态编程</h4><p>由于同样引入了时间，我们可以想到，最简单的方法其实与之前的热门统计类似，只需要按照用户 ID 分流，然后遇到登录失败的事件时将其保存在 ListState 中，然后设置一个定时器，2 秒后触发。定时器触发时检查状态中的登录失败事件个数，如果大于等于 2，那么就输出报警信息。</p>
+<p>在 src/main/java 下创建 LoginFail 类，定义 POJO 类 LoginEvent，这是输入的登录事件流。登录数据本应该从 UserBehavior 日志里提取，由于 UserBehavior.csv 中没有做相关埋点，我们从另一个文件 LoginLog.csv 中读取登录数据。</p>
+<p>代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.test.loginfail_detect;</span><br><span class="line"><span class="keyword">import</span> com.test.loginfail_detect.beans.LoginEvent;</span><br><span class="line"><span class="keyword">import</span> com.test.loginfail_detect.beans.LoginFailWarning;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.api.common.state.ListState;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.api.common.state.ListStateDescriptor;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.api.common.state.ValueState;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.api.common.state.ValueStateDescriptor;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.configuration.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.shaded.guava18.com.google.common.collect.Lists;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.TimeCharacteristic;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.datastream.DataStream;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.functions.KeyedProcessFunction;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.functions.timestamps.BoundedOutOfOrdernessTimestampExtractor;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.windowing.time.Time;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.util.Collector;</span><br><span class="line"><span class="keyword">import</span> java.net.URL;</span><br><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"><span class="keyword">import</span> java.util.Iterator;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LoginFail</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();</span><br><span class="line">        env.setParallelism(<span class="number">1</span>);</span><br><span class="line">        env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 1. 从文件中读取数据</span></span><br><span class="line">        URL resource = LoginFail.class.getResource("/LoginLog.csv");</span><br><span class="line">        DataStream&lt;LoginEvent&gt; loginEventStream = env.readTextFile(resource.getPath())</span><br><span class="line">                .map(line -&gt; &#123;</span><br><span class="line">                    String[] fields = line.split(<span class="string">","</span>);</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> LoginEvent(<span class="keyword">new</span> Long(fields[<span class="number">0</span>]), fields[<span class="number">1</span>], fields[<span class="number">2</span>], <span class="keyword">new</span> Long(fields[<span class="number">3</span>]));</span><br><span class="line">                &#125;)</span><br><span class="line">                .assignTimestampsAndWatermarks(<span class="keyword">new</span> BoundedOutOfOrdernessTimestampExtractor&lt;LoginEvent&gt;											(Time.seconds(<span class="number">3</span>)) &#123;</span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">extractTimestamp</span><span class="params">(LoginEvent element)</span> </span>&#123;</span><br><span class="line">                        <span class="keyword">return</span> element.getTimestamp() * <span class="number">1000L</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 自定义处理函数检测连续登录失败事件</span></span><br><span class="line">        SingleOutputStreamOperator&lt;LoginFailWarning&gt; warningStream = loginEventStream</span><br><span class="line">                .keyBy(LoginEvent::getUserId)</span><br><span class="line">                .process(<span class="keyword">new</span> LoginFailDetectWarning(<span class="number">2</span>));</span><br><span class="line"></span><br><span class="line">        warningStream.print();</span><br><span class="line"></span><br><span class="line">        env.execute(<span class="string">"login fail detect job"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 实现自定义KeyedProcessFunction</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">LoginFailDetectWarning0</span> <span class="keyword">extends</span> <span class="title">KeyedProcessFunction</span>&lt;<span class="title">Long</span>, <span class="title">LoginEvent</span>, 											<span class="title">LoginFailWarning</span>&gt;</span>&#123;</span><br><span class="line">        <span class="comment">// 定义属性，最大连续登录失败次数</span></span><br><span class="line">        <span class="keyword">private</span> Integer maxFailTimes;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">LoginFailDetectWarning0</span><span class="params">(Integer maxFailTimes)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.maxFailTimes = maxFailTimes;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 定义状态：保存2秒内所有的登录失败事件</span></span><br><span class="line">        ListState&lt;LoginEvent&gt; loginFailEventListState;</span><br><span class="line">        <span class="comment">// 定义状态：保存注册的定时器时间戳</span></span><br><span class="line">        ValueState&lt;Long&gt; timerTsState;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">open</span><span class="params">(Configuration parameters)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">            loginFailEventListState = getRuntimeContext().getListState(<span class="keyword">new</span> ListStateDescriptor&lt;LoginEvent&gt;							(<span class="string">"login-fail-list"</span>, LoginEvent<span class="class">.<span class="keyword">class</span>))</span>;</span><br><span class="line">            timerTsState = getRuntimeContext().getState(<span class="keyword">new</span> ValueStateDescriptor&lt;Long&gt;(<span class="string">"timer-ts"</span>, 											Long<span class="class">.<span class="keyword">class</span>))</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">processElement</span><span class="params">(LoginEvent value, Context ctx, Collector&lt;LoginFailWarning&gt; out)</span> <span class="keyword">throws</span> 					Exception </span>&#123;</span><br><span class="line">            <span class="comment">// 判断当前登录事件类型</span></span><br><span class="line">            <span class="keyword">if</span>( <span class="string">"fail"</span>.equals(value.getLoginState()) )&#123;</span><br><span class="line">                <span class="comment">// 1. 如果是失败事件，添加到列表状态中</span></span><br><span class="line">                loginFailEventListState.add(value);</span><br><span class="line">                <span class="comment">// 如果没有定时器，注册一个2秒之后的定时器</span></span><br><span class="line">                <span class="keyword">if</span>( timerTsState.value() == <span class="keyword">null</span> )&#123;</span><br><span class="line">                    Long ts = (value.getTimestamp() + <span class="number">2</span>) * <span class="number">1000L</span>;</span><br><span class="line">                    ctx.timerService().registerEventTimeTimer(ts);</span><br><span class="line">                    timerTsState.update(ts);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">// 2. 如果是登录成功，删除定时器，清空状态，重新开始</span></span><br><span class="line">                <span class="keyword">if</span>( timerTsState.value() != <span class="keyword">null</span> )</span><br><span class="line">                    ctx.timerService().deleteEventTimeTimer(timerTsState.value());</span><br><span class="line">                loginFailEventListState.clear();</span><br><span class="line">                timerTsState.clear();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onTimer</span><span class="params">(<span class="keyword">long</span> timestamp, OnTimerContext ctx, Collector&lt;LoginFailWarning&gt; out)</span> <span class="keyword">throws</span> 						Exception </span>&#123;</span><br><span class="line">            <span class="comment">// 定时器触发，说明2秒内没有登录成功来，判断ListState中失败的个数</span></span><br><span class="line">            ArrayList&lt;LoginEvent&gt; loginFailEvents = Lists.newArrayList(loginFailEventListState.get());</span><br><span class="line">            Integer failTimes = loginFailEvents.size();</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span>( failTimes &gt;= maxFailTimes )&#123;</span><br><span class="line">                <span class="comment">// 如果超出设定的最大失败次数，输出报警</span></span><br><span class="line">                out.collect( <span class="keyword">new</span> LoginFailWarning(ctx.getCurrentKey(),</span><br><span class="line">                        loginFailEvents.get(<span class="number">0</span>).getTimestamp(),</span><br><span class="line">                        loginFailEvents.get(failTimes - <span class="number">1</span>).getTimestamp(),</span><br><span class="line">                        <span class="string">"login fail in 2s for "</span> + failTimes + <span class="string">" times"</span>) );</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 清空状态</span></span><br><span class="line">            loginFailEventListState.clear();</span><br><span class="line">            timerTsState.clear();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 实现自定义KeyedProcessFunction</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">LoginFailDetectWarning</span> <span class="keyword">extends</span> <span class="title">KeyedProcessFunction</span>&lt;<span class="title">Long</span>, <span class="title">LoginEvent</span>, 									<span class="title">LoginFailWarning</span>&gt; </span>&#123;</span><br><span class="line">        <span class="comment">// 定义属性，最大连续登录失败次数</span></span><br><span class="line">        <span class="keyword">private</span> Integer maxFailTimes;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">LoginFailDetectWarning</span><span class="params">(Integer maxFailTimes)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.maxFailTimes = maxFailTimes;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 定义状态：保存2秒内所有的登录失败事件</span></span><br><span class="line">        ListState&lt;LoginEvent&gt; loginFailEventListState;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">open</span><span class="params">(Configuration parameters)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">            loginFailEventListState = getRuntimeContext().getListState(<span class="keyword">new</span> ListStateDescriptor&lt;LoginEvent&gt;					(<span class="string">"login-fail-list"</span>, LoginEvent<span class="class">.<span class="keyword">class</span>))</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 以登录事件作为判断报警的触发条件，不再注册定时器</span></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">processElement</span><span class="params">(LoginEvent value, Context ctx, Collector&lt;LoginFailWarning&gt; out)</span> <span class="keyword">throws</span> 					Exception </span>&#123;</span><br><span class="line">            <span class="comment">// 判断当前事件登录状态</span></span><br><span class="line">            <span class="keyword">if</span>( <span class="string">"fail"</span>.equals(value.getLoginState()) )&#123;</span><br><span class="line">                <span class="comment">// 1. 如果是登录失败，获取状态中之前的登录失败事件，继续判断是否已有失败事件</span></span><br><span class="line">                Iterator&lt;LoginEvent&gt; iterator = loginFailEventListState.get().iterator();</span><br><span class="line">                <span class="keyword">if</span>( iterator.hasNext() )&#123;</span><br><span class="line">                    <span class="comment">// 1.1 如果已经有登录失败事件，继续判断时间戳是否在2秒之内</span></span><br><span class="line">                    <span class="comment">// 获取已有的登录失败事件</span></span><br><span class="line">                    LoginEvent firstFailEvent = iterator.next();</span><br><span class="line">                    <span class="keyword">if</span>( value.getTimestamp() - firstFailEvent.getTimestamp() &lt;= <span class="number">2</span> )&#123;</span><br><span class="line">                        <span class="comment">// 1.1.1 如果在2秒之内，输出报警</span></span><br><span class="line">                        out.collect( <span class="keyword">new</span> LoginFailWarning(value.getUserId(), firstFailEvent.getTimestamp(), 												value.getTimestamp(), <span class="string">"login fail 2 times in 2s"</span>) );</span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                    <span class="comment">// 不管报不报警，这次都已处理完毕，直接更新状态</span></span><br><span class="line">                    loginFailEventListState.clear();</span><br><span class="line">                    loginFailEventListState.add(value);</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="comment">// 1.2 如果没有登录失败，直接将当前事件存入ListState</span></span><br><span class="line">                    loginFailEventListState.add(value);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">// 2. 如果是登录成功，直接清空状态</span></span><br><span class="line">                loginFailEventListState.clear();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="CEP编程"><a href="#CEP编程" class="headerlink" title="CEP编程"></a>CEP编程</h4><p>上一节我们通过对状态编程的改进，去掉了定时器，在 process function 中做了更多的逻辑处理，实现了最初的需求。不过这种方法里有很多的条件判断，而我们目前仅仅实现的是检测“连续 2 次登录失败”，这是最简单的情形。如果需要检测更多次，内部逻辑显然会变得非常复杂。那有什么方式可以方便地实现呢？很幸运，flink 为我们提供了 CEP（Complex Event Processing，复杂事件处理）库，用于在流中筛选符合某种复杂模式的事件。接下来我们就基于 CEP 来完成这个模块的实现。</p>
+<p>在 src/main/java 下继续创建 LoginFailWithCep 类，POJO 类 LoginEvent 由于在LoginFail.java 已经定义，我们在同一个模块中就不需要再定义了。</p>
+<p>代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.test.loginfail_detect;</span><br><span class="line"><span class="keyword">import</span> com.test.loginfail_detect.beans.LoginEvent;</span><br><span class="line"><span class="keyword">import</span> com.test.loginfail_detect.beans.LoginFailWarning;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.cep.CEP;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.cep.PatternSelectFunction;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.cep.PatternStream;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.cep.pattern.Pattern;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.cep.pattern.conditions.SimpleCondition;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.TimeCharacteristic;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.datastream.DataStream;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.functions.timestamps.BoundedOutOfOrdernessTimestampExtractor;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.windowing.time.Time;</span><br><span class="line"><span class="keyword">import</span> java.net.URL;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LoginFailWithCep</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();</span><br><span class="line">        env.setParallelism(<span class="number">1</span>);</span><br><span class="line">        env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 1. 从文件中读取数据</span></span><br><span class="line">        URL resource = LoginFailWithCep.class.getResource("/LoginLog.csv");</span><br><span class="line">        DataStream&lt;LoginEvent&gt; loginEventStream = env.readTextFile(resource.getPath())</span><br><span class="line">                .map(line -&gt; &#123;</span><br><span class="line">                    String[] fields = line.split(<span class="string">","</span>);</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> LoginEvent(<span class="keyword">new</span> Long(fields[<span class="number">0</span>]), fields[<span class="number">1</span>], fields[<span class="number">2</span>], <span class="keyword">new</span> Long(fields[<span class="number">3</span>]));</span><br><span class="line">                &#125;)</span><br><span class="line">                .assignTimestampsAndWatermarks(<span class="keyword">new</span> BoundedOutOfOrdernessTimestampExtractor&lt;LoginEvent&gt;											(Time.seconds(<span class="number">3</span>)) &#123;</span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">extractTimestamp</span><span class="params">(LoginEvent element)</span> </span>&#123;</span><br><span class="line">                        <span class="keyword">return</span> element.getTimestamp() * <span class="number">1000L</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 1. 定义一个匹配模式</span></span><br><span class="line">        <span class="comment">// firstFail -&gt; secondFail, within 2s</span></span><br><span class="line">        Pattern&lt;LoginEvent, LoginEvent&gt; loginFailPattern = Pattern</span><br><span class="line">                .&lt;LoginEvent&gt;begin(<span class="string">"firstFail"</span>).where(<span class="keyword">new</span> SimpleCondition&lt;LoginEvent&gt;() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">filter</span><span class="params">(LoginEvent value)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="string">"fail"</span>.equals(value.getLoginState());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;)</span><br><span class="line">                .next(<span class="string">"secondFail"</span>).where(<span class="keyword">new</span> SimpleCondition&lt;LoginEvent&gt;() &#123;</span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">filter</span><span class="params">(LoginEvent value)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">                  <span class="keyword">return</span> <span class="string">"fail"</span>.equals(value.getLoginState());</span><br><span class="line">                &#125;</span><br><span class="line">              &#125;)</span><br><span class="line">                .next(<span class="string">"thirdFail"</span>).where(<span class="keyword">new</span> SimpleCondition&lt;LoginEvent&gt;() &#123;</span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">filter</span><span class="params">(LoginEvent value)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">                  <span class="keyword">return</span> <span class="string">"fail"</span>.equals(value.getLoginState());</span><br><span class="line">                &#125;</span><br><span class="line">              &#125;)</span><br><span class="line">                .within(Time.seconds(<span class="number">3</span>));</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 2. 将匹配模式应用到数据流上，得到一个pattern stream</span></span><br><span class="line">        PatternStream&lt;LoginEvent&gt; patternStream = CEP.pattern(loginEventStream.keyBy(LoginEvent::getUserId), 				loginFailPattern);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 3. 检出符合匹配条件的复杂事件，进行转换处理，得到报警信息</span></span><br><span class="line">        SingleOutputStreamOperator&lt;LoginFailWarning&gt; warningStream = patternStream.select(<span class="keyword">new</span> 											LoginFailMatchDetectWarning());</span><br><span class="line"></span><br><span class="line">        warningStream.print();</span><br><span class="line"></span><br><span class="line">        env.execute(<span class="string">"login fail detect with cep job"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 实现自定义的PatternSelectFunction</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">LoginFailMatchDetectWarning</span> <span class="keyword">implements</span> <span class="title">PatternSelectFunction</span>&lt;<span class="title">LoginEvent</span>, 								<span class="title">LoginFailWarning</span>&gt;</span>&#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> LoginFailWarning <span class="title">select</span><span class="params">(Map&lt;String, List&lt;LoginEvent&gt;&gt; pattern)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">            LoginEvent firstFailEvent = pattern.get(<span class="string">"firstFail"</span>).iterator().next();</span><br><span class="line">            LoginEvent lastFailEvent = pattern.get(<span class="string">"thirdFail"</span>).get(<span class="number">0</span>);</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> LoginFailWarning(firstFailEvent.getUserId(), firstFailEvent.getTimestamp(), 														 lastFailEvent.getTimestamp(), <span class="string">"login fail 2 times"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Rui Zhang
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://yoursite.com/2021/11/28/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-5/" title="基于Flink的电商用户行为数据分析（5）">http://yoursite.com/2021/11/28/基于Flink的电商用户行为数据分析-5/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Flink/" rel="tag"># Flink</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/11/25/%E6%95%B0%E4%BB%93%E6%95%B0%E6%8D%AE%E5%88%86%E5%B1%82/" rel="prev" title="数仓数据分层">
+      <i class="fa fa-chevron-left"></i> 数仓数据分层
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/11/28/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-6/" rel="next" title="基于Flink的电商用户行为数据分析（6）">
+      基于Flink的电商用户行为数据分析（6） <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#基于Flink的电商用户行为数据分析（5）"><span class="nav-number">1.</span> <span class="nav-text">基于Flink的电商用户行为数据分析（5）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#恶意登录检测"><span class="nav-number">1.1.</span> <span class="nav-text">恶意登录检测</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#模块创建和数据准备"><span class="nav-number">1.1.1.</span> <span class="nav-text">模块创建和数据准备</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#代码实现"><span class="nav-number">1.1.2.</span> <span class="nav-text">代码实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#状态编程"><span class="nav-number">1.1.3.</span> <span class="nav-text">状态编程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CEP编程"><span class="nav-number">1.1.4.</span> <span class="nav-text">CEP编程</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Rui Zhang"
+      src="/images/head.jpg">
+  <p class="site-author-name" itemprop="name">Rui Zhang</p>
+  <div class="site-description" itemprop="description">不在沉默中爆发，就在沉默中灭亡</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">52</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2021 – 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Rui Zhang</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.7m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">25:10</span>
+</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"right","width":120,"height":230},"mobile":{"show":true},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/clicklove.js"></script>

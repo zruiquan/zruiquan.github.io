@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="第1章 环境问题1.1 DataGrip 中注释乱码问题注释属于元数据的一部分，同样存储在mysql的metastore库中，如果metastore库的字符集不支持中文，就会导致中文显示乱码。 不建议修改Hive元数据库的编码，此处我们在metastore中找存储注释的表，找到表中存储注释的字段，只改对应表对应字段的编码。 如下两步修改，缺一不可">
+<meta property="og:type" content="article">
+<meta property="og:title" content="电商数仓项目-电商数据仓库系统-数仓问题汇总">
+<meta property="og:url" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-%E6%95%B0%E4%BB%93%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB/index.html">
+<meta property="og:site_name" content="没有尾巴的小驴">
+<meta property="og:description" content="第1章 环境问题1.1 DataGrip 中注释乱码问题注释属于元数据的一部分，同样存储在mysql的metastore库中，如果metastore库的字符集不支持中文，就会导致中文显示乱码。 不建议修改Hive元数据库的编码，此处我们在metastore中找存储注释的表，找到表中存储注释的字段，只改对应表对应字段的编码。 如下两步修改，缺一不可">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-%E6%95%B0%E4%BB%93%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB/wps1.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-%E6%95%B0%E4%BB%93%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB/wps2.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-%E6%95%B0%E4%BB%93%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB/wps3.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-%E6%95%B0%E4%BB%93%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB/wps4.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-%E6%95%B0%E4%BB%93%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB/wps5.jpg">
+<meta property="article:published_time" content="2024-11-29T19:25:53.000Z">
+<meta property="article:modified_time" content="2025-06-25T08:08:46.498Z">
+<meta property="article:author" content="Rui Zhang">
+<meta property="article:tag" content="数仓">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-%E6%95%B0%E4%BB%93%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB/wps1.jpg">
+
+<link rel="canonical" href="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-%E6%95%B0%E4%BB%93%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true
+  };
+</script>
+
+  <title>电商数仓项目-电商数据仓库系统-数仓问题汇总 | 没有尾巴的小驴</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">没有尾巴的小驴</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">记录生活</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">22</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">22</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">52</span></a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-%E6%95%B0%E4%BB%93%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/head.jpg">
+      <meta itemprop="name" content="Rui Zhang">
+      <meta itemprop="description" content="不在沉默中爆发，就在沉默中灭亡">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="没有尾巴的小驴">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          电商数仓项目-电商数据仓库系统-数仓问题汇总
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-11-30 03:25:53" itemprop="dateCreated datePublished" datetime="2024-11-30T03:25:53+08:00">2024-11-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-06-25 16:08:46" itemprop="dateModified" datetime="2025-06-25T16:08:46+08:00">2025-06-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%B0%E4%BB%93/" itemprop="url" rel="index"><span itemprop="name">数仓</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="第1章-环境问题"><a href="#第1章-环境问题" class="headerlink" title="第1章 环境问题"></a>第1章 环境问题</h1><h2 id="1-1-DataGrip-中注释乱码问题"><a href="#1-1-DataGrip-中注释乱码问题" class="headerlink" title="1.1 DataGrip 中注释乱码问题"></a>1.1 DataGrip 中注释乱码问题</h2><p>注释属于元数据的一部分，同样存储在mysql的metastore库中，如果metastore库的字符集不支持中文，就会导致中文显示乱码。</p>
+<p>不建议修改Hive元数据库的编码，此处我们在metastore中找存储注释的表，找到表中存储注释的字段，只改对应表对应字段的编码。</p>
+<p>如下两步修改，缺一不可</p>
+<p>（1）修改mysql元数据库</p>
+<p>我们用到的注释有两种：字段注释和整张表的注释。</p>
+<p>COLUMNS_V2 表中的 COMMENT 字段存储了 Hive 表所有字段的注释，TABLE_PARAMS 表中的 PARAM_VALUE 字段存储了所有表的注释。我们可以通过命令修改字段编码，也可以用 DataGrip 或 Navicat 等工具修改，此处仅对 Navicat 进行展示。</p>
+<p>（i）命令修改</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> COLUMNS_V2 <span class="keyword">modify</span> <span class="keyword">column</span> <span class="keyword">COMMENT</span> <span class="built_in">varchar</span>(<span class="number">256</span>) <span class="built_in">character</span> <span class="keyword">set</span> utf8;</span><br><span class="line"><span class="keyword">alter</span> <span class="keyword">table</span> TABLE_PARAMS <span class="keyword">modify</span> <span class="keyword">column</span> PARAM_VALUE mediumtext <span class="built_in">character</span> <span class="keyword">set</span> utf8;</span><br></pre></td></tr></table></figure>
+
+<p>（ii）使用工具</p>
+<p>​    以 COLUMNS_V2 表中COMMENT 字段的修改为例</p>
+<p>​    1. 右键点击表名，选择设计表</p>
+<p><img src="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-%E6%95%B0%E4%BB%93%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB/wps1.jpg" alt="img"> </p>
+<p>​    2. 在右侧页面中选中表的字段</p>
+<p><img src="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-%E6%95%B0%E4%BB%93%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB/wps2.jpg" alt="img"> </p>
+<p>​    3. 在页面下方下拉列表中将字符集改为 utf8</p>
+<p><img src="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-%E6%95%B0%E4%BB%93%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB/wps3.jpg" alt="img"> </p>
+<p>修改字符集之后，已存在的中文注释能否正确显示？不能。为何？</p>
+<p>数据库中的字符都是通过编码存储的，写入时编码，读取时解码。修改字段编码并不会改变此前数据的编码方式，依然为默认的 latin1，此时读取之前的中文注释会用 utf8 解码，编解码方式不一致，依然乱码。</p>
+<p>（2）修改url连接</p>
+<p>修改 hive-site.xml 在末尾添加</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&amp;amp;useUnicode</span>=<span class="string">true&amp;amp;characterEncoding=UTF-8</span></span><br></pre></td></tr></table></figure>
+
+<p>xml 文件中 &amp; 符是有特殊含义的，我们必须使用转义的方式 &amp; 对 &amp; 进行替换</p>
+<p>修改结果如下</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">name</span>&gt;</span>javax.jdo.option.ConnectionURL<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">value</span>&gt;</span>jdbc:mysql://hadoop102:3306/metastore?useSSL=false<span class="symbol">&amp;amp;</span>useUnicode=true<span class="symbol">&amp;amp;</span>characterEncoding=UTF-8<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>只要修改了 hive-site.xml，就必须重启 hiveserver2。</p>
+<h2 id="1-2-DataGrip-刷新连接时-hiveserver2-后台报错"><a href="#1-2-DataGrip-刷新连接时-hiveserver2-后台报错" class="headerlink" title="1.2 DataGrip 刷新连接时 hiveserver2 后台报错"></a>1.2 DataGrip 刷新连接时 hiveserver2 后台报错</h2><ol>
+<li>报错信息如下</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">FAILED: ParseException line 1:5 cannot recognize input near 'show' 'indexes' 'on' in ddl statement</span><br></pre></td></tr></table></figure>
+
+<p>原因：我们使用的是 Hive-3.1.2，早期版本的 Hive 有索引功能，当前版本已移除， DataGrip 刷新连接时会扫描索引，而 Hive 没有，就会报错。</p>
+<ol start="2">
+<li>报错信息如下</li>
+</ol>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">FAILED: Execution Error, return code 1 from org.apache.hadoop.hive.ql.exec.DDLTask. Current user : atguigu is not allowed to list roles. User has to belong to ADMIN role and have it as current role, for this action.</span><br><span class="line"></span><br><span class="line">FAILED: Execution Error, return code 1 from org.apache.hadoop.hive.ql.exec.DDLTask. Current user : atguigu is not allowed get principals in a role. User has to belong to ADMIN role and have it as current role, for this action. Otherwise, grantor need to have ADMIN OPTION on role being granted and have it as a current role for this action.</span><br></pre></td></tr></table></figure>
+
+<p>DataGrip 连接 hiveserver2 时会做权限认证，但本项目中我们没有对 Hive 的权限管理进行配置，因而报错。</p>
+<p>上述两个问题都是 DataGrip 导致的，并非 Hive 环境的问题，不影响使用</p>
+<h2 id="1-3-Hivesever2-报错OOM"><a href="#1-3-Hivesever2-报错OOM" class="headerlink" title="1.3 Hivesever2 报错OOM"></a>1.3 Hivesever2 报错OOM</h2><p>Hive 默认堆内存只有 256M，如果 hiveserver2 后台频繁出现 OutOfMemoryError，可以调大堆内存。</p>
+<p>在 Hive 家目录的 conf 目录下复制一份模板文件 hive-env.sh.template</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[atguigu@hadoop102 conf]$ cd $HIVE_HOME/conf</span><br><span class="line">[atguigu@hadoop102 conf]$ cp hive-env.sh.template hive-env.sh</span><br></pre></td></tr></table></figure>
+
+<p>修改 hive-env.sh，将 Hive 堆内存改为 1024M，如下</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export HADOOP_HEAPSIZE=2048</span><br></pre></td></tr></table></figure>
+
+<p>可根据实际使用情况适当调整堆内存。</p>
+<h2 id="1-4-DataGrip-侧边栏ODS-层JSON表字段无法显示"><a href="#1-4-DataGrip-侧边栏ODS-层JSON表字段无法显示" class="headerlink" title="1.4 DataGrip 侧边栏ODS 层JSON表字段无法显示"></a>1.4 DataGrip 侧边栏ODS 层JSON表字段无法显示</h2><p>建表字段中有如下语句的表字段无法显示</p>
+<p>ROW FORMAT SERDE ‘org.apache.hadoop.hive.serde2.JsonSerDe’</p>
+<p>上述语句指定了 Hive 表的序列化器和反序列化器 SERDE（serialization 和 deserialization 的合并缩写），用于解析 JSON 格式的文件。上述 SERDE 是由第三方提供的，在 hive-site.xml 中添加如下配置即可解决</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>metastore.storage.schema.reader.impl<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">value</span>&gt;</span>org.apache.hadoop.hive.metastore.SerDeStorageSchemaReader<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="1-5-Hivesever2报错too-many-open-files"><a href="#1-5-Hivesever2报错too-many-open-files" class="headerlink" title="1.5 Hivesever2报错too many open files"></a>1.5 Hivesever2报错too many open files</h2><p>Hiveserver2 运行过程出现too many open files异常，原因是Hivesever2进程的打开的文件（文件描述符）过多。解决方案如下：</p>
+<p>方案一：重启Hiveserver2可临时解决问题</p>
+<p>方案二：修改vi /etc/security/limits.conf可永久解决问题，需重启操作系统</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">hard</span> <span class="string">nofile 102400</span></span><br><span class="line"><span class="attr">soft</span> <span class="string">nofile 102400</span></span><br></pre></td></tr></table></figure>
+
+<h1 id="第2章-Hive-BUG"><a href="#第2章-Hive-BUG" class="headerlink" title="第2章 Hive BUG"></a>第2章 Hive BUG</h1><p>Hive的某些优化手段有BUG，特定场景会出问题，出问题关闭相应的优化即可。</p>
+<h2 id="2-1-cbo优化BUG"><a href="#2-1-cbo优化BUG" class="headerlink" title="2.1 cbo优化BUG"></a>2.1 cbo优化BUG</h2><p>cbo优化会导致 hive struct结构体判空操作失效，执行计划缺少对应的 filter</p>
+<p>解决思路：set hive.cbo.enable=false;</p>
+<p>参考issue：<a href="https://issues.apache.org/jira/browse/HIVE-21778" target="_blank" rel="noopener">https://issues.apache.org/jira/browse/HIVE-21778</a></p>
+<h2 id="2-2-MapJoin-BUG"><a href="#2-2-MapJoin-BUG" class="headerlink" title="2.2 MapJoin BUG"></a>2.2 MapJoin BUG</h2><p>关联的两张表中有空表，会出现ClassCastException</p>
+<p><img src="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-%E6%95%B0%E4%BB%93%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB/wps4.jpg" alt="img"> </p>
+<p>解决思路：set hive.mapjoin.optimized.hashtable=false;</p>
+<p>参考issue：<a href="https://issues.apache.org/jira/browse/HIVE-19388" target="_blank" rel="noopener">https://issues.apache.org/jira/browse/HIVE-19388</a></p>
+<h2 id="2-3-Hive向量化查询优化"><a href="#2-3-Hive向量化查询优化" class="headerlink" title="2.3 Hive向量化查询优化"></a>2.3 Hive向量化查询优化</h2><p><img src="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-%E6%95%B0%E4%BB%93%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB/wps5.jpg" alt="img"> </p>
+<p> join执行出错，使用left join成功</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">set hive.vectorized.execution.enabled=false;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Rui Zhang
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-%E6%95%B0%E4%BB%93%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB/" title="电商数仓项目-电商数据仓库系统-数仓问题汇总">http://yoursite.com/2024/11/30/电商数仓项目-电商数据仓库系统-数仓问题汇总/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%95%B0%E4%BB%93/" rel="tag"># 数仓</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/" rel="prev" title="电商数仓项目-电商数据仓库系统-Superset">
+      <i class="fa fa-chevron-left"></i> 电商数仓项目-电商数据仓库系统-Superset
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第1章-环境问题"><span class="nav-number">1.</span> <span class="nav-text">第1章 环境问题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-DataGrip-中注释乱码问题"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 DataGrip 中注释乱码问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-DataGrip-刷新连接时-hiveserver2-后台报错"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 DataGrip 刷新连接时 hiveserver2 后台报错</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-3-Hivesever2-报错OOM"><span class="nav-number">1.3.</span> <span class="nav-text">1.3 Hivesever2 报错OOM</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-4-DataGrip-侧边栏ODS-层JSON表字段无法显示"><span class="nav-number">1.4.</span> <span class="nav-text">1.4 DataGrip 侧边栏ODS 层JSON表字段无法显示</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-5-Hivesever2报错too-many-open-files"><span class="nav-number">1.5.</span> <span class="nav-text">1.5 Hivesever2报错too many open files</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第2章-Hive-BUG"><span class="nav-number">2.</span> <span class="nav-text">第2章 Hive BUG</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-cbo优化BUG"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 cbo优化BUG</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-MapJoin-BUG"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 MapJoin BUG</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-Hive向量化查询优化"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 Hive向量化查询优化</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Rui Zhang"
+      src="/images/head.jpg">
+  <p class="site-author-name" itemprop="name">Rui Zhang</p>
+  <div class="site-description" itemprop="description">不在沉默中爆发，就在沉默中灭亡</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">52</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2021 – 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Rui Zhang</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.7m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">25:10</span>
+</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"right","width":120,"height":230},"mobile":{"show":true},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/clicklove.js"></script>

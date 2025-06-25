@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="1. SpringSecurity 框架简介  1.1 概要Spring 是非常流行和成功的 Java 应用开发框架，Spring Security 正是 Spring 家族中的成员。Spring Security 基于 Spring 框架，提供了一套 Web 应用安全性的完整解决方案。 正如你可能知道的关于安全方面的两个主要区域是“认证”和“授权”（或者访问控制），一般来说，Web 应用的安全性">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SpringSecurity技术">
+<meta property="og:url" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/index.html">
+<meta property="og:site_name" content="没有尾巴的小驴">
+<meta property="og:description" content="1. SpringSecurity 框架简介  1.1 概要Spring 是非常流行和成功的 Java 应用开发框架，Spring Security 正是 Spring 家族中的成员。Spring Security 基于 Spring 框架，提供了一套 Web 应用安全性的完整解决方案。 正如你可能知道的关于安全方面的两个主要区域是“认证”和“授权”（或者访问控制），一般来说，Web 应用的安全性">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217100218352.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217100310529.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217100333678.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217100404384.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217100425634.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217100512975.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217100522638.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217100631283.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217100713230.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217100730915.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217100754340.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217100846943.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217101007025.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217101032005.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217101051441.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217101138064.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217101230159.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217101241855.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217101406501.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217102035648.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217102235107.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217102343008.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217102407966.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217102525631.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217102554894.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217102603200.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217102632127.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217102708350.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217102723934.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217102733695.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217102803678.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217102827024.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217102842637.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217102912734.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217103537261.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217103553198.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217103603758.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217103624000.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217104010464.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217104022975.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217104053476.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217104126608.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217104238959.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217104312754.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217104319680.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217104325694.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217104341425.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217104355102.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217104419824.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217104432432.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217104440174.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217104455629.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217115355565.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217115415639.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217115614584.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217115601256.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217115635623.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217115726252.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217115746087.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217115818632.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217115844359.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217115934668.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217115954186.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217120041497.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217120157145.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217120207738.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217120247479.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217120259495.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217131023255.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217131058737.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217131130338.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217131146048.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217131206995.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217131307568.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217131325571.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217131358256.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217131523554.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217131655539.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217131718111.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217131819633.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217131842705.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217131850783.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217131927011.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217132001826.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217132014463.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217132045792.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217132127744.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217132156864.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217132213413.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217132313249.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217132556052.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217132623922.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217132636463.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217132709408.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217132723600.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217133448549.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217133504705.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217133532719.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217133539935.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217133601360.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217133648737.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217133656623.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217133743618.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217133910722.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217133935888.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217134045332.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217134102359.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217134114484.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217134124240.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217134130865.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217134145986.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217134205556.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217134216869.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217134256484.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217134311955.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217134321077.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217134341107.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217134354149.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217134403555.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217134429799.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217134439141.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217134444917.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217134616681.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217134624821.png">
+<meta property="og:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217134631495.png">
+<meta property="article:published_time" content="2022-02-16T06:20:18.000Z">
+<meta property="article:modified_time" content="2025-06-25T08:08:46.010Z">
+<meta property="article:author" content="Rui Zhang">
+<meta property="article:tag" content="SpringSecurity">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217100218352.png">
+
+<link rel="canonical" href="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true
+  };
+</script>
+
+  <title>SpringSecurity技术 | 没有尾巴的小驴</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">没有尾巴的小驴</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">记录生活</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">22</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">22</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">52</span></a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/head.jpg">
+      <meta itemprop="name" content="Rui Zhang">
+      <meta itemprop="description" content="不在沉默中爆发，就在沉默中灭亡">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="没有尾巴的小驴">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          SpringSecurity技术
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-02-16 14:20:18" itemprop="dateCreated datePublished" datetime="2022-02-16T14:20:18+08:00">2022-02-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-06-25 16:08:46" itemprop="dateModified" datetime="2025-06-25T16:08:46+08:00">2025-06-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/SpringSecurity/" itemprop="url" rel="index"><span itemprop="name">SpringSecurity</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>13k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>12 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="1-SpringSecurity-框架简介"><a href="#1-SpringSecurity-框架简介" class="headerlink" title="1. SpringSecurity 框架简介"></a>1. SpringSecurity 框架简介</h1><p> <img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217100218352.png" alt="image-20220217100218352"></p>
+<h2 id="1-1-概要"><a href="#1-1-概要" class="headerlink" title="1.1 概要"></a>1.1 概要</h2><p>Spring 是非常流行和成功的 Java 应用开发框架，Spring Security 正是 Spring 家族中的成员。Spring Security 基于 Spring 框架，提供了一套 Web 应用安全性的完整解决方案。</p>
+<p>正如你可能知道的关于安全方面的两个主要区域是“认证”和“授权”（或者访问控制），一般来说，Web 应用的安全性包括用户认证（Authentication）和用户授权</p>
+<p>（Authorization）两个部分，这两点也是 Spring Security 重要核心功能。</p>
+<p>（1） 用户认证指的是：验证某个用户是否为系统中的合法主体，也就是说用户能否访问该系统。用户认证一般要求用户提供用户名和密码。系统通过校验用户名和密码来完成认证过程。通俗点说就是系统认为用户是否能登录</p>
+<p>（2） 用户授权指的是验证某个用户是否有权限执行某个操作。在一个系统中，不同用户所具有的权限是不同的。比如对一个文件来说，有的用户只能进行读取，而有的用户可以进行修改。一般来说，系统会为不同的用户分配不同的角色，而每个角色则对应一系列的权限。通俗点讲就是系统判断用户是否有权限去做某些事情。</p>
+<h2 id="1-2-历史"><a href="#1-2-历史" class="headerlink" title="1.2 历史"></a>1.2 历史</h2><p>Spring Security 开始于 2003 年年底,““spring 的 acegi 安全系统”。 起因是 Spring</p>
+<p>开发者邮件列表中的一个问题,有人提问是否考虑提供一个基于 spring 的安全实现。</p>
+<p>Spring Security 以“The Acegi Secutity System for Spring” 的名字始于 2013 年晚些时候。一个问题提交到 Spring 开发者的邮件列表，询问是否已经有考虑一个机遇 Spring 的安全性社区实现。那时候 Spring 的社区相对较小（相对现在）。实际上 Spring 自己在2013 年只是一个存在于 ScourseForge 的项目，这个问题的回答是一个值得研究的领</p>
+<p>域，虽然目前时间的缺乏组织了我们对它的探索。</p>
+<p>考虑到这一点，一个简单的安全实现建成但是并没有发布。几周后，Spring 社区的其他成员询问了安全性，这次这个代码被发送给他们。其他几个请求也跟随而来。到 2014 年一月大约有 20 万人使用了这个代码。这些创业者的人提出一个 SourceForge 项目加入是为了，这是在 2004 三月正式成立。</p>
+<p>在早些时候，这个项目没有任何自己的验证模块，身份验证过程依赖于容器管理的安全性和 Acegi 安全性。而不是专注于授权。开始的时候这很适合，但是越来越多的用户请求额外的容器支持。容器特定的认证领域接口的基本限制变得清晰。还有一个相关的问题增加新的容器的路径，这是最终用户的困惑和错误配置的常见问题。</p>
+<p>Acegi 安全特定的认证服务介绍。大约一年后，Acegi 安全正式成为了 Spring 框架的子项目。1.0.0 最终版本是出版于 2006 -在超过两年半的大量生产的软件项目和数以百计的改进和积极利用社区的贡献。</p>
+<p>Acegi 安全 2007 年底正式成为了 Spring 组合项目，更名为”Spring Security”。</p>
+<h2 id="1-3-同款产品对比"><a href="#1-3-同款产品对比" class="headerlink" title="1.3 同款产品对比"></a>1.3 同款产品对比</h2><h3 id="1-3-1-Spring-Security"><a href="#1-3-1-Spring-Security" class="headerlink" title="1.3.1 Spring Security"></a>1.3.1 Spring Security</h3><p>Spring 技术栈的组成部分。</p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217100310529.png" alt="image-20220217100310529"></p>
+<h3 id="1-3-2-Shiro"><a href="#1-3-2-Shiro" class="headerlink" title="1.3.2 Shiro"></a>1.3.2 Shiro</h3><p>Apache 旗下的轻量级权限控制框架。</p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217100333678.png" alt="image-20220217100333678"> </p>
+<p>特点：</p>
+<p>⚫ 轻量级。Shiro 主张的理念是把复杂的事情变简单。针对对性能有更高要求的互联网应用有更好表现。</p>
+<p>⚫ 通用性。</p>
+<p>◼好处：不局限于Web 环境，可以脱离Web 环境使用。</p>
+<p>◼缺陷：在Web 环境下一些特定的需求需要手动编写代码定制。</p>
+<p>Spring Security 是 Spring 家族中的一个安全管理框架，实际上，在 Spring Boot 出现之前，Spring Security 就已经发展了多年了，但是使用的并不多，安全管理这个领域，一直是 Shiro 的天下。</p>
+<p>相对于 Shiro，在 SSM 中整合 Spring Security 都是比较麻烦的操作，所以，Spring Security 虽然功能比 Shiro 强大，但是使用反而没有 Shiro 多（Shiro 虽然功能没有Spring Security 多，但是对于大部分项目而言，Shiro 也够用了）。</p>
+<p>自从有了 Spring Boot 之后，Spring Boot 对于 Spring Security 提供了自动化配置方案，可以使用更少的配置来使用 Spring Security。</p>
+<p>因此，一般来说，常见的安全管理技术栈的组合是这样的:</p>
+<ul>
+<li><p>SSM + Shiro</p>
+</li>
+<li><p>Spring Boot/Spring Cloud + Spring Security</p>
+</li>
+</ul>
+<p><strong>以上只是一个推荐的组合而已，如果单纯从技术上来说，无论怎么组合，都是可以运行</strong></p>
+<p><strong>的。</strong> </p>
+<h2 id="1-4-模块划分"><a href="#1-4-模块划分" class="headerlink" title="1.4 模块划分"></a>1.4 模块划分</h2><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217100404384.png" alt="image-20220217100404384"></p>
+<h1 id="2-SpringSecurity-入门案例"><a href="#2-SpringSecurity-入门案例" class="headerlink" title="2. SpringSecurity 入门案例"></a>2. SpringSecurity 入门案例</h1><h2 id="2-1-创建一个项目"><a href="#2-1-创建一个项目" class="headerlink" title="2.1 创建一个项目"></a>2.1 创建一个项目</h2><p> <img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217100425634.png" alt="image-20220217100425634"><br><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217100512975.png" alt="image-20220217100512975"></p>
+<p> <img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217100522638.png" alt="image-20220217100522638"><br><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217100631283.png" alt="image-20220217100631283"></p>
+<p>添加一个配置类：  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SecurityConfigextends</span> <span class="title">WebSecurityConfigurerAdapter</span> </span>&#123;</span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">configure</span><span class="params">(HttpSecurity http)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">	http.formLogin() <span class="comment">// 表单登录</span></span><br><span class="line">	.and()</span><br><span class="line">	.authorizeRequests() <span class="comment">// 认证配置</span></span><br><span class="line">	.anyRequest() <span class="comment">// 任何请求</span></span><br><span class="line">	.authenticated(); <span class="comment">// 都需要身份验证</span></span><br><span class="line">&#125; &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-2-运行这个项目"><a href="#2-2-运行这个项目" class="headerlink" title="2.2 运行这个项目"></a>2.2 运行这个项目</h2><p>访问 localhost:8080</p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217100713230.png" alt="image-20220217100713230"></p>
+<p>默认的用户名： user<br>密码在项目启动的时候在控制台会打印， 注意每次启动的时候密码都回发生变化！  </p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217100730915.png" alt="image-20220217100730915"></p>
+<p>输入用户名，密码，这样表示可以访问了， 404 表示我们没有这个控制器，但是我们可以访问了。  </p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217100754340.png" alt="image-20220217100754340"></p>
+<h2 id="2-3-权限管理中的相关概念"><a href="#2-3-权限管理中的相关概念" class="headerlink" title="2.3 权限管理中的相关概念"></a>2.3 权限管理中的相关概念</h2><h3 id="2-3-1-主体"><a href="#2-3-1-主体" class="headerlink" title="2.3.1 主体"></a>2.3.1 主体</h3><p>英文单词：principal</p>
+<p>使用系统的用户或设备或从其他系统远程登录的用户等等。简单说就是谁使用系统谁就是主体。</p>
+<h3 id="2-3-2-认证"><a href="#2-3-2-认证" class="headerlink" title="2.3.2 认证"></a>2.3.2 认证</h3><p>英文单词：authentication</p>
+<p>权限管理系统确认一个主体的身份，允许主体进入系统。简单说就是“主体”证明自己是谁。</p>
+<p>笼统的认为就是以前所做的登录操作。</p>
+<h3 id="2-3-3-授权"><a href="#2-3-3-授权" class="headerlink" title="2.3.3 授权"></a>2.3.3 授权</h3><p>英文单词：authorization</p>
+<p>将操作系统的“权力”“授予”“主体”，这样主体就具备了操作系统中特定功能的能力。</p>
+<p>所以简单来说，授权就是给用户分配权限。</p>
+<h2 id="2-4-添加一个控制器进行访问"><a href="#2-4-添加一个控制器进行访问" class="headerlink" title="2.4 添加一个控制器进行访问"></a>2.4 添加一个控制器进行访问</h2> <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.atguigu.controller;</span><br><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">IndexController</span> </span>&#123;</span><br><span class="line">	<span class="meta">@GetMapping</span>(<span class="string">"index"</span>)</span><br><span class="line">	<span class="meta">@ResponseBody</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">index</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="string">"success"</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217100846943.png" alt="image-20220217100846943"></p>
+<h2 id="2-5-SpringSecurity-基本原理"><a href="#2-5-SpringSecurity-基本原理" class="headerlink" title="2.5 SpringSecurity 基本原理"></a>2.5 SpringSecurity 基本原理</h2><p> SpringSecurity 本质是一个过滤器链： 从启动是可以获取到过滤器链：</p>
+ <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter</span><br><span class="line">org.springframework.security.web.context.SecurityContextPersistenceFilter</span><br><span class="line">org.springframework.security.web.header.HeaderWriterFilter</span><br><span class="line">org.springframework.security.web.csrf.CsrfFilter</span><br><span class="line">org.springframework.security.web.authentication.logout.LogoutFilter</span><br><span class="line">org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter</span><br><span class="line">org.springframework.security.web.authentication.ui.DefaultLoginPageGeneratingFilter</span><br><span class="line">org.springframework.security.web.authentication.ui.DefaultLogoutPageGeneratingFilter</span><br><span class="line">org.springframework.security.web.savedrequest.RequestCacheAwareFilter</span><br><span class="line">org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter</span><br><span class="line">org.springframework.security.web.authentication.AnonymousAuthenticationFilter</span><br><span class="line">org.springframework.security.web.session.SessionManagementFilter</span><br><span class="line">org.springframework.security.web.access.ExceptionTranslationFilter</span><br><span class="line">org.springframework.security.web.access.intercept.FilterSecurityInterceptor</span><br></pre></td></tr></table></figure>
+
+<p>代码底层流程：重点看三个过滤器：</p>
+<p>FilterSecurityInterceptor：是一个方法级的权限过滤器, 基本位于过滤链的最底部。</p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217101007025.png" alt="image-20220217101007025"></p>
+<p>super.beforeInvocation(fi) 表示查看之前的 filter 是否通过。<br>fi.getChain().doFilter(fi.getRequest(), fi.getResponse());表示真正的调用后台的服务。</p>
+<p>ExceptionTranslationFilter：是个异常过滤器，用来处理在认证授权过程中抛出的异常  </p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217101032005.png" alt="image-20220217101032005"></p>
+<p>UsernamePasswordAuthenticationFilter ：对/login 的 POST 请求做拦截，校验表单中用户名，密码。</p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217101051441.png" alt="image-20220217101051441"></p>
+<h2 id="2-6-UserDetailsService-接口讲解"><a href="#2-6-UserDetailsService-接口讲解" class="headerlink" title="2.6 UserDetailsService 接口讲解"></a>2.6 UserDetailsService 接口讲解</h2><p>当什么也没有配置的时候，账号和密码是由 Spring Security 定义生成的。而在实际项目中账号和密码都是从数据库中查询出来的。 所以我们要通过自定义逻辑控制认证逻辑。<br>如果需要自定义逻辑时，只需要实现 UserDetailsService 接口即可。接口定义如下：  </p>
+<p> <img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217101138064.png" alt="image-20220217101138064"></p>
+<h3 id="返回值-UserDetails"><a href="#返回值-UserDetails" class="headerlink" title="返回值 UserDetails"></a>返回值 UserDetails</h3><p>这个类是系统默认的用户“主体”</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 表示获取登录用户所有权限</span></span><br><span class="line">Collection&lt;? extends GrantedAuthority&gt; getAuthorities();</span><br><span class="line"><span class="comment">// 表示获取密码</span></span><br><span class="line"><span class="function">String <span class="title">getPassword</span><span class="params">()</span></span>;</span><br><span class="line"><span class="comment">// 表示获取用户名</span></span><br><span class="line"><span class="function">String <span class="title">getUsername</span><span class="params">()</span></span>;</span><br><span class="line"><span class="comment">// 表示判断账户是否过期</span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">isAccountNonExpired</span><span class="params">()</span></span>;</span><br><span class="line"><span class="comment">// 表示判断账户是否被锁定</span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">isAccountNonLocked</span><span class="params">()</span></span>;</span><br><span class="line"><span class="comment">// 表示凭证&#123;密码&#125;是否过期</span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">isCredentialsNonExpired</span><span class="params">()</span></span>;</span><br><span class="line"><span class="comment">// 表示当前用户是否可用</span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">isEnabled</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>以下是 UserDetails 实现类  </p>
+<p> <img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217101230159.png" alt="image-20220217101230159"></p>
+<p>以后我们只需要使用 User 这个实体类即可！</p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217101241855.png" alt="image-20220217101241855"></p>
+<h3 id="方法参数-username"><a href="#方法参数-username" class="headerlink" title="方法参数 username"></a>方法参数 username</h3><p> 表示用户名。此值是客户端表单传递过来的数据。默认情况下必须叫 username，否则无法接收。  </p>
+<h2 id="2-7-PasswordEncoder-接口讲解"><a href="#2-7-PasswordEncoder-接口讲解" class="headerlink" title="2.7 PasswordEncoder 接口讲解"></a>2.7 PasswordEncoder 接口讲解</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 表示把参数按照特定的解析规则进行解析</span></span><br><span class="line"><span class="function">String <span class="title">encode</span><span class="params">(CharSequence rawPassword)</span></span>;</span><br><span class="line"><span class="comment">// 表示验证从存储中获取的编码密码与编码后提交的原始密码是否匹配。如果密码匹配，则返回 true；如果不匹配，则返回 false。第一个参数表示需要被解析的密码。第二个</span></span><br><span class="line"><span class="comment">// 参数表示存储的密码。</span></span><br><span class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">matches</span><span class="params">(CharSequence rawPassword, String encodedPassword)</span></span>;</span><br><span class="line"><span class="comment">// 表示如果解析的密码能够再次进行解析且达到更安全的结果则返回 true，否则返回false。默认返回 false。</span></span><br><span class="line"><span class="function"><span class="keyword">default</span> <span class="keyword">boolean</span> <span class="title">upgradeEncoding</span><span class="params">(String encodedPassword)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接口实现类</p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217101406501.png" alt="image-20220217101406501"></p>
+<p> BCryptPasswordEncoder 是 Spring Security 官方推荐的密码解析器，平时多使用这个解析<br>器。<br>BCryptPasswordEncoder 是对 bcrypt 强散列方法的具体实现。是基于 Hash 算法实现的单<br>向加密。可以通过 strength 控制加密强度，默认 10.  </p>
+<h3 id="查用方法演示"><a href="#查用方法演示" class="headerlink" title="查用方法演示"></a>查用方法演示</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test01</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="comment">// 创建密码解析器</span></span><br><span class="line">	BCryptPasswordEncoder bCryptPasswordEncoder = <span class="keyword">new</span></span><br><span class="line">	BCryptPasswordEncoder();</span><br><span class="line">	<span class="comment">// 对密码进行加密</span></span><br><span class="line">	String atguigu = bCryptPasswordEncoder.encode(<span class="string">"atguigu"</span>);</span><br><span class="line">	<span class="comment">// 打印加密之后的数据</span></span><br><span class="line">	System.out.println(<span class="string">"加密之后数据： \t"</span>+atguigu);</span><br><span class="line">	<span class="comment">//判断原字符加密后和加密之前是否匹配</span></span><br><span class="line">	<span class="keyword">boolean</span> result = bCryptPasswordEncoder.matches(<span class="string">"atguigu"</span>, atguigu);</span><br><span class="line">	<span class="comment">// 打印比较结果</span></span><br><span class="line">	System.out.println(<span class="string">"比较结果： \t"</span>+result);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-8-SpringBoot-对-Security-的自动配置"><a href="#2-8-SpringBoot-对-Security-的自动配置" class="headerlink" title="2.8 SpringBoot 对 Security 的自动配置"></a>2.8 SpringBoot 对 Security 的自动配置</h2><p><a href="https://docs.spring.io/spring-security/site/docs/5.3.4.RELEASE/reference/html5/#servlet-hello" target="_blank" rel="noopener">https://docs.spring.io/spring-</a> <a href="https://docs.spring.io/spring-security/site/docs/5.3.4.RELEASE/reference/html5/#servlet-hello" target="_blank" rel="noopener">security/site/docs/5.3.4.RELEASE/reference/html5/#servlet-hello</a></p>
+<h1 id="3-SpringSecurity-Web-权限方案"><a href="#3-SpringSecurity-Web-权限方案" class="headerlink" title="3. SpringSecurity Web 权限方案"></a>3. SpringSecurity Web 权限方案</h1><h2 id="3-1-设置登录系统的账号、密码"><a href="#3-1-设置登录系统的账号、密码" class="headerlink" title="3.1 设置登录系统的账号、密码"></a>3.1 设置登录系统的账号、密码</h2><p>方式一：在 application.properties  </p>
+ <figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">spring.security.user.name</span>=<span class="string">atguigu</span></span><br><span class="line"><span class="meta">spring.security.user.password</span>=<span class="string">atguigu</span></span><br></pre></td></tr></table></figure>
+
+<p>方式二：编写类实现接口  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.atguigu.config;</span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SecurityConfig</span> </span>&#123;</span><br><span class="line">	<span class="comment">// 注入 PasswordEncoder 类到 spring 容器中</span></span><br><span class="line">	<span class="meta">@Bean</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> PasswordEncoder <span class="title">passwordEncoder</span><span class="params">()</span></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">new</span> BCryptPasswordEncoder();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.atguigu.service;</span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LoginService</span> <span class="keyword">implements</span> <span class="title">UserDetailsService</span> </span>&#123;</span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> UserDetails <span class="title">loadUserByUsername</span><span class="params">(String username)</span> <span class="keyword">throws</span></span></span><br><span class="line"><span class="function">UsernameNotFoundException </span>&#123;</span><br><span class="line">	<span class="comment">// 判断用户名是否存在</span></span><br><span class="line">	<span class="keyword">if</span> (!<span class="string">"admin"</span>.equals(username))&#123;</span><br><span class="line">	<span class="keyword">throw</span> <span class="keyword">new</span> UsernameNotFoundException(<span class="string">"用户名不存在！ "</span>);&#125;</span><br><span class="line">	<span class="comment">// 从数据库中获取的密码 atguigu 的密文</span></span><br><span class="line">	String pwd =<span class="string">"$2a$10$2R/M6iU3mCZt3ByG7kwYTeeW0w7/UqdeXrb27zkBIizBvAven0/na"</span>;</span><br><span class="line">	<span class="comment">// 第三个参数表示权限</span></span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">new</span> User(username,pwd,AuthorityUtils.commaSeparatedStringToAuthorityList(<span class="string">"admin,"</span>));</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-2-实现数据库认证来完成用户登录"><a href="#3-2-实现数据库认证来完成用户登录" class="headerlink" title="3.2 实现数据库认证来完成用户登录"></a>3.2 实现数据库认证来完成用户登录</h2><p>完成自定义登录  </p>
+<h3 id="3-2-1-准备-sql"><a href="#3-2-1-准备-sql" class="headerlink" title="3.2.1 准备 sql"></a>3.2.1 准备 sql</h3> <figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> <span class="keyword">users</span>(</span><br><span class="line">    <span class="keyword">id</span> <span class="built_in">bigint</span> primary <span class="keyword">key</span> auto_increment,</span><br><span class="line">    username <span class="built_in">varchar</span>(<span class="number">20</span>) <span class="keyword">unique</span> <span class="keyword">not</span> <span class="literal">null</span>,</span><br><span class="line">    <span class="keyword">password</span> <span class="built_in">varchar</span>(<span class="number">100</span>)</span><br><span class="line">);</span><br><span class="line"><span class="comment">-- 密码 atguigu</span></span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> <span class="keyword">users</span> <span class="keyword">values</span>(<span class="number">1</span>,<span class="string">'张san'</span>,<span class="string">'$2a$10$2R/M6iU3mCZt3ByG7kwYTeeW0w7/UqdeXrb27zkBIizBvAven0/na'</span>);</span><br><span class="line"><span class="comment">-- 密码 atguigu</span></span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> <span class="keyword">users</span> <span class="keyword">values</span>(<span class="number">2</span>,<span class="string">'李si'</span>,<span class="string">'$2a$10$2R/M6iU3mCZt3ByG7kwYTeeW0w7/UqdeXrb27zkBIizBvAven0/na'</span>);</span><br><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> <span class="keyword">role</span>(</span><br><span class="line">    <span class="keyword">id</span> <span class="built_in">bigint</span> primary <span class="keyword">key</span> auto_increment,</span><br><span class="line">    <span class="keyword">name</span> <span class="built_in">varchar</span>(<span class="number">20</span>)</span><br><span class="line">);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> <span class="keyword">role</span> <span class="keyword">values</span>(<span class="number">1</span>,<span class="string">'管理员'</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> <span class="keyword">role</span> <span class="keyword">values</span>(<span class="number">2</span>,<span class="string">'普通用户'</span>);</span><br><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> role_user(</span><br><span class="line">    uid <span class="built_in">bigint</span>,</span><br><span class="line">    rid <span class="built_in">bigint</span></span><br><span class="line">);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> role_user <span class="keyword">values</span>(<span class="number">1</span>,<span class="number">1</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> role_user <span class="keyword">values</span>(<span class="number">2</span>,<span class="number">2</span>);</span><br><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> menu(</span><br><span class="line">    <span class="keyword">id</span> <span class="built_in">bigint</span> primary <span class="keyword">key</span> auto_increment,</span><br><span class="line">    <span class="keyword">name</span> <span class="built_in">varchar</span>(<span class="number">20</span>),</span><br><span class="line">    <span class="keyword">url</span> <span class="built_in">varchar</span>(<span class="number">100</span>),</span><br><span class="line">    parentid <span class="built_in">bigint</span>,</span><br><span class="line">    permission <span class="built_in">varchar</span>(<span class="number">20</span>)</span><br><span class="line">);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> menu <span class="keyword">values</span>(<span class="number">1</span>,<span class="string">'系统管理'</span>,<span class="string">''</span>,<span class="number">0</span>,<span class="string">'menu:system'</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> menu <span class="keyword">values</span>(<span class="number">2</span>,<span class="string">'用户管理'</span>,<span class="string">''</span>,<span class="number">0</span>,<span class="string">'menu:user'</span>);</span><br><span class="line"><span class="keyword">create</span> <span class="keyword">table</span> role_menu(</span><br><span class="line">    <span class="keyword">mid</span> <span class="built_in">bigint</span>,</span><br><span class="line">    rid <span class="built_in">bigint</span></span><br><span class="line">);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> role_menu <span class="keyword">values</span>(<span class="number">1</span>,<span class="number">1</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> role_menu <span class="keyword">values</span>(<span class="number">2</span>,<span class="number">1</span>);</span><br><span class="line"><span class="keyword">insert</span> <span class="keyword">into</span> role_menu <span class="keyword">values</span>(<span class="number">2</span>,<span class="number">2</span>);</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-2-2-添加依赖"><a href="#3-2-2-添加依赖" class="headerlink" title="3.2.2 添加依赖"></a>3.2.2 添加依赖</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-web<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-security<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-test<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">scope</span>&gt;</span>test<span class="tag">&lt;/<span class="name">scope</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!--mybatis-plus--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.baomidou<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mybatis-plus-boot-starter<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">version</span>&gt;</span>3.0.5<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!--mysql--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">groupId</span>&gt;</span>mysql<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>mysql-connector-java<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!--lombok 用来简化实体类--&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.projectlombok<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>lombok<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-2-3-制作实体类"><a href="#3-2-3-制作实体类" class="headerlink" title="3.2.3 制作实体类"></a>3.2.3 制作实体类</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Users</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> Integer id;</span><br><span class="line">	<span class="keyword">private</span> String username;</span><br><span class="line">	<span class="keyword">private</span> String password;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-2-4-整合MybatisPlus-制作mapper"><a href="#3-2-4-整合MybatisPlus-制作mapper" class="headerlink" title="3.2.4 整合MybatisPlus 制作mapper"></a>3.2.4 整合MybatisPlus 制作mapper</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Repository</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">UsersMapper</span> <span class="keyword">extends</span> <span class="title">BaseMapper</span>&lt;<span class="title">Users</span>&gt; </span>&#123;</span><br><span class="line">&#125;</span><br><span class="line">配置文件添加数据库配置</span><br><span class="line">#mysql 数据库连接</span><br><span class="line">spring.datasource.driver-<span class="class"><span class="keyword">class</span>-<span class="title">name</span></span>=com.mysql.cj.jdbc.Driver</span><br><span class="line">spring.datasource.url=jdbc:mysql:<span class="comment">//localhost:3306/demo?serverTimezone=GMT%2B8</span></span><br><span class="line">spring.datasource.username=root</span><br><span class="line">spring.datasource.password=root</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-2-5-制作登录实现类"><a href="#3-2-5-制作登录实现类" class="headerlink" title="3.2.5 制作登录实现类"></a>3.2.5 制作登录实现类</h3> <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span>(<span class="string">"userDetailsService"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MyUserDetailsService</span> <span class="keyword">implements</span> <span class="title">UserDetailsService</span> </span>&#123;</span><br><span class="line">	<span class="meta">@Autowired</span></span><br><span class="line">	<span class="keyword">private</span> UsersMapper usersMapper;</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> UserDetails <span class="title">loadUserByUsername</span><span class="params">(String s)</span> <span class="keyword">throws</span></span></span><br><span class="line"><span class="function">		UsernameNotFoundException </span>&#123;</span><br><span class="line">		QueryWrapper&lt;Users&gt; wrapper = <span class="keyword">new</span> QueryWrapper();</span><br><span class="line">		wrapper.eq(<span class="string">"username"</span>,s);</span><br><span class="line">		Users users = usersMapper.selectOne(wrapper);</span><br><span class="line">		<span class="keyword">if</span>(users == <span class="keyword">null</span>) &#123;</span><br><span class="line">			<span class="keyword">throw</span> <span class="keyword">new</span> UsernameNotFoundException(<span class="string">"用户名不存在！ "</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		System.out.println(users);</span><br><span class="line">		List&lt;GrantedAuthority&gt; auths =</span><br><span class="line">		AuthorityUtils.commaSeparatedStringToAuthorityList(<span class="string">"role"</span>);</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">new</span> User(users.getUsername(),</span><br><span class="line">		<span class="keyword">new</span> BCryptPasswordEncoder().encode(users.getPassword()),auths);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-2-6-测试访问"><a href="#3-2-6-测试访问" class="headerlink" title="3.2.6 测试访问"></a>3.2.6 测试访问</h3><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217102035648.png" alt="image-20220217102035648"></p>
+<p>输入用户名，密码</p>
+<h2 id="3-3-未认证请求跳转到登录页"><a href="#3-3-未认证请求跳转到登录页" class="headerlink" title="3.3 未认证请求跳转到登录页"></a>3.3 未认证请求跳转到登录页</h2><h3 id="3-3-1-引入前端模板依赖"><a href="#3-3-1-引入前端模板依赖" class="headerlink" title="3.3.1 引入前端模板依赖"></a>3.3.1 引入前端模板依赖</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-thymeleaf<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-3-2-引入登录页面"><a href="#3-3-2-引入登录页面" class="headerlink" title="3.3.2 引入登录页面"></a>3.3.2 引入登录页面</h3><p>将准备好的登录页面导入项目中</p>
+<h3 id="3-3-3-编写控制器"><a href="#3-3-3-编写控制器" class="headerlink" title="3.3.3 编写控制器"></a>3.3.3 编写控制器</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Controller</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">IndexController</span> </span>&#123;</span><br><span class="line">	<span class="meta">@GetMapping</span>(<span class="string">"index"</span>)</span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">index</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="string">"login"</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="meta">@GetMapping</span>(<span class="string">"findAll"</span>)</span><br><span class="line">	<span class="meta">@ResponseBody</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">findAll</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="string">"findAll"</span>;</span><br><span class="line">&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-3-4-编写配置类放行登录页面以及静态资源"><a href="#3-3-4-编写配置类放行登录页面以及静态资源" class="headerlink" title="3.3.4 编写配置类放行登录页面以及静态资源"></a>3.3.4 编写配置类放行登录页面以及静态资源</h3><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217102235107.png" alt="image-20220217102235107"></p>
+<h3 id="3-3-5-测试"><a href="#3-3-5-测试" class="headerlink" title="3.3.5 测试"></a>3.3.5 测试</h3><p>访问 localhost:8090/index  </p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217102343008.png" alt="image-20220217102343008"></p>
+<p>访问 localhost:8090/findAll 会提示 403 错误 表示没有这个权限。</p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217102407966.png" alt="image-20220217102407966"></p>
+<h3 id="3-3-6-设置未授权的请求跳转到登录页"><a href="#3-3-6-设置未授权的请求跳转到登录页" class="headerlink" title="3.3.6 设置未授权的请求跳转到登录页"></a>3.3.6 设置未授权的请求跳转到登录页</h3><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217102525631.png" alt="image-20220217102525631"></p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217102554894.png" alt="image-20220217102554894"></p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217102603200.png" alt="image-20220217102603200"></p>
+<h2 id="3-4-基于角色或权限进行访问控制"><a href="#3-4-基于角色或权限进行访问控制" class="headerlink" title="3.4 基于角色或权限进行访问控制"></a>3.4 基于角色或权限进行访问控制</h2><h3 id="3-4-1-hasAuthority-方法"><a href="#3-4-1-hasAuthority-方法" class="headerlink" title="3.4.1 hasAuthority 方法"></a>3.4.1 hasAuthority 方法</h3><p>如果当前的主体具有指定的权限，则返回 true,否则返回 false</p>
+<h4 id="修改配置类"><a href="#修改配置类" class="headerlink" title="修改配置类"></a>修改配置类</h4><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217102632127.png" alt="image-20220217102632127"></p>
+<h4 id="添加一个控制器"><a href="#添加一个控制器" class="headerlink" title="添加一个控制器"></a>添加一个控制器</h4><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217102708350.png" alt="image-20220217102708350"> </p>
+<h4 id="给用户登录主体赋予权限"><a href="#给用户登录主体赋予权限" class="headerlink" title="给用户登录主体赋予权限"></a>给用户登录主体赋予权限</h4><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217102723934.png" alt="image-20220217102723934"></p>
+<h4 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h4><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217102733695.png" alt="image-20220217102733695"></p>
+<h3 id="3-4-2-hasAnyAuthority-方法"><a href="#3-4-2-hasAnyAuthority-方法" class="headerlink" title="3.4.2 hasAnyAuthority 方法"></a>3.4.2 hasAnyAuthority 方法</h3><p>如果当前的主体有任何提供的角色（给定的作为一个逗号分隔的字符串列表）的话，返回</p>
+<p>true.</p>
+<p>访问 <a href="http://localhost:8090/find" target="_blank" rel="noopener">http://localhost:8090/find</a></p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217102803678.png" alt="image-20220217102803678"></p>
+<h3 id="3-4-3-hasRole-方法"><a href="#3-4-3-hasRole-方法" class="headerlink" title="3.4.3 hasRole 方法"></a>3.4.3 hasRole 方法</h3><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217102827024.png" alt="image-20220217102827024"></p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217102842637.png" alt="image-20220217102842637"></p>
+<h3 id="3-4-4-hasAnyRole"><a href="#3-4-4-hasAnyRole" class="headerlink" title="3.4.4 hasAnyRole"></a>3.4.4 hasAnyRole</h3><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217102912734.png" alt="image-20220217102912734"></p>
+<h2 id="3-5-基于数据库实现权限认证"><a href="#3-5-基于数据库实现权限认证" class="headerlink" title="3.5 基于数据库实现权限认证"></a>3.5 基于数据库实现权限认证</h2><h3 id="3-5-1-添加实体类"><a href="#3-5-1-添加实体类" class="headerlink" title="3.5.1 添加实体类"></a>3.5.1 添加实体类</h3><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217103537261.png" alt="image-20220217103537261"></p>
+<h3 id="3-5-2-编写接口与实现类"><a href="#3-5-2-编写接口与实现类" class="headerlink" title="3.5.2 编写接口与实现类"></a>3.5.2 编写接口与实现类</h3><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217103553198.png" alt="image-20220217103553198"></p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217103603758.png" alt="image-20220217103603758"></p>
+<p>UsersServiceImpl  </p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217103624000.png" alt="image-20220217103624000"></p>
+<h3 id="3-5-3-在配置文件中添加映射"><a href="#3-5-3-在配置文件中添加映射" class="headerlink" title="3.5.3 在配置文件中添加映射"></a>3.5.3 在配置文件中添加映射</h3><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217104010464.png" alt="image-20220217104010464"></p>
+<h3 id="3-5-4-修改访问配置类"><a href="#3-5-4-修改访问配置类" class="headerlink" title="3.5.4 修改访问配置类"></a>3.5.4 修改访问配置类</h3><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217104022975.png" alt="image-20220217104022975"></p>
+<h3 id="3-5-5-使用管理员与非管理员进行测试"><a href="#3-5-5-使用管理员与非管理员进行测试" class="headerlink" title="3.5.5 使用管理员与非管理员进行测试"></a>3.5.5 使用管理员与非管理员进行测试</h3><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217104053476.png" alt="image-20220217104053476"></p>
+<h2 id="3-6-自定义-403-页面"><a href="#3-6-自定义-403-页面" class="headerlink" title="3.6 自定义 403 页面"></a>3.6 自定义 403 页面</h2><p> <img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217104126608.png" alt="image-20220217104126608"></p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217104238959.png" alt="image-20220217104238959"></p>
+<h2 id="3-7-注解使用"><a href="#3-7-注解使用" class="headerlink" title="3.7 注解使用"></a>3.7 注解使用</h2><h3 id="3-7-1-Secured"><a href="#3-7-1-Secured" class="headerlink" title="3.7.1 @Secured"></a>3.7.1 @Secured</h3><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217104312754.png" alt="image-20220217104312754"></p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217104319680.png" alt="image-20220217104319680"></p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217104325694.png" alt="image-20220217104325694"></p>
+<h3 id="3-7-2-PreAuthorize"><a href="#3-7-2-PreAuthorize" class="headerlink" title="3.7.2 @PreAuthorize"></a>3.7.2 @PreAuthorize</h3><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217104341425.png" alt="image-20220217104341425"></p>
+<h3 id="3-7-3-PostAuthorize"><a href="#3-7-3-PostAuthorize" class="headerlink" title="3.7.3 @PostAuthorize"></a>3.7.3 @PostAuthorize</h3><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217104355102.png" alt="image-20220217104355102"></p>
+<p>使用李四登录测试：  </p>
+<h3 id="3-7-4-PostFilter"><a href="#3-7-4-PostFilter" class="headerlink" title="3.7.4 @PostFilter"></a>3.7.4 @PostFilter</h3><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217104419824.png" alt="image-20220217104419824"></p>
+<h3 id="3-7-5-PreFilter"><a href="#3-7-5-PreFilter" class="headerlink" title="3.7.5 @PreFilter"></a>3.7.5 @PreFilter</h3><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217104432432.png" alt="image-20220217104432432"></p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217104440174.png" alt="image-20220217104440174"></p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217104455629.png" alt="image-20220217104455629"></p>
+<p>测试的 Json 数据：  </p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">[ &#123;</span><br><span class="line"><span class="attr">"id"</span>: <span class="string">"1"</span>,</span><br><span class="line"><span class="attr">"username"</span>: <span class="string">"admin"</span>,</span><br><span class="line"><span class="attr">"password"</span>: <span class="string">"666"</span></span><br><span class="line">&#125;,</span><br><span class="line">&#123;</span><br><span class="line"><span class="attr">"id"</span>: <span class="string">"2"</span>,</span><br><span class="line"><span class="attr">"username"</span>: <span class="string">"admins"</span>,</span><br><span class="line"><span class="attr">"password"</span>: <span class="string">"888"</span></span><br><span class="line">&#125;,</span><br><span class="line">&#123;</span><br><span class="line"><span class="attr">"id"</span>: <span class="string">"3"</span>,</span><br><span class="line"><span class="attr">"username"</span>: <span class="string">"admins11"</span>,</span><br><span class="line"><span class="attr">"password"</span>: <span class="string">"11888"</span></span><br><span class="line">&#125;,</span><br><span class="line">&#123;</span><br><span class="line"><span class="attr">"id"</span>: <span class="string">"4"</span>,</span><br><span class="line"><span class="attr">"username"</span>: <span class="string">"admins22"</span>,</span><br><span class="line"><span class="attr">"password"</span>: <span class="string">"22888"</span></span><br><span class="line">&#125;]</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-7-6-权限表达式"><a href="#3-7-6-权限表达式" class="headerlink" title="3.7.6 权限表达式"></a>3.7.6 权限表达式</h3><p><a href="https://docs.spring.io/springsecurity/site/docs/5.3.4.RELEASE/reference/html5/#el-access" target="_blank" rel="noopener">https://docs.spring.io/springsecurity/site/docs/5.3.4.RELEASE/reference/html5/#el-access</a>  </p>
+<h2 id="3-8-基于数据库的记住我"><a href="#3-8-基于数据库的记住我" class="headerlink" title="3.8 基于数据库的记住我"></a>3.8 基于数据库的记住我</h2><h3 id="3-8-1-创建表"><a href="#3-8-1-创建表" class="headerlink" title="3.8.1 创建表"></a>3.8.1 创建表</h3><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217115355565.png" alt="image-20220217115355565"></p>
+<h3 id="3-8-2-添加数据库的配置文件"><a href="#3-8-2-添加数据库的配置文件" class="headerlink" title="3.8.2 添加数据库的配置文件"></a>3.8.2 添加数据库的配置文件</h3><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217115415639.png" alt="image-20220217115415639"></p>
+<h3 id="3-8-3-编写配置类"><a href="#3-8-3-编写配置类" class="headerlink" title="3.8.3 编写配置类"></a>3.8.3 编写配置类</h3><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217115614584.png" alt="image-20220217115614584"></p>
+<h3 id="3-8-4-修改安全配置类"><a href="#3-8-4-修改安全配置类" class="headerlink" title="3.8.4 修改安全配置类"></a>3.8.4 修改安全配置类</h3><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217115601256.png" alt="image-20220217115601256"></p>
+<h3 id="3-8-5-页面添加记住我复选框"><a href="#3-8-5-页面添加记住我复选框" class="headerlink" title="3.8.5 页面添加记住我复选框"></a>3.8.5 页面添加记住我复选框</h3><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217115635623.png" alt="image-20220217115635623"></p>
+<h3 id="3-8-6-使用张三进行登录测试"><a href="#3-8-6-使用张三进行登录测试" class="headerlink" title="3.8.6 使用张三进行登录测试"></a>3.8.6 使用张三进行登录测试</h3><p>登录成功之后，关闭浏览器再次访问 <a href="http://localhost:8090/find，发现依然可以使用！" target="_blank" rel="noopener">http://localhost:8090/find，发现依然可以使用！</a></p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217115726252.png" alt="image-20220217115726252"></p>
+<h3 id="3-8-7-设置有效期"><a href="#3-8-7-设置有效期" class="headerlink" title="3.8.7 设置有效期"></a>3.8.7 设置有效期</h3><p>默认 2 周时间。但是可以通过设置状态有效时间，即使项目重新启动下次也可以正常登录。</p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217115746087.png" alt="image-20220217115746087"></p>
+<h2 id="3-9-用户注销"><a href="#3-9-用户注销" class="headerlink" title="3.9 用户注销"></a>3.9 用户注销</h2><h3 id="3-9-1-在登录页面添加一个退出连接"><a href="#3-9-1-在登录页面添加一个退出连接" class="headerlink" title="3.9.1 在登录页面添加一个退出连接"></a>3.9.1 在登录页面添加一个退出连接</h3><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217115818632.png" alt="image-20220217115818632"></p>
+<h3 id="3-9-2-在配置类中添加退出映射地址"><a href="#3-9-2-在配置类中添加退出映射地址" class="headerlink" title="3.9.2 在配置类中添加退出映射地址"></a>3.9.2 在配置类中添加退出映射地址</h3><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217115844359.png" alt="image-20220217115844359"></p>
+<h3 id="3-9-3-测试"><a href="#3-9-3-测试" class="headerlink" title="3.9.3 测试"></a>3.9.3 测试</h3><p>退出之后，是无法访问需要登录时才能访问的控制器！</p>
+<h2 id="3-10-CSRF"><a href="#3-10-CSRF" class="headerlink" title="3.10 CSRF"></a>3.10 CSRF</h2><h3 id="3-10-1-CSRF-理解"><a href="#3-10-1-CSRF-理解" class="headerlink" title="3.10.1 CSRF 理解"></a>3.10.1 CSRF 理解</h3><p> <img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217115934668.png" alt="image-20220217115934668"></p>
+<h3 id="3-10-2-案例"><a href="#3-10-2-案例" class="headerlink" title="3.10.2 案例"></a>3.10.2 案例</h3><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217115954186.png" alt="image-20220217115954186"></p>
+<h3 id="3-10-3-Spring-Security-实现-CSRF-的原理："><a href="#3-10-3-Spring-Security-实现-CSRF-的原理：" class="headerlink" title="3.10.3 Spring Security 实现 CSRF 的原理："></a>3.10.3 Spring Security 实现 CSRF 的原理：</h3><ol>
+<li>生成 csrfToken 保存到HttpSession 或者 Cookie 中。</li>
+</ol>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217120041497.png" alt="image-20220217120041497"></p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217120157145.png" alt="image-20220217120157145"></p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217120207738.png" alt="image-20220217120207738"></p>
+<ol start="2">
+<li>请求到来时，从请求中提取 csrfToken，和保存的 csrfToken 做比较，进而判断当前请求是否合法。主要通过 CsrfFilter 过滤器来完成。</li>
+</ol>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217120247479.png" alt="image-20220217120247479"></p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217120259495.png" alt="image-20220217120259495"></p>
+<h1 id="4-SpringSecurity-微服务权限方案"><a href="#4-SpringSecurity-微服务权限方案" class="headerlink" title="4. SpringSecurity 微服务权限方案"></a>4. SpringSecurity 微服务权限方案</h1><h2 id="4-1-什么是微服务"><a href="#4-1-什么是微服务" class="headerlink" title="4.1 什么是微服务"></a>4.1 什么是微服务</h2><p>1、微服务由来</p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217131023255.png" alt="image-20220217131023255"></p>
+<h2 id="4-2-微服务认证与授权实现思路"><a href="#4-2-微服务认证与授权实现思路" class="headerlink" title="4.2 微服务认证与授权实现思路"></a>4.2 微服务认证与授权实现思路</h2><h3 id="1、认证授权过程分析"><a href="#1、认证授权过程分析" class="headerlink" title="1、认证授权过程分析"></a>1、认证授权过程分析</h3><p>（1） 如果是基于Session，那么 Spring-security 会对 cookie 里的 sessionid 进行解析，找到服务器存储的 session 信息，然后判断当前用户是否符合请求的要求。</p>
+<p>（2） 如果是token，则是解析出 token，然后将当前请求加入到 Spring-security 管理的权限信息中去</p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217131058737.png" alt="image-20220217131058737"></p>
+<p>如果系统的模块众多，每个模块都需要进行授权与认证，所以我们选择基于 token 的形式进行授权与认证，用户根据用户名密码认证成功，然后获取当前用户角色的一系列权限  值，并以用户名为key，权限列表为value 的形式存入 redis 缓存中，根据用户名相关信息生成token 返回，浏览器将 token 记录到 cookie 中，每次调用 api 接口都默认将token 携带到 header 请求头中，Spring-security 解析 header 头获取 token 信息，解析 token 获取当前用户名，根据用户名就可以从redis 中获取权限列表，这样 Spring-security 就能够判断当前请求是否有权限访问</p>
+<h3 id="2、权限管理数据模型"><a href="#2、权限管理数据模型" class="headerlink" title="2、权限管理数据模型"></a>2、权限管理数据模型</h3><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217131130338.png" alt="image-20220217131130338"></p>
+<h2 id="4-3-jwt-介绍"><a href="#4-3-jwt-介绍" class="headerlink" title="4.3 jwt 介绍"></a>4.3 jwt 介绍</h2><h3 id="1、访问令牌的类型"><a href="#1、访问令牌的类型" class="headerlink" title="1、访问令牌的类型"></a>1、访问令牌的类型</h3><p> <img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217131146048.png" alt="image-20220217131146048"></p>
+<h3 id="2、JWT-的组成"><a href="#2、JWT-的组成" class="headerlink" title="2、JWT 的组成"></a>2、JWT 的组成</h3><p>典型的，一个JWT 看起来如下图：</p>
+<p> <img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217131206995.png" alt="image-20220217131206995"></p>
+<p> 该对象为一个很长的字符串，字符之间通过”.”分隔符分为三个子串。每一个子串表示了一个功能块，总共有以下三个部分： JWT 头、有效载荷和签名  </p>
+<h4 id="JWT-头"><a href="#JWT-头" class="headerlink" title="JWT 头"></a>JWT 头</h4><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217131307568.png" alt="image-20220217131307568"> </p>
+<h4 id="有效载荷"><a href="#有效载荷" class="headerlink" title="有效载荷"></a>有效载荷</h4><p> <img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217131325571.png" alt="image-20220217131325571"></p>
+<h4 id="签名哈希"><a href="#签名哈希" class="headerlink" title="签名哈希"></a>签名哈希</h4><p> <img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217131358256.png" alt="image-20220217131358256"></p>
+<h2 id="4-4-具体代码实现"><a href="#4-4-具体代码实现" class="headerlink" title="4.4 具体代码实现"></a>4.4 具体代码实现</h2><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217131523554.png" alt="image-20220217131523554"></p>
+<h3 id="4-4-1-编写核心配置类"><a href="#4-4-1-编写核心配置类" class="headerlink" title="4.4.1 编写核心配置类"></a>4.4.1 编写核心配置类</h3><p> Spring Security 的核心配置就是继承 WebSecurityConfigurerAdapter 并注解@EnableWebSecurity 的配置。这个配置指明了用户名密码的处理方式、请求路径、登录、登出控制等和安全相关的配置  </p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217131655539.png" alt="image-20220217131655539"></p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217131718111.png" alt="image-20220217131718111"></p>
+<h3 id="4-4-2-创建认证授权相关的工具类"><a href="#4-4-2-创建认证授权相关的工具类" class="headerlink" title="4.4.2 创建认证授权相关的工具类"></a>4.4.2 创建认证授权相关的工具类</h3><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217131819633.png" alt="image-20220217131819633">  </p>
+<h4 id="（1）DefaultPasswordEncoder：密码处理的方法"><a href="#（1）DefaultPasswordEncoder：密码处理的方法" class="headerlink" title="（1）DefaultPasswordEncoder：密码处理的方法"></a>（1）DefaultPasswordEncoder：密码处理的方法</h4><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217131842705.png" alt="image-20220217131842705"></p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217131850783.png" alt="image-20220217131850783"></p>
+<h4 id="（2）-TokenManager：token-操作的工具类"><a href="#（2）-TokenManager：token-操作的工具类" class="headerlink" title="（2） TokenManager：token 操作的工具类"></a>（2） TokenManager：token 操作的工具类</h4><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217131927011.png" alt="image-20220217131927011"></p>
+<h4 id="（3）-TokenLogoutHandler：退出实现"><a href="#（3）-TokenLogoutHandler：退出实现" class="headerlink" title="（3） TokenLogoutHandler：退出实现"></a>（3） TokenLogoutHandler：退出实现</h4><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217132001826.png" alt="image-20220217132001826"></p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217132014463.png" alt="image-20220217132014463"></p>
+<h4 id="（4）UnauthorizedEntryPoint：未授权统一处理"><a href="#（4）UnauthorizedEntryPoint：未授权统一处理" class="headerlink" title="（4）UnauthorizedEntryPoint：未授权统一处理"></a>（4）UnauthorizedEntryPoint：未授权统一处理</h4><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217132045792.png" alt="image-20220217132045792"></p>
+<h3 id="4-4-3-创建认证授权实体类"><a href="#4-4-3-创建认证授权实体类" class="headerlink" title="4.4.3 创建认证授权实体类"></a>4.4.3 创建认证授权实体类</h3><p> <img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217132127744.png" alt="image-20220217132127744"></p>
+<h4 id="1-SecutityUser"><a href="#1-SecutityUser" class="headerlink" title="(1) SecutityUser"></a>(1) SecutityUser</h4><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217132156864.png" alt="image-20220217132156864"></p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217132213413.png" alt="image-20220217132213413"></p>
+<h4 id="2-User"><a href="#2-User" class="headerlink" title="(2) User"></a>(2) User</h4><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217132313249.png" alt="image-20220217132313249"></p>
+<h3 id="4-4-4-创建认证和授权的filter"><a href="#4-4-4-创建认证和授权的filter" class="headerlink" title="4.4.4 创建认证和授权的filter"></a>4.4.4 创建认证和授权的filter</h3><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217132556052.png" alt="image-20220217132556052"></p>
+<h4 id="（1-TokenLoginFilter：认证的-filter"><a href="#（1-TokenLoginFilter：认证的-filter" class="headerlink" title="（1)TokenLoginFilter：认证的 filter"></a>（1)TokenLoginFilter：认证的 filter</h4><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217132623922.png" alt="image-20220217132623922"></p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217132636463.png" alt="image-20220217132636463"></p>
+<h4 id="（2）-TokenAuthenticationFilter：-授权-filter"><a href="#（2）-TokenAuthenticationFilter：-授权-filter" class="headerlink" title="（2） TokenAuthenticationFilter： 授权 filter"></a>（2） TokenAuthenticationFilter： 授权 filter</h4><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217132709408.png" alt="image-20220217132709408"></p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217132723600.png" alt="image-20220217132723600"></p>
+<h1 id="5-SpringSecurity-原理总结"><a href="#5-SpringSecurity-原理总结" class="headerlink" title="5. SpringSecurity 原理总结"></a>5. SpringSecurity 原理总结</h1><h2 id="5-1-SpringSecurity-的过滤器介绍"><a href="#5-1-SpringSecurity-的过滤器介绍" class="headerlink" title="5.1 SpringSecurity 的过滤器介绍"></a>5.1 SpringSecurity 的过滤器介绍</h2><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217133448549.png" alt="image-20220217133448549"></p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217133504705.png" alt="image-20220217133504705"></p>
+<h2 id="5-2-SpringSecurity-基本流程"><a href="#5-2-SpringSecurity-基本流程" class="headerlink" title="5.2 SpringSecurity 基本流程"></a>5.2 SpringSecurity 基本流程</h2><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217133532719.png" alt="image-20220217133532719"></p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217133539935.png" alt="image-20220217133539935"></p>
+<h2 id="5-3-SpringSecurity-认证流程"><a href="#5-3-SpringSecurity-认证流程" class="headerlink" title="5.3 SpringSecurity 认证流程"></a>5.3 SpringSecurity 认证流程</h2><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217133601360.png" alt="image-20220217133601360"></p>
+<h3 id="5-3-1-UsernamePasswordAuthenticationFilter-源码"><a href="#5-3-1-UsernamePasswordAuthenticationFilter-源码" class="headerlink" title="5.3.1 UsernamePasswordAuthenticationFilter 源码"></a>5.3.1 UsernamePasswordAuthenticationFilter 源码</h3><p>当前端提交的是一个 POST 方式的登录表单请求，就会被该过滤器拦截，并进行身份认证。该过滤器的 doFilter() 方法实现在其抽象父类<br>AbstractAuthenticationProcessingFilter 中，查看相关源码：  </p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217133648737.png" alt="image-20220217133648737"></p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217133656623.png" alt="image-20220217133656623"></p>
+<p>上述的 第二 过程调用了 UsernamePasswordAuthenticationFilter 的attemptAuthentication() 方法，源码如下：</p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217133743618.png" alt="image-20220217133743618"></p>
+<p>上述的（ 3）过程创建的 UsernamePasswordAuthenticationToken 是Authentication 接口的实现类，该类有两个构造器，一个用于封装前端请求传入的未认<br>证的用户信息，一个用于封装认证成功后的用户信息：  </p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217133910722.png" alt="image-20220217133910722"></p>
+<p>Authentication 接口的实现类用于存储用户认证信息，查看该接口具体定义：  </p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217133935888.png" alt="image-20220217133935888"></p>
+<h3 id="5-3-2-ProviderManager-源码"><a href="#5-3-2-ProviderManager-源码" class="headerlink" title="5.3.2 ProviderManager 源码"></a>5.3.2 ProviderManager 源码</h3><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217134045332.png" alt="image-20220217134045332"></p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217134102359.png" alt="image-20220217134102359"></p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217134114484.png" alt="image-20220217134114484"></p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217134124240.png" alt="image-20220217134124240"></p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217134130865.png" alt="image-20220217134130865"></p>
+<h3 id="5-3-3-认证成功-失败处理"><a href="#5-3-3-认证成功-失败处理" class="headerlink" title="5.3.3 认证成功/失败处理"></a>5.3.3 认证成功/失败处理</h3><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217134145986.png" alt="image-20220217134145986"></p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217134205556.png" alt="image-20220217134205556"></p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217134216869.png" alt="image-20220217134216869"></p>
+<h2 id="5-4-SpringSecurity-权限访问流程"><a href="#5-4-SpringSecurity-权限访问流程" class="headerlink" title="5.4 SpringSecurity 权限访问流程"></a>5.4 SpringSecurity 权限访问流程</h2><p>上一个部分通过源码的方式介绍了认证流程，下面介绍权限访问流程，主要是对ExceptionTranslationFilter 过滤器和 FilterSecurityInterceptor 过滤器进行介绍。  </p>
+<h3 id="5-4-1-ExceptionTranslationFilter-过滤器"><a href="#5-4-1-ExceptionTranslationFilter-过滤器" class="headerlink" title="5.4.1 ExceptionTranslationFilter 过滤器"></a>5.4.1 ExceptionTranslationFilter 过滤器</h3><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217134256484.png" alt="image-20220217134256484"></p>
+<h3 id="5-4-2-FilterSecurityInterceptor-过滤器"><a href="#5-4-2-FilterSecurityInterceptor-过滤器" class="headerlink" title="5.4.2 FilterSecurityInterceptor 过滤器"></a>5.4.2 FilterSecurityInterceptor 过滤器</h3><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217134311955.png" alt="image-20220217134311955"></p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217134321077.png" alt="image-20220217134321077"></p>
+<h2 id="5-5-SpringSecurity-请求间共享认证信息"><a href="#5-5-SpringSecurity-请求间共享认证信息" class="headerlink" title="5.5 SpringSecurity 请求间共享认证信息"></a>5.5 SpringSecurity 请求间共享认证信息</h2><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217134341107.png" alt="image-20220217134341107"></p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217134354149.png" alt="image-20220217134354149"></p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217134403555.png" alt="image-20220217134403555"></p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217134429799.png" alt="image-20220217134429799"></p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217134439141.png" alt="image-20220217134439141"></p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217134444917.png" alt="image-20220217134444917"></p>
+<h3 id="5-5-1-SecurityContextPersistenceFilter-过滤器"><a href="#5-5-1-SecurityContextPersistenceFilter-过滤器" class="headerlink" title="5.5.1 SecurityContextPersistenceFilter 过滤器"></a>5.5.1 SecurityContextPersistenceFilter 过滤器</h3><p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217134616681.png" alt="image-20220217134616681"></p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217134624821.png" alt="image-20220217134624821"></p>
+<p><img src="/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/image-20220217134631495.png" alt="image-20220217134631495"></p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Rui Zhang
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://yoursite.com/2022/02/16/SpringSecurity%E6%8A%80%E6%9C%AF/" title="SpringSecurity技术">http://yoursite.com/2022/02/16/SpringSecurity技术/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/SpringSecurity/" rel="tag"># SpringSecurity</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/01/25/Hadoop%E4%B9%8BMapReduce/" rel="prev" title="Hadoop之MapReduce">
+      <i class="fa fa-chevron-left"></i> Hadoop之MapReduce
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/02/16/SSO%E7%BB%9F%E4%B8%80%E8%AE%A4%E8%AF%81%E5%8D%8F%E8%AE%AE/" rel="next" title="SSO统一认证协议">
+      SSO统一认证协议 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-SpringSecurity-框架简介"><span class="nav-number">1.</span> <span class="nav-text">1. SpringSecurity 框架简介</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-概要"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 概要</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-历史"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 历史</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-3-同款产品对比"><span class="nav-number">1.3.</span> <span class="nav-text">1.3 同款产品对比</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-1-Spring-Security"><span class="nav-number">1.3.1.</span> <span class="nav-text">1.3.1 Spring Security</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-2-Shiro"><span class="nav-number">1.3.2.</span> <span class="nav-text">1.3.2 Shiro</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-4-模块划分"><span class="nav-number">1.4.</span> <span class="nav-text">1.4 模块划分</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-SpringSecurity-入门案例"><span class="nav-number">2.</span> <span class="nav-text">2. SpringSecurity 入门案例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-创建一个项目"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 创建一个项目</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-运行这个项目"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 运行这个项目</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-权限管理中的相关概念"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 权限管理中的相关概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-1-主体"><span class="nav-number">2.3.1.</span> <span class="nav-text">2.3.1 主体</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-2-认证"><span class="nav-number">2.3.2.</span> <span class="nav-text">2.3.2 认证</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-3-授权"><span class="nav-number">2.3.3.</span> <span class="nav-text">2.3.3 授权</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-添加一个控制器进行访问"><span class="nav-number">2.4.</span> <span class="nav-text">2.4 添加一个控制器进行访问</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-5-SpringSecurity-基本原理"><span class="nav-number">2.5.</span> <span class="nav-text">2.5 SpringSecurity 基本原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-6-UserDetailsService-接口讲解"><span class="nav-number">2.6.</span> <span class="nav-text">2.6 UserDetailsService 接口讲解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#返回值-UserDetails"><span class="nav-number">2.6.1.</span> <span class="nav-text">返回值 UserDetails</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#方法参数-username"><span class="nav-number">2.6.2.</span> <span class="nav-text">方法参数 username</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-7-PasswordEncoder-接口讲解"><span class="nav-number">2.7.</span> <span class="nav-text">2.7 PasswordEncoder 接口讲解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#查用方法演示"><span class="nav-number">2.7.1.</span> <span class="nav-text">查用方法演示</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-8-SpringBoot-对-Security-的自动配置"><span class="nav-number">2.8.</span> <span class="nav-text">2.8 SpringBoot 对 Security 的自动配置</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-SpringSecurity-Web-权限方案"><span class="nav-number">3.</span> <span class="nav-text">3. SpringSecurity Web 权限方案</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-设置登录系统的账号、密码"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 设置登录系统的账号、密码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-实现数据库认证来完成用户登录"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 实现数据库认证来完成用户登录</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-1-准备-sql"><span class="nav-number">3.2.1.</span> <span class="nav-text">3.2.1 准备 sql</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-2-添加依赖"><span class="nav-number">3.2.2.</span> <span class="nav-text">3.2.2 添加依赖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-3-制作实体类"><span class="nav-number">3.2.3.</span> <span class="nav-text">3.2.3 制作实体类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-4-整合MybatisPlus-制作mapper"><span class="nav-number">3.2.4.</span> <span class="nav-text">3.2.4 整合MybatisPlus 制作mapper</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-5-制作登录实现类"><span class="nav-number">3.2.5.</span> <span class="nav-text">3.2.5 制作登录实现类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-6-测试访问"><span class="nav-number">3.2.6.</span> <span class="nav-text">3.2.6 测试访问</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-未认证请求跳转到登录页"><span class="nav-number">3.3.</span> <span class="nav-text">3.3 未认证请求跳转到登录页</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-1-引入前端模板依赖"><span class="nav-number">3.3.1.</span> <span class="nav-text">3.3.1 引入前端模板依赖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-2-引入登录页面"><span class="nav-number">3.3.2.</span> <span class="nav-text">3.3.2 引入登录页面</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-3-编写控制器"><span class="nav-number">3.3.3.</span> <span class="nav-text">3.3.3 编写控制器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-4-编写配置类放行登录页面以及静态资源"><span class="nav-number">3.3.4.</span> <span class="nav-text">3.3.4 编写配置类放行登录页面以及静态资源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-5-测试"><span class="nav-number">3.3.5.</span> <span class="nav-text">3.3.5 测试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-6-设置未授权的请求跳转到登录页"><span class="nav-number">3.3.6.</span> <span class="nav-text">3.3.6 设置未授权的请求跳转到登录页</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-4-基于角色或权限进行访问控制"><span class="nav-number">3.4.</span> <span class="nav-text">3.4 基于角色或权限进行访问控制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-1-hasAuthority-方法"><span class="nav-number">3.4.1.</span> <span class="nav-text">3.4.1 hasAuthority 方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#修改配置类"><span class="nav-number">3.4.1.1.</span> <span class="nav-text">修改配置类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#添加一个控制器"><span class="nav-number">3.4.1.2.</span> <span class="nav-text">添加一个控制器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#给用户登录主体赋予权限"><span class="nav-number">3.4.1.3.</span> <span class="nav-text">给用户登录主体赋予权限</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#测试"><span class="nav-number">3.4.1.4.</span> <span class="nav-text">测试</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-2-hasAnyAuthority-方法"><span class="nav-number">3.4.2.</span> <span class="nav-text">3.4.2 hasAnyAuthority 方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-3-hasRole-方法"><span class="nav-number">3.4.3.</span> <span class="nav-text">3.4.3 hasRole 方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-4-hasAnyRole"><span class="nav-number">3.4.4.</span> <span class="nav-text">3.4.4 hasAnyRole</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-5-基于数据库实现权限认证"><span class="nav-number">3.5.</span> <span class="nav-text">3.5 基于数据库实现权限认证</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-1-添加实体类"><span class="nav-number">3.5.1.</span> <span class="nav-text">3.5.1 添加实体类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-2-编写接口与实现类"><span class="nav-number">3.5.2.</span> <span class="nav-text">3.5.2 编写接口与实现类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-3-在配置文件中添加映射"><span class="nav-number">3.5.3.</span> <span class="nav-text">3.5.3 在配置文件中添加映射</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-4-修改访问配置类"><span class="nav-number">3.5.4.</span> <span class="nav-text">3.5.4 修改访问配置类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-5-使用管理员与非管理员进行测试"><span class="nav-number">3.5.5.</span> <span class="nav-text">3.5.5 使用管理员与非管理员进行测试</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-6-自定义-403-页面"><span class="nav-number">3.6.</span> <span class="nav-text">3.6 自定义 403 页面</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-7-注解使用"><span class="nav-number">3.7.</span> <span class="nav-text">3.7 注解使用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-7-1-Secured"><span class="nav-number">3.7.1.</span> <span class="nav-text">3.7.1 @Secured</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-7-2-PreAuthorize"><span class="nav-number">3.7.2.</span> <span class="nav-text">3.7.2 @PreAuthorize</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-7-3-PostAuthorize"><span class="nav-number">3.7.3.</span> <span class="nav-text">3.7.3 @PostAuthorize</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-7-4-PostFilter"><span class="nav-number">3.7.4.</span> <span class="nav-text">3.7.4 @PostFilter</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-7-5-PreFilter"><span class="nav-number">3.7.5.</span> <span class="nav-text">3.7.5 @PreFilter</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-7-6-权限表达式"><span class="nav-number">3.7.6.</span> <span class="nav-text">3.7.6 权限表达式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-8-基于数据库的记住我"><span class="nav-number">3.8.</span> <span class="nav-text">3.8 基于数据库的记住我</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-8-1-创建表"><span class="nav-number">3.8.1.</span> <span class="nav-text">3.8.1 创建表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-8-2-添加数据库的配置文件"><span class="nav-number">3.8.2.</span> <span class="nav-text">3.8.2 添加数据库的配置文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-8-3-编写配置类"><span class="nav-number">3.8.3.</span> <span class="nav-text">3.8.3 编写配置类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-8-4-修改安全配置类"><span class="nav-number">3.8.4.</span> <span class="nav-text">3.8.4 修改安全配置类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-8-5-页面添加记住我复选框"><span class="nav-number">3.8.5.</span> <span class="nav-text">3.8.5 页面添加记住我复选框</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-8-6-使用张三进行登录测试"><span class="nav-number">3.8.6.</span> <span class="nav-text">3.8.6 使用张三进行登录测试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-8-7-设置有效期"><span class="nav-number">3.8.7.</span> <span class="nav-text">3.8.7 设置有效期</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-9-用户注销"><span class="nav-number">3.9.</span> <span class="nav-text">3.9 用户注销</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-9-1-在登录页面添加一个退出连接"><span class="nav-number">3.9.1.</span> <span class="nav-text">3.9.1 在登录页面添加一个退出连接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-9-2-在配置类中添加退出映射地址"><span class="nav-number">3.9.2.</span> <span class="nav-text">3.9.2 在配置类中添加退出映射地址</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-9-3-测试"><span class="nav-number">3.9.3.</span> <span class="nav-text">3.9.3 测试</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-10-CSRF"><span class="nav-number">3.10.</span> <span class="nav-text">3.10 CSRF</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-10-1-CSRF-理解"><span class="nav-number">3.10.1.</span> <span class="nav-text">3.10.1 CSRF 理解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-10-2-案例"><span class="nav-number">3.10.2.</span> <span class="nav-text">3.10.2 案例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-10-3-Spring-Security-实现-CSRF-的原理："><span class="nav-number">3.10.3.</span> <span class="nav-text">3.10.3 Spring Security 实现 CSRF 的原理：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-SpringSecurity-微服务权限方案"><span class="nav-number">4.</span> <span class="nav-text">4. SpringSecurity 微服务权限方案</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#4-1-什么是微服务"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 什么是微服务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-2-微服务认证与授权实现思路"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 微服务认证与授权实现思路</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、认证授权过程分析"><span class="nav-number">4.2.1.</span> <span class="nav-text">1、认证授权过程分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、权限管理数据模型"><span class="nav-number">4.2.2.</span> <span class="nav-text">2、权限管理数据模型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-3-jwt-介绍"><span class="nav-number">4.3.</span> <span class="nav-text">4.3 jwt 介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1、访问令牌的类型"><span class="nav-number">4.3.1.</span> <span class="nav-text">1、访问令牌的类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2、JWT-的组成"><span class="nav-number">4.3.2.</span> <span class="nav-text">2、JWT 的组成</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#JWT-头"><span class="nav-number">4.3.2.1.</span> <span class="nav-text">JWT 头</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#有效载荷"><span class="nav-number">4.3.2.2.</span> <span class="nav-text">有效载荷</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#签名哈希"><span class="nav-number">4.3.2.3.</span> <span class="nav-text">签名哈希</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-4-具体代码实现"><span class="nav-number">4.4.</span> <span class="nav-text">4.4 具体代码实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-1-编写核心配置类"><span class="nav-number">4.4.1.</span> <span class="nav-text">4.4.1 编写核心配置类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-2-创建认证授权相关的工具类"><span class="nav-number">4.4.2.</span> <span class="nav-text">4.4.2 创建认证授权相关的工具类</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#（1）DefaultPasswordEncoder：密码处理的方法"><span class="nav-number">4.4.2.1.</span> <span class="nav-text">（1）DefaultPasswordEncoder：密码处理的方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（2）-TokenManager：token-操作的工具类"><span class="nav-number">4.4.2.2.</span> <span class="nav-text">（2） TokenManager：token 操作的工具类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（3）-TokenLogoutHandler：退出实现"><span class="nav-number">4.4.2.3.</span> <span class="nav-text">（3） TokenLogoutHandler：退出实现</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（4）UnauthorizedEntryPoint：未授权统一处理"><span class="nav-number">4.4.2.4.</span> <span class="nav-text">（4）UnauthorizedEntryPoint：未授权统一处理</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-3-创建认证授权实体类"><span class="nav-number">4.4.3.</span> <span class="nav-text">4.4.3 创建认证授权实体类</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-SecutityUser"><span class="nav-number">4.4.3.1.</span> <span class="nav-text">(1) SecutityUser</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-User"><span class="nav-number">4.4.3.2.</span> <span class="nav-text">(2) User</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-4-创建认证和授权的filter"><span class="nav-number">4.4.4.</span> <span class="nav-text">4.4.4 创建认证和授权的filter</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#（1-TokenLoginFilter：认证的-filter"><span class="nav-number">4.4.4.1.</span> <span class="nav-text">（1)TokenLoginFilter：认证的 filter</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#（2）-TokenAuthenticationFilter：-授权-filter"><span class="nav-number">4.4.4.2.</span> <span class="nav-text">（2） TokenAuthenticationFilter： 授权 filter</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#5-SpringSecurity-原理总结"><span class="nav-number">5.</span> <span class="nav-text">5. SpringSecurity 原理总结</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#5-1-SpringSecurity-的过滤器介绍"><span class="nav-number">5.1.</span> <span class="nav-text">5.1 SpringSecurity 的过滤器介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-2-SpringSecurity-基本流程"><span class="nav-number">5.2.</span> <span class="nav-text">5.2 SpringSecurity 基本流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-3-SpringSecurity-认证流程"><span class="nav-number">5.3.</span> <span class="nav-text">5.3 SpringSecurity 认证流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-1-UsernamePasswordAuthenticationFilter-源码"><span class="nav-number">5.3.1.</span> <span class="nav-text">5.3.1 UsernamePasswordAuthenticationFilter 源码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-2-ProviderManager-源码"><span class="nav-number">5.3.2.</span> <span class="nav-text">5.3.2 ProviderManager 源码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-3-认证成功-失败处理"><span class="nav-number">5.3.3.</span> <span class="nav-text">5.3.3 认证成功&#x2F;失败处理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-4-SpringSecurity-权限访问流程"><span class="nav-number">5.4.</span> <span class="nav-text">5.4 SpringSecurity 权限访问流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-4-1-ExceptionTranslationFilter-过滤器"><span class="nav-number">5.4.1.</span> <span class="nav-text">5.4.1 ExceptionTranslationFilter 过滤器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-4-2-FilterSecurityInterceptor-过滤器"><span class="nav-number">5.4.2.</span> <span class="nav-text">5.4.2 FilterSecurityInterceptor 过滤器</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-5-SpringSecurity-请求间共享认证信息"><span class="nav-number">5.5.</span> <span class="nav-text">5.5 SpringSecurity 请求间共享认证信息</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-5-1-SecurityContextPersistenceFilter-过滤器"><span class="nav-number">5.5.1.</span> <span class="nav-text">5.5.1 SecurityContextPersistenceFilter 过滤器</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Rui Zhang"
+      src="/images/head.jpg">
+  <p class="site-author-name" itemprop="name">Rui Zhang</p>
+  <div class="site-description" itemprop="description">不在沉默中爆发，就在沉默中灭亡</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">52</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2021 – 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Rui Zhang</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.7m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">25:10</span>
+</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"right","width":120,"height":230},"mobile":{"show":true},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/clicklove.js"></script>

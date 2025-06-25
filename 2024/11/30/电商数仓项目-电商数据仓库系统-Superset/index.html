@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="第1章 Superset入门1.1 Superset概述Apache Superset是一个现代的数据探索和可视化平台。它功能强大且十分易用，可对接各种数据源，包括很多现代的大数据分析引擎，拥有丰富的图表展示形式，并且支持自定义仪表盘。   1.2 环境说明">
+<meta property="og:type" content="article">
+<meta property="og:title" content="电商数仓项目-电商数据仓库系统-Superset">
+<meta property="og:url" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/index.html">
+<meta property="og:site_name" content="没有尾巴的小驴">
+<meta property="og:description" content="第1章 Superset入门1.1 Superset概述Apache Superset是一个现代的数据探索和可视化平台。它功能强大且十分易用，可对接各种数据源，包括很多现代的大数据分析引擎，拥有丰富的图表展示形式，并且支持自定义仪表盘。   1.2 环境说明">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps6.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps7.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps8.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps9.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps11.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps12.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps13.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps14.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps15.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps16.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps17.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps18.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps19.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps20.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps21.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps22.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps23.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps24.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps25.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps26.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps27.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps28.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps29.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps30.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps31.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps32.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps33.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps34.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps35.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps36.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps37.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps38.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps39.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps40.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps41.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps42.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps43.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps44.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps45.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps46.jpg">
+<meta property="article:published_time" content="2024-11-29T19:25:42.000Z">
+<meta property="article:modified_time" content="2025-06-25T08:08:46.468Z">
+<meta property="article:author" content="Rui Zhang">
+<meta property="article:tag" content="数仓">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps6.jpg">
+
+<link rel="canonical" href="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true
+  };
+</script>
+
+  <title>电商数仓项目-电商数据仓库系统-Superset | 没有尾巴的小驴</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">没有尾巴的小驴</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">记录生活</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">22</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">22</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">52</span></a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/head.jpg">
+      <meta itemprop="name" content="Rui Zhang">
+      <meta itemprop="description" content="不在沉默中爆发，就在沉默中灭亡">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="没有尾巴的小驴">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          电商数仓项目-电商数据仓库系统-Superset
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-11-30 03:25:42" itemprop="dateCreated datePublished" datetime="2024-11-30T03:25:42+08:00">2024-11-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-06-25 16:08:46" itemprop="dateModified" datetime="2025-06-25T16:08:46+08:00">2025-06-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%B0%E4%BB%93/" itemprop="url" rel="index"><span itemprop="name">数仓</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>11k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>10 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="第1章-Superset入门"><a href="#第1章-Superset入门" class="headerlink" title="第1章 Superset入门"></a>第1章 Superset入门</h1><h2 id="1-1-Superset概述"><a href="#1-1-Superset概述" class="headerlink" title="1.1 Superset概述"></a>1.1 Superset概述</h2><p>Apache Superset是一个现代的数据探索和可视化平台。它功能强大且十分易用，可对接各种数据源，包括很多现代的大数据分析引擎，拥有丰富的图表展示形式，并且支持自定义仪表盘。</p>
+<p><img src="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps6.jpg" alt="img"> </p>
+<h2 id="1-2-环境说明"><a href="#1-2-环境说明" class="headerlink" title="1.2 环境说明"></a>1.2 环境说明</h2><p>本课程使用的服务器操作系统为CentOS 7，Superset对接的数据源为MySQL数据库。</p>
+<h1 id="第2章-Superset安装"><a href="#第2章-Superset安装" class="headerlink" title="第2章 Superset安装"></a>第2章 Superset安装</h1><p>Superset官网地址：<a href="http://superset.apache.org/" target="_blank" rel="noopener">http://superset.apache.org/</a></p>
+<h2 id="2-1-安装Python环境"><a href="#2-1-安装Python环境" class="headerlink" title="2.1 安装Python环境"></a>2.1 安装Python环境</h2><p>Superset是由Python语言编写的Web应用，要求Python3.7以上的环境。</p>
+<h3 id="2-1-1-安装Miniconda"><a href="#2-1-1-安装Miniconda" class="headerlink" title="2.1.1 安装Miniconda"></a>2.1.1 安装Miniconda</h3><p>conda是一个开源的包、环境管理器，可以用于在同一个机器上安装不同Python版本的软件包及其依赖，并能够在不同的Python环境之间切换，Anaconda包括Conda、Python以及一大堆安装好的工具包，比如：numpy、pandas等，Miniconda包括Conda、Python。</p>
+<p>此处，我们不需要如此多的工具包，故选择MiniConda。</p>
+<p>1）下载Miniconda（Python3版本）</p>
+<p>下载地址：<a href="https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh" target="_blank" rel="noopener">https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh</a></p>
+<p>2）安装Miniconda</p>
+<p>（1）执行以下命令进行安装，并按照提示操作，直到安装完成。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[atguigu@hadoop102 lib]$ bash Miniconda3-latest-Linux-x86_64.sh</span><br></pre></td></tr></table></figure>
+
+<p>（2）在安装过程中，出现以下提示时，可以指定安装路径 /opt/module/miniconda3</p>
+<p><img src="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps7.jpg" alt="img"> </p>
+<p>（3）出现以下字样，即为安装完成</p>
+<p><img src="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps8.jpg" alt="img"> </p>
+<p>3）加载环境变量配置文件，使之生效</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[atguigu@hadoop102 lib]$ source ~/.bashrc</span><br></pre></td></tr></table></figure>
+
+<p>4）取消激活base环境</p>
+<p>Miniconda安装完成后，每次打开终端都会激活其默认的base环境，我们可通过以下命令，禁止激活默认base环境。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[atguigu@hadoop102 lib]$ conda config --set auto_activate_base false</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-1-2-创建Python3-8环境"><a href="#2-1-2-创建Python3-8环境" class="headerlink" title="2.1.2 创建Python3.8环境"></a>2.1.2 创建Python3.8环境</h3><p>1）配置conda国内镜像（此处可不配置，国外镜像比清华镜像更快）</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(base) [atguigu@hadoop102 ~]$ conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free</span><br><span class="line">(base) [atguigu@hadoop102 ~]$ conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main</span><br><span class="line">(base) [atguigu@hadoop102 ~]$ conda config --set show_channel_urls yes</span><br></pre></td></tr></table></figure>
+
+<p>​    （1）查看conda的镜像channel配置</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[atguigu@hadoop102 ~]$ conda config --show channels</span><br><span class="line"> - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main</span><br><span class="line"> - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free</span><br><span class="line"> - defaults</span><br></pre></td></tr></table></figure>
+
+<p>​    （2）删除清华镜像,继续用默认的</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[atguigu@hadoop102 ~]$ conda config --remove-key channels</span><br><span class="line">[atguigu@hadoop102 ~]$ conda config --show channels</span><br><span class="line"> - defaults</span><br></pre></td></tr></table></figure>
+
+<p>2）创建Python3.8环境</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(base) [atguigu@hadoop102 ~]$ conda create --name superset python=3.8.16</span><br></pre></td></tr></table></figure>
+
+<p>Ø 说明：conda环境管理常用命令</p>
+<p>Ø 创建环境：conda create -n env_name</p>
+<p>Ø 查看所有环境：conda info –envs</p>
+<p>Ø 删除一个环境：conda remove -n env_name –all</p>
+<p>3）激活superset环境</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(base) [atguigu@hadoop102 ~]$ conda activate superset</span><br></pre></td></tr></table></figure>
+
+<p>​    激活后效果如下图所示</p>
+<p><img src="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps9.jpg" alt="img"> </p>
+<p>说明：退出当前环境</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(superset) [atguigu@hadoop102 ~]$ conda deactivate</span><br></pre></td></tr></table></figure>
+
+<p>4）执行python -V命令查看python版本</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(superset) [atguigu@hadoop102 ~]$ python -V</span><br><span class="line">Python 3.8.16</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-2-Superset部署"><a href="#2-2-Superset部署" class="headerlink" title="2.2 Superset部署"></a>2.2 Superset部署</h2><h3 id="2-2-1-安装依赖"><a href="#2-2-1-安装依赖" class="headerlink" title="2.2.1 安装依赖"></a>2.2.1 安装依赖</h3><p>安装Superset之前，需安装以下所需依赖。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(superset) [atguigu@hadoop102 ~]$ sudo yum install -y gcc gcc-c++ libffi-devel python-devel python-pip python-wheel python-setuptools openssl-devel cyrus-sasl-devel openldap-devel</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-2-2-安装Superset"><a href="#2-2-2-安装Superset" class="headerlink" title="2.2.2 安装Superset"></a>2.2.2 安装Superset</h3><p>1）更新pip</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(superset) [atguigu@hadoop102 ~]$ pip install --upgrade pip -i https://pypi.douban.com/simple/</span><br></pre></td></tr></table></figure>
+
+<p>说明：pip是python的包管理工具，可以和centos中的yum类比</p>
+<p>2）安装Supetset</p>
+<p>（1）上传base.txt文件至任意路径</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">(superset) [atguigu@hadoop102 ~]$ ll ~</span><br><span class="line">总用量 12</span><br><span class="line">-rw-r--r--. 1 atguigu atguigu 5795 2月  3 15:27 base.txt</span><br><span class="line">drwxrwxr-x. 2 atguigu atguigu 4096 2月  6 11:42 bin</span><br></pre></td></tr></table></figure>
+
+<p>该文件可用于指定superset依赖组件及版本，下载地址及内容如下。</p>
+<p><a href="https://raw.githubusercontent.com/apache/superset/2.0.0/requirements/base.txt" target="_blank" rel="noopener">https://raw.githubusercontent.com/apache/superset/2.0.0/requirements/base.txt</a></p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">aiohttp</span>=<span class="string">=3.8.1</span></span><br><span class="line"><span class="comment">    # via slackclient</span></span><br><span class="line"><span class="attr">aiosignal</span>=<span class="string">=1.2.0</span></span><br><span class="line"><span class="comment">    # via aiohttp</span></span><br><span class="line"><span class="attr">alembic</span>=<span class="string">=1.6.5</span></span><br><span class="line"><span class="comment">    # via flask-migrate</span></span><br><span class="line"><span class="attr">amqp</span>=<span class="string">=5.1.0</span></span><br><span class="line"><span class="comment">    # via kombu</span></span><br><span class="line"><span class="meta">apispec[yaml]</span>=<span class="string">=3.3.2</span></span><br><span class="line"><span class="comment">    # via flask-appbuilder</span></span><br><span class="line"><span class="meta">async-timeout</span>=<span class="string">=4.0.2</span></span><br><span class="line"><span class="comment">    # via aiohttp</span></span><br><span class="line"><span class="attr">attrs</span>=<span class="string">=21.2.0</span></span><br><span class="line"><span class="comment">    # via</span></span><br><span class="line"><span class="comment">    #   aiohttp</span></span><br><span class="line"><span class="comment">    #   jsonschema</span></span><br><span class="line"><span class="attr">babel</span>=<span class="string">=2.9.1</span></span><br><span class="line"><span class="comment">    # via flask-babel</span></span><br><span class="line"><span class="attr">backoff</span>=<span class="string">=1.11.1</span></span><br><span class="line"><span class="comment">    # via apache-superset</span></span><br><span class="line"><span class="attr">billiard</span>=<span class="string">=3.6.4.0</span></span><br><span class="line"><span class="comment">    # via celery</span></span><br><span class="line"><span class="attr">bleach</span>=<span class="string">=3.3.1</span></span><br><span class="line"><span class="comment">    # via apache-superset</span></span><br><span class="line"><span class="attr">brotli</span>=<span class="string">=1.0.9</span></span><br><span class="line"><span class="comment">    # via flask-compress</span></span><br><span class="line"><span class="attr">cachelib</span>=<span class="string">=0.4.1</span></span><br><span class="line"><span class="comment">    # via apache-superset</span></span><br><span class="line"><span class="attr">celery</span>=<span class="string">=5.2.2</span></span><br><span class="line"><span class="comment">    # via apache-superset</span></span><br><span class="line"><span class="attr">cffi</span>=<span class="string">=1.14.6</span></span><br><span class="line"><span class="comment">    # via cryptography</span></span><br><span class="line"><span class="meta">charset-normalizer</span>=<span class="string">=2.0.4</span></span><br><span class="line"><span class="comment">    # via aiohttp</span></span><br><span class="line"><span class="attr">click</span>=<span class="string">=8.0.4</span></span><br><span class="line"><span class="comment">    # via</span></span><br><span class="line"><span class="comment">    #   apache-superset</span></span><br><span class="line"><span class="comment">    #   celery</span></span><br><span class="line"><span class="comment">    #   click-didyoumean</span></span><br><span class="line"><span class="comment">    #   click-plugins</span></span><br><span class="line"><span class="comment">    #   click-repl</span></span><br><span class="line"><span class="comment">    #   flask</span></span><br><span class="line"><span class="comment">    #   flask-appbuilder</span></span><br><span class="line"><span class="meta">click-didyoumean</span>=<span class="string">=0.3.0</span></span><br><span class="line"><span class="comment">    # via celery</span></span><br><span class="line"><span class="meta">click-plugins</span>=<span class="string">=1.1.1</span></span><br><span class="line"><span class="comment">    # via celery</span></span><br><span class="line"><span class="meta">click-repl</span>=<span class="string">=0.2.0</span></span><br><span class="line"><span class="comment">    # via celery</span></span><br><span class="line"><span class="attr">colorama</span>=<span class="string">=0.4.4</span></span><br><span class="line"><span class="comment">    # via</span></span><br><span class="line"><span class="comment">    #   apache-superset</span></span><br><span class="line"><span class="comment">    #   flask-appbuilder</span></span><br><span class="line"><span class="attr">convertdate</span>=<span class="string">=2.3.2</span></span><br><span class="line"><span class="comment">    # via holidays</span></span><br><span class="line"><span class="meta">cron-descriptor</span>=<span class="string">=1.2.24</span></span><br><span class="line"><span class="comment">    # via apache-superset</span></span><br><span class="line"><span class="attr">croniter</span>=<span class="string">=1.0.15</span></span><br><span class="line"><span class="comment">    # via apache-superset</span></span><br><span class="line"><span class="attr">cryptography</span>=<span class="string">=3.4.7</span></span><br><span class="line"><span class="comment">    # via apache-superset</span></span><br><span class="line"><span class="attr">deprecation</span>=<span class="string">=2.1.0</span></span><br><span class="line"><span class="comment">    # via apache-superset</span></span><br><span class="line"><span class="attr">dnspython</span>=<span class="string">=2.1.0</span></span><br><span class="line"><span class="comment">    # via email-validator</span></span><br><span class="line"><span class="meta">email-validator</span>=<span class="string">=1.1.3</span></span><br><span class="line"><span class="comment">    # via flask-appbuilder</span></span><br><span class="line"><span class="attr">flask</span>=<span class="string">=2.0.3</span></span><br><span class="line"><span class="comment">    # via</span></span><br><span class="line"><span class="comment">    #   apache-superset</span></span><br><span class="line"><span class="comment">    #   flask-appbuilder</span></span><br><span class="line"><span class="comment">    #   flask-babel</span></span><br><span class="line"><span class="comment">    #   flask-caching</span></span><br><span class="line"><span class="comment">    #   flask-compress</span></span><br><span class="line"><span class="comment">    #   flask-jwt-extended</span></span><br><span class="line"><span class="comment">    #   flask-login</span></span><br><span class="line"><span class="comment">    #   flask-migrate</span></span><br><span class="line"><span class="comment">    #   flask-sqlalchemy</span></span><br><span class="line"><span class="comment">    #   flask-wtf</span></span><br><span class="line"><span class="meta">flask-appbuilder</span>=<span class="string">=4.1.3</span></span><br><span class="line"><span class="comment">    # via apache-superset</span></span><br><span class="line"><span class="meta">flask-babel</span>=<span class="string">=1.0.0</span></span><br><span class="line"><span class="comment">    # via flask-appbuilder</span></span><br><span class="line"><span class="meta">flask-caching</span>=<span class="string">=1.10.1</span></span><br><span class="line"><span class="comment">    # via apache-superset</span></span><br><span class="line"><span class="meta">flask-compress</span>=<span class="string">=1.10.1</span></span><br><span class="line"><span class="comment">    # via apache-superset</span></span><br><span class="line"><span class="meta">flask-jwt-extended</span>=<span class="string">=4.3.1</span></span><br><span class="line"><span class="comment">    # via flask-appbuilder</span></span><br><span class="line"><span class="meta">flask-login</span>=<span class="string">=0.4.1</span></span><br><span class="line"><span class="comment">    # via flask-appbuilder</span></span><br><span class="line"><span class="meta">flask-migrate</span>=<span class="string">=3.1.0</span></span><br><span class="line"><span class="comment">    # via apache-superset</span></span><br><span class="line"><span class="meta">flask-sqlalchemy</span>=<span class="string">=2.5.1</span></span><br><span class="line"><span class="comment">    # via</span></span><br><span class="line"><span class="comment">    #   flask-appbuilder</span></span><br><span class="line"><span class="comment">    #   flask-migrate</span></span><br><span class="line"><span class="meta">flask-talisman</span>=<span class="string">=0.8.1</span></span><br><span class="line"><span class="comment">    # via apache-superset</span></span><br><span class="line"><span class="meta">flask-wtf</span>=<span class="string">=0.14.3</span></span><br><span class="line"><span class="comment">    # via</span></span><br><span class="line"><span class="comment">    #   apache-superset</span></span><br><span class="line"><span class="comment">    #   flask-appbuilder</span></span><br><span class="line"><span class="attr">frozenlist</span>=<span class="string">=1.3.0</span></span><br><span class="line"><span class="comment">    # via</span></span><br><span class="line"><span class="comment">    #   aiohttp</span></span><br><span class="line"><span class="comment">    #   aiosignal</span></span><br><span class="line"><span class="meta">func-timeout</span>=<span class="string">=4.3.5</span></span><br><span class="line"><span class="comment">    # via apache-superset</span></span><br><span class="line"><span class="attr">geographiclib</span>=<span class="string">=1.52</span></span><br><span class="line"><span class="comment">    # via geopy</span></span><br><span class="line"><span class="attr">geopy</span>=<span class="string">=2.2.0</span></span><br><span class="line"><span class="comment">    # via apache-superset</span></span><br><span class="line"><span class="meta">graphlib-backport</span>=<span class="string">=1.0.3</span></span><br><span class="line"><span class="comment">    # via apache-superset</span></span><br><span class="line"><span class="attr">gunicorn</span>=<span class="string">=20.1.0</span></span><br><span class="line"><span class="comment">    # via apache-superset</span></span><br><span class="line"><span class="attr">hashids</span>=<span class="string">=1.3.1</span></span><br><span class="line"><span class="comment">    # via apache-superset</span></span><br><span class="line"><span class="attr">holidays</span>=<span class="string">=0.10.3</span></span><br><span class="line"><span class="comment">    # via apache-superset</span></span><br><span class="line"><span class="attr">humanize</span>=<span class="string">=3.11.0</span></span><br><span class="line"><span class="comment">    # via apache-superset</span></span><br><span class="line"><span class="attr">idna</span>=<span class="string">=3.2</span></span><br><span class="line"><span class="comment">    # via</span></span><br><span class="line"><span class="comment">    #   email-validator</span></span><br><span class="line"><span class="comment">    #   yarl</span></span><br><span class="line"><span class="attr">isodate</span>=<span class="string">=0.6.0</span></span><br><span class="line"><span class="comment">    # via apache-superset</span></span><br><span class="line"><span class="attr">itsdangerous</span>=<span class="string">=2.1.1</span></span><br><span class="line"><span class="comment">    # via</span></span><br><span class="line"><span class="comment">    #   flask</span></span><br><span class="line"><span class="comment">    #   flask-wtf</span></span><br><span class="line"><span class="attr">jinja2</span>=<span class="string">=3.0.3</span></span><br><span class="line"><span class="comment">    # via</span></span><br><span class="line"><span class="comment">    #   flask</span></span><br><span class="line"><span class="comment">    #   flask-babel</span></span><br><span class="line"><span class="attr">jsonschema</span>=<span class="string">=3.2.0</span></span><br><span class="line"><span class="comment">    # via flask-appbuilder</span></span><br><span class="line"><span class="attr">kombu</span>=<span class="string">=5.2.4</span></span><br><span class="line"><span class="comment">    # via celery</span></span><br><span class="line"><span class="meta">korean-lunar-calendar</span>=<span class="string">=0.2.1</span></span><br><span class="line"><span class="comment">    # via holidays</span></span><br><span class="line"><span class="attr">mako</span>=<span class="string">=1.1.4</span></span><br><span class="line"><span class="comment">    # via alembic</span></span><br><span class="line"><span class="attr">markdown</span>=<span class="string">=3.3.4</span></span><br><span class="line"><span class="comment">    # via apache-superset</span></span><br><span class="line"><span class="attr">markupsafe</span>=<span class="string">=2.0.1</span></span><br><span class="line"><span class="comment">    # via</span></span><br><span class="line"><span class="comment">    #   jinja2</span></span><br><span class="line"><span class="comment">    #   mako</span></span><br><span class="line"><span class="comment">    #   wtforms</span></span><br><span class="line"><span class="attr">marshmallow</span>=<span class="string">=3.13.0</span></span><br><span class="line"><span class="comment">    # via</span></span><br><span class="line"><span class="comment">    #   flask-appbuilder</span></span><br><span class="line"><span class="comment">    #   marshmallow-enum</span></span><br><span class="line"><span class="comment">    #   marshmallow-sqlalchemy</span></span><br><span class="line"><span class="meta">marshmallow-enum</span>=<span class="string">=1.5.1</span></span><br><span class="line"><span class="comment">    # via flask-appbuilder</span></span><br><span class="line"><span class="meta">marshmallow-sqlalchemy</span>=<span class="string">=0.23.1</span></span><br><span class="line"><span class="comment">    # via flask-appbuilder</span></span><br><span class="line"><span class="attr">msgpack</span>=<span class="string">=1.0.2</span></span><br><span class="line"><span class="comment">    # via apache-superset</span></span><br><span class="line"><span class="attr">multidict</span>=<span class="string">=5.1.0</span></span><br><span class="line"><span class="comment">    # via</span></span><br><span class="line"><span class="comment">    #   aiohttp</span></span><br><span class="line"><span class="comment">    #   yarl</span></span><br><span class="line"><span class="attr">numpy</span>=<span class="string">=1.22.1</span></span><br><span class="line"><span class="comment">    # via</span></span><br><span class="line"><span class="comment">    #   apache-superset</span></span><br><span class="line"><span class="comment">    #   pandas</span></span><br><span class="line"><span class="comment">    #   pyarrow</span></span><br><span class="line"><span class="attr">packaging</span>=<span class="string">=21.3</span></span><br><span class="line"><span class="comment">    # via</span></span><br><span class="line"><span class="comment">    #   bleach</span></span><br><span class="line"><span class="comment">    #   deprecation</span></span><br><span class="line"><span class="attr">pandas</span>=<span class="string">=1.3.4</span></span><br><span class="line"><span class="comment">    # via apache-superset</span></span><br><span class="line"><span class="attr">parsedatetime</span>=<span class="string">=2.6</span></span><br><span class="line"><span class="comment">    # via apache-superset</span></span><br><span class="line"><span class="attr">pgsanity</span>=<span class="string">=0.2.9</span></span><br><span class="line"><span class="comment">    # via apache-superset</span></span><br><span class="line"><span class="attr">polyline</span>=<span class="string">=1.4.0</span></span><br><span class="line"><span class="comment">    # via apache-superset</span></span><br><span class="line"><span class="attr">prison</span>=<span class="string">=0.2.1</span></span><br><span class="line"><span class="comment">    # via flask-appbuilder</span></span><br><span class="line"><span class="meta">prompt-toolkit</span>=<span class="string">=3.0.28</span></span><br><span class="line"><span class="comment">    # via click-repl</span></span><br><span class="line"><span class="attr">pyarrow</span>=<span class="string">=5.0.0</span></span><br><span class="line"><span class="comment">    # via apache-superset</span></span><br><span class="line"><span class="attr">pycparser</span>=<span class="string">=2.20</span></span><br><span class="line"><span class="comment">    # via cffi</span></span><br><span class="line"><span class="attr">pyjwt</span>=<span class="string">=2.4.0</span></span><br><span class="line"><span class="comment">    # via</span></span><br><span class="line"><span class="comment">    #   apache-superset</span></span><br><span class="line"><span class="comment">    #   flask-appbuilder</span></span><br><span class="line"><span class="comment">    #   flask-jwt-extended</span></span><br><span class="line"><span class="attr">pymeeus</span>=<span class="string">=0.5.11</span></span><br><span class="line"><span class="comment">    # via convertdate</span></span><br><span class="line"><span class="attr">pyparsing</span>=<span class="string">=3.0.6</span></span><br><span class="line"><span class="comment">    # via</span></span><br><span class="line"><span class="comment">    #   apache-superset</span></span><br><span class="line"><span class="comment">    #   packaging</span></span><br><span class="line"><span class="attr">pyrsistent</span>=<span class="string">=0.16.1</span></span><br><span class="line"><span class="comment">    # via jsonschema</span></span><br><span class="line"><span class="meta">python-dateutil</span>=<span class="string">=2.8.2</span></span><br><span class="line"><span class="comment">    # via</span></span><br><span class="line"><span class="comment">    #   alembic</span></span><br><span class="line"><span class="comment">    #   apache-superset</span></span><br><span class="line"><span class="comment">    #   croniter</span></span><br><span class="line"><span class="comment">    #   flask-appbuilder</span></span><br><span class="line"><span class="comment">    #   holidays</span></span><br><span class="line"><span class="comment">    #   pandas</span></span><br><span class="line"><span class="meta">python-dotenv</span>=<span class="string">=0.19.0</span></span><br><span class="line"><span class="comment">    # via apache-superset</span></span><br><span class="line"><span class="meta">python-editor</span>=<span class="string">=1.0.4</span></span><br><span class="line"><span class="comment">    # via alembic</span></span><br><span class="line"><span class="meta">python-geohash</span>=<span class="string">=0.8.5</span></span><br><span class="line"><span class="comment">    # via apache-superset</span></span><br><span class="line"><span class="attr">pytz</span>=<span class="string">=2021.3</span></span><br><span class="line"><span class="comment">    # via</span></span><br><span class="line"><span class="comment">    #   babel</span></span><br><span class="line"><span class="comment">    #   celery</span></span><br><span class="line"><span class="comment">    #   convertdate</span></span><br><span class="line"><span class="comment">    #   flask-babel</span></span><br><span class="line"><span class="comment">    #   pandas</span></span><br><span class="line"><span class="attr">pyyaml</span>=<span class="string">=5.4.1</span></span><br><span class="line"><span class="comment">    # via</span></span><br><span class="line"><span class="comment">    #   apache-superset</span></span><br><span class="line"><span class="comment">    #   apispec</span></span><br><span class="line"><span class="attr">redis</span>=<span class="string">=3.5.3</span></span><br><span class="line"><span class="comment">    # via apache-superset</span></span><br><span class="line"><span class="attr">selenium</span>=<span class="string">=3.141.0</span></span><br><span class="line"><span class="comment">    # via apache-superset</span></span><br><span class="line"><span class="attr">simplejson</span>=<span class="string">=3.17.3</span></span><br><span class="line"><span class="comment">    # via apache-superset</span></span><br><span class="line"><span class="attr">six</span>=<span class="string">=1.16.0</span></span><br><span class="line"><span class="comment">    # via</span></span><br><span class="line"><span class="comment">    #   bleach</span></span><br><span class="line"><span class="comment">    #   click-repl</span></span><br><span class="line"><span class="comment">    #   flask-talisman</span></span><br><span class="line"><span class="comment">    #   holidays</span></span><br><span class="line"><span class="comment">    #   isodate</span></span><br><span class="line"><span class="comment">    #   jsonschema</span></span><br><span class="line"><span class="comment">    #   polyline</span></span><br><span class="line"><span class="comment">    #   prison</span></span><br><span class="line"><span class="comment">    #   pyrsistent</span></span><br><span class="line"><span class="comment">    #   python-dateutil</span></span><br><span class="line"><span class="comment">    #   sqlalchemy-utils</span></span><br><span class="line"><span class="comment">    #   wtforms-json</span></span><br><span class="line"><span class="attr">slackclient</span>=<span class="string">=2.5.0</span></span><br><span class="line"><span class="comment">    # via apache-superset</span></span><br><span class="line"><span class="attr">sqlalchemy</span>=<span class="string">=1.3.24</span></span><br><span class="line"><span class="comment">    # via</span></span><br><span class="line"><span class="comment">    #   alembic</span></span><br><span class="line"><span class="comment">    #   apache-superset</span></span><br><span class="line"><span class="comment">    #   flask-appbuilder</span></span><br><span class="line"><span class="comment">    #   flask-sqlalchemy</span></span><br><span class="line"><span class="comment">    #   marshmallow-sqlalchemy</span></span><br><span class="line"><span class="comment">    #   sqlalchemy-utils</span></span><br><span class="line"><span class="meta">sqlalchemy-utils</span>=<span class="string">=0.37.8</span></span><br><span class="line"><span class="comment">    # via</span></span><br><span class="line"><span class="comment">    #   apache-superset</span></span><br><span class="line"><span class="comment">    #   flask-appbuilder</span></span><br><span class="line"><span class="attr">sqlparse</span>=<span class="string">=0.3.0</span></span><br><span class="line"><span class="comment">    # via apache-superset</span></span><br><span class="line"><span class="attr">tabulate</span>=<span class="string">=0.8.9</span></span><br><span class="line"><span class="comment">    # via apache-superset</span></span><br><span class="line"><span class="meta">typing-extensions</span>=<span class="string">=3.10.0.0</span></span><br><span class="line"><span class="comment">    # via apache-superset</span></span><br><span class="line"><span class="attr">urllib3</span>=<span class="string">=1.26.6</span></span><br><span class="line"><span class="comment">    # via selenium</span></span><br><span class="line"><span class="attr">vine</span>=<span class="string">=5.0.0</span></span><br><span class="line"><span class="comment">    # via</span></span><br><span class="line"><span class="comment">    #   amqp</span></span><br><span class="line"><span class="comment">    #   celery</span></span><br><span class="line"><span class="comment">    #   kombu</span></span><br><span class="line"><span class="attr">wcwidth</span>=<span class="string">=0.2.5</span></span><br><span class="line"><span class="comment">    # via prompt-toolkit</span></span><br><span class="line"><span class="attr">webencodings</span>=<span class="string">=0.5.1</span></span><br><span class="line"><span class="comment">    # via bleach</span></span><br><span class="line"><span class="attr">werkzeug</span>=<span class="string">=2.0.3</span></span><br><span class="line"><span class="comment">    # via</span></span><br><span class="line"><span class="comment">    #   flask</span></span><br><span class="line"><span class="comment">    #   flask-jwt-extended</span></span><br><span class="line"><span class="attr">wtforms</span>=<span class="string">=2.3.3</span></span><br><span class="line"><span class="comment">    # via</span></span><br><span class="line"><span class="comment">    #   flask-appbuilder</span></span><br><span class="line"><span class="comment">    #   flask-wtf</span></span><br><span class="line"><span class="comment">    #   wtforms-json</span></span><br><span class="line"><span class="meta">wtforms-json</span>=<span class="string">=0.3.3</span></span><br><span class="line"><span class="comment">    # via apache-superset</span></span><br><span class="line"><span class="attr">yarl</span>=<span class="string">=1.6.3</span></span><br><span class="line"><span class="comment">    # via aiohttp</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># The following packages are considered to be unsafe in a requirements file:</span></span><br><span class="line"><span class="comment"># setuptools</span></span><br></pre></td></tr></table></figure>
+
+<p>（2）在base.txt所在目录下执行如下命令，安装SuperSet</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(superset) [atguigu@hadoop102 ~]$ pip install apache-superset==2.0.0 -i https://pypi.tuna.tsinghua.edu.cn/simple -r base.txt</span><br></pre></td></tr></table></figure>
+
+<p>说明：</p>
+<p>-i的作用是指定镜像，这里选择国内镜像</p>
+<p>-r的作用是指定superset依赖组件及相应版本，指向base.txt文件即可</p>
+<h3 id="2-2-3-配置Superset元数据库"><a href="#2-2-3-配置Superset元数据库" class="headerlink" title="2.2.3 配置Superset元数据库"></a>2.2.3 配置Superset元数据库</h3><p>Superset的元数据支持MySQL、PostgreSQL，此处采用MySQL。</p>
+<p>1）在MySQL中创建superset元数据库</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">mysql&gt;</span><span class="bash"> CREATE DATABASE superset DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;</span></span><br></pre></td></tr></table></figure>
+
+<p>2）创建superset用户</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">mysql&gt;</span><span class="bash"> create user superset@<span class="string">'%'</span> identified WITH mysql_native_password BY <span class="string">'superset'</span>;</span></span><br><span class="line"><span class="meta">mysql&gt;</span><span class="bash"> grant all privileges on . to superset@<span class="string">'%'</span> with grant option;</span></span><br><span class="line"><span class="meta">mysql&gt;</span><span class="bash"> flush privileges;</span></span><br></pre></td></tr></table></figure>
+
+<p>3）修改superset配置文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(superset) [atguigu@hadoop102 ~]$ vim /opt/module/miniconda3/envs/superset/lib/python3.8/site-packages/superset/config.py</span><br></pre></td></tr></table></figure>
+
+<p>修改内容如下：（184、185行）</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> SQLALCHEMY_DATABASE_URI = <span class="string">"sqlite:///"</span> + os.path.join(DATA_DIR, <span class="string">"superset.db"</span>)</span></span><br><span class="line">SQLALCHEMY_DATABASE_URI = 'mysql://superset:superset@hadoop102:3306/superset?charset=utf8'</span><br></pre></td></tr></table></figure>
+
+<p>4）安装python msyql驱动</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(superset) [atguigu@hadoop102 ~]$ conda install mysqlclient</span><br></pre></td></tr></table></figure>
+
+<p>5）初始化superset元数据</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">(superset) [atguigu@hadoop102 ~]$ export FLASK_APP=superset</span><br><span class="line">(superset) [atguigu@hadoop102 ~]$ superset db upgrade</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-2-4-SupersetSet初始化"><a href="#2-2-4-SupersetSet初始化" class="headerlink" title="2.2.4 SupersetSet初始化"></a>2.2.4 SupersetSet初始化</h3><p>1）创建管理员用户</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(superset) [atguigu@hadoop102 ~]$ superset fab create-admin</span><br></pre></td></tr></table></figure>
+
+<p>2）初始化superset</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(superset) [atguigu@hadoop102 ~]$ superset init</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-2-5-启动Supterset"><a href="#2-2-5-启动Supterset" class="headerlink" title="2.2.5 启动Supterset"></a>2.2.5 启动Supterset</h3><p>1）安装gunicorn</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(superset) [atguigu@hadoop102 ~]$ pip install gunicorn -i https://pypi.douban.com/simple/</span><br></pre></td></tr></table></figure>
+
+<p>说明：gunicorn是一个Python Web Server，可以和java中的TomCat类比</p>
+<p>2）启动Superset</p>
+<p>（1）确保当前conda环境为superset，及下图所示</p>
+<p><img src="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps11.jpg" alt="img"> </p>
+<p>（2）启动</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(superset) [atguigu@hadoop102 ~]$ gunicorn --workers 5 --timeout 120 --bind hadoop102:8787  "superset.app:create_app()" --daemon</span><br></pre></td></tr></table></figure>
+
+<p>说明：</p>
+<p>–workers：指定进程个数</p>
+<p>–timeout：worker进程超时时间，超时会自动重启</p>
+<p>–bind：绑定本机地址，即为Superset访问地址</p>
+<p>–daemon：后台运行</p>
+<p>（3）登录Superset</p>
+<p>访问<a href="http://hadoop102:8787，并使用2.2.2节中第4步创建的管理员账号进行登录。">http://hadoop102:8787，并使用2.2.2节中第4步创建的管理员账号进行登录。</a></p>
+<p><img src="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps12.jpg" alt="img"> </p>
+<p>3）停止superset</p>
+<p>（1）停掉gunicorn进程</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(superset) [atguigu@hadoop102 ~]$ ps -ef | awk '/superset/ &amp;&amp; !/awk/&#123;print $2&#125;' | xargs kill -9</span><br></pre></td></tr></table></figure>
+
+<p>（2）退出superset环境</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(superset) [atguigu@hadoop102 ~]$ conda deactivate</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-2-4-superset启停脚本"><a href="#2-2-4-superset启停脚本" class="headerlink" title="2.2.4 superset启停脚本"></a>2.2.4 superset启停脚本</h3><p>1）创建superset.sh文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[atguigu@hadoop102 bin]$ vim superset.sh</span><br></pre></td></tr></table></figure>
+
+<p>内容如下</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line"></span><br><span class="line">superset_status()&#123;</span><br><span class="line">    result=`ps -ef | awk '/gunicorn/ &amp;&amp; !/awk/&#123;print $2&#125;' | wc -l`</span><br><span class="line">    if [[ $result -eq 0 ]]; then</span><br><span class="line">        return 0</span><br><span class="line">    else</span><br><span class="line">        return 1</span><br><span class="line">    fi</span><br><span class="line">&#125;</span><br><span class="line">superset_start()&#123;</span><br><span class="line">        source ~/.bashrc</span><br><span class="line">        superset_status &gt;/dev/null 2&gt;&amp;1</span><br><span class="line">        if [[ $? -eq 0 ]]; then</span><br><span class="line">            conda activate superset ; gunicorn --workers 5 --timeout 120 --bind hadoop102:8787 --daemon 'superset.app:create_app()'</span><br><span class="line">        else</span><br><span class="line">            echo "superset正在运行"</span><br><span class="line">        fi</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">superset_stop()&#123;</span><br><span class="line">    superset_status &gt;/dev/null 2&gt;&amp;1</span><br><span class="line">    if [[ $? -eq 0 ]]; then</span><br><span class="line">        echo "superset未在运行"</span><br><span class="line">    else</span><br><span class="line">        ps -ef | awk '/gunicorn/ &amp;&amp; !/awk/&#123;print $2&#125;' | xargs kill -9</span><br><span class="line">    fi</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">case $1 in</span><br><span class="line">    start )</span><br><span class="line">        echo "启动Superset"</span><br><span class="line">        superset_start</span><br><span class="line">    ;;</span><br><span class="line">    stop )</span><br><span class="line">        echo "停止Superset"</span><br><span class="line">        superset_stop</span><br><span class="line">    ;;</span><br><span class="line">    restart )</span><br><span class="line">        echo "重启Superset"</span><br><span class="line">        superset_stop</span><br><span class="line">        superset_start</span><br><span class="line">    ;;</span><br><span class="line">    status )</span><br><span class="line">        superset_status &gt;/dev/null 2&gt;&amp;1</span><br><span class="line">        if [[ $? -eq 0 ]]; then</span><br><span class="line">            echo "superset未在运行"</span><br><span class="line">        else</span><br><span class="line">            echo "superset正在运行"</span><br><span class="line">        fi</span><br><span class="line">esac</span><br></pre></td></tr></table></figure>
+
+<p>2）加执行权限</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[atguigu@hadoop102 bin]$ chmod +x superset.sh</span><br></pre></td></tr></table></figure>
+
+<p>3）测试</p>
+<p>（1）启动superset</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[atguigu@hadoop102 bin]$ superset.sh start</span><br></pre></td></tr></table></figure>
+
+<p>（2）停止superset</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[atguigu@hadoop102 bin]$ superset.sh stop</span><br></pre></td></tr></table></figure>
+
+<h1 id="第3章-Superset使用"><a href="#第3章-Superset使用" class="headerlink" title="第3章 Superset使用"></a>第3章 Superset使用</h1><h2 id="3-1-对接MySQL数据源"><a href="#3-1-对接MySQL数据源" class="headerlink" title="3.1 对接MySQL数据源"></a>3.1 对接MySQL数据源</h2><h3 id="3-1-1-安装依赖（前边步骤已安装，可跳过）"><a href="#3-1-1-安装依赖（前边步骤已安装，可跳过）" class="headerlink" title="3.1.1 安装依赖（前边步骤已安装，可跳过）"></a>3.1.1 安装依赖（前边步骤已安装，可跳过）</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(superset) [atguigu@hadoop102 ~]$ conda install mysqlclient</span><br></pre></td></tr></table></figure>
+
+<p>说明：对接不同的数据源，需安装不同的依赖，以下地址为官网说明。</p>
+<p><a href="https://superset.apache.org/docs/databases/installing-database-drivers" target="_blank" rel="noopener">https://superset.apache.org/docs/databases/installing-database-drivers</a></p>
+<h3 id="3-1-2-数据源配置"><a href="#3-1-2-数据源配置" class="headerlink" title="3.1.2 数据源配置"></a>3.1.2 数据源配置</h3><p>1）Database配置</p>
+<p>Step1：点击Data/Databases</p>
+<p><img src="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps13.jpg" alt="img"> </p>
+<p>Step2：点击＋DATABASE</p>
+<p><img src="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps14.jpg" alt="img"> </p>
+<p>Step3：点击填写Database及SQL Alchemy URI</p>
+<p><img src="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps15.jpg" alt="img"> </p>
+<p>​    （1）方式一：通过URL连接</p>
+<p>注：SQL Alchemy URI编写规范：mysql://用户名:密码@主机名:端口号/数据库名称</p>
+<p>此处填写：mysql://superset:superset@hadoop102:3306/gmall_report?charset=utf8</p>
+<p><img src="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps16.jpg" alt="img"> </p>
+<p><img src="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps17.jpg" alt="img"> </p>
+<p>​    （2）方式二：逐个输入认证信息</p>
+<p><img src="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps18.jpg" alt="img"> </p>
+<p>​    此处选择方式一。</p>
+<p>​    Step4：点击Test Connection，出现“Connection looks good!”提示即表示连接成功。</p>
+<p><img src="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps19.jpg" alt="img"> </p>
+<p>Step5：点击CONNECT</p>
+<p><img src="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps20.jpg" alt="img"> </p>
+<p>2）Table配置</p>
+<p>Step1：点击Data/Datasets</p>
+<p><img src="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps21.jpg" alt="img"> </p>
+<p>Step2：点击+DATASET</p>
+<p><img src="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps22.jpg" alt="img"> </p>
+<p>Step3：配置Table</p>
+<p><img src="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps23.jpg" alt="img"> </p>
+<h2 id="3-2-制作仪表盘"><a href="#3-2-制作仪表盘" class="headerlink" title="3.2 制作仪表盘"></a>3.2 制作仪表盘</h2><h3 id="3-2-1-创建空白仪表盘"><a href="#3-2-1-创建空白仪表盘" class="headerlink" title="3.2.1 创建空白仪表盘"></a>3.2.1 创建空白仪表盘</h3><p>1）点击Dashboards/+DASHBOARDS</p>
+<p><img src="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps24.jpg" alt="img"> </p>
+<p><img src="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps25.jpg" alt="img"> </p>
+<p>2）命名并保存</p>
+<p><img src="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps26.jpg" alt="img"> </p>
+<h3 id="3-2-2-创建图表"><a href="#3-2-2-创建图表" class="headerlink" title="3.2.2 创建图表"></a>3.2.2 创建图表</h3><p>1）点击Charts/+CHART</p>
+<p><img src="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps27.jpg" alt="img"> </p>
+<p><img src="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps28.jpg" alt="img"> </p>
+<p>2）选则数据源及图表类型</p>
+<p><img src="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps29.jpg" alt="img"> </p>
+<p>3）创建图表</p>
+<p><img src="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps30.jpg" alt="img"> </p>
+<p>4）按照说明配置图表并创建</p>
+<p><img src="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps31.jpg" alt="img"> </p>
+<p>5）如配置无误，可出现以下图标</p>
+<p><img src="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps32.jpg" alt="img"> </p>
+<p>8）命名该图表，并保存至仪表盘</p>
+<p><img src="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps33.jpg" alt="img"> </p>
+<p><img src="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps34.jpg" alt="img"> </p>
+<h3 id="3-2-3-编辑仪表盘"><a href="#3-2-3-编辑仪表盘" class="headerlink" title="3.2.3 编辑仪表盘"></a>3.2.3 编辑仪表盘</h3><p>1）打开仪表盘，点击编辑按钮</p>
+<p><img src="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps35.jpg" alt="img"> </p>
+<p>2）调整图表大小以及图表盘布局</p>
+<p><img src="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps36.jpg" alt="img"> </p>
+<p>3）点击下图中箭头，可调整仪表盘自动刷新时间</p>
+<p><img src="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps37.jpg" alt="img"> </p>
+<p><img src="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps38.jpg" alt="img"> </p>
+<p><img src="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps39.jpg" alt="img"> </p>
+<h1 id="第4章-Superset实战"><a href="#第4章-Superset实战" class="headerlink" title="第4章 Superset实战"></a>第4章 Superset实战</h1><h2 id="4-1-制作地图"><a href="#4-1-制作地图" class="headerlink" title="4.1 制作地图"></a>4.1 制作地图</h2><p>4.1.1 配置Table</p>
+<p><img src="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps40.jpg" alt="img"> </p>
+<p>4.1.2 配置Chart</p>
+<p><img src="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps41.jpg" alt="img"> </p>
+<p><img src="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps42.jpg" alt="img"> </p>
+<p><img src="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps43.jpg" alt="img"> </p>
+<h2 id="4-2-制作饼状图"><a href="#4-2-制作饼状图" class="headerlink" title="4.2 制作饼状图"></a>4.2 制作饼状图</h2><p>4.2.1 配置Table</p>
+<p><img src="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps44.jpg" alt="img"> </p>
+<p>4.2.2 配置Chart</p>
+<p><img src="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps45.jpg" alt="img"> </p>
+<p><img src="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/wps46.jpg" alt="img"></p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Rui Zhang
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://yoursite.com/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-Superset/" title="电商数仓项目-电商数据仓库系统-Superset">http://yoursite.com/2024/11/30/电商数仓项目-电商数据仓库系统-Superset/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%95%B0%E4%BB%93/" rel="tag"># 数仓</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-DolphinScheduler/" rel="prev" title="电商数仓项目-电商数据仓库系统-DolphinScheduler">
+      <i class="fa fa-chevron-left"></i> 电商数仓项目-电商数据仓库系统-DolphinScheduler
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/11/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%B5%E5%95%86%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E7%B3%BB%E7%BB%9F-%E6%95%B0%E4%BB%93%E9%97%AE%E9%A2%98%E6%B1%87%E6%80%BB/" rel="next" title="电商数仓项目-电商数据仓库系统-数仓问题汇总">
+      电商数仓项目-电商数据仓库系统-数仓问题汇总 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第1章-Superset入门"><span class="nav-number">1.</span> <span class="nav-text">第1章 Superset入门</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-Superset概述"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 Superset概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-环境说明"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 环境说明</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第2章-Superset安装"><span class="nav-number">2.</span> <span class="nav-text">第2章 Superset安装</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-安装Python环境"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 安装Python环境</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-1-安装Miniconda"><span class="nav-number">2.1.1.</span> <span class="nav-text">2.1.1 安装Miniconda</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-2-创建Python3-8环境"><span class="nav-number">2.1.2.</span> <span class="nav-text">2.1.2 创建Python3.8环境</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-Superset部署"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 Superset部署</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-1-安装依赖"><span class="nav-number">2.2.1.</span> <span class="nav-text">2.2.1 安装依赖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-2-安装Superset"><span class="nav-number">2.2.2.</span> <span class="nav-text">2.2.2 安装Superset</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-3-配置Superset元数据库"><span class="nav-number">2.2.3.</span> <span class="nav-text">2.2.3 配置Superset元数据库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-4-SupersetSet初始化"><span class="nav-number">2.2.4.</span> <span class="nav-text">2.2.4 SupersetSet初始化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-5-启动Supterset"><span class="nav-number">2.2.5.</span> <span class="nav-text">2.2.5 启动Supterset</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-4-superset启停脚本"><span class="nav-number">2.2.6.</span> <span class="nav-text">2.2.4 superset启停脚本</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第3章-Superset使用"><span class="nav-number">3.</span> <span class="nav-text">第3章 Superset使用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-对接MySQL数据源"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 对接MySQL数据源</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-1-安装依赖（前边步骤已安装，可跳过）"><span class="nav-number">3.1.1.</span> <span class="nav-text">3.1.1 安装依赖（前边步骤已安装，可跳过）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-2-数据源配置"><span class="nav-number">3.1.2.</span> <span class="nav-text">3.1.2 数据源配置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-制作仪表盘"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 制作仪表盘</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-1-创建空白仪表盘"><span class="nav-number">3.2.1.</span> <span class="nav-text">3.2.1 创建空白仪表盘</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-2-创建图表"><span class="nav-number">3.2.2.</span> <span class="nav-text">3.2.2 创建图表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-3-编辑仪表盘"><span class="nav-number">3.2.3.</span> <span class="nav-text">3.2.3 编辑仪表盘</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第4章-Superset实战"><span class="nav-number">4.</span> <span class="nav-text">第4章 Superset实战</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#4-1-制作地图"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 制作地图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-2-制作饼状图"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 制作饼状图</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Rui Zhang"
+      src="/images/head.jpg">
+  <p class="site-author-name" itemprop="name">Rui Zhang</p>
+  <div class="site-description" itemprop="description">不在沉默中爆发，就在沉默中灭亡</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">52</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2021 – 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Rui Zhang</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.7m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">25:10</span>
+</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"right","width":120,"height":230},"mobile":{"show":true},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/clicklove.js"></script>

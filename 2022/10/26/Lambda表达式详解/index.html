@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="一、概述Lambda表达式 –&gt; 函数式编程（函数编程思想） 面向对象编程思想： 强调的是【对象】，必须通过对象的形式来做一些事情，一般情况下会比较复杂。 函数编程思想：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Lambda表达式详解">
+<meta property="og:url" content="http://yoursite.com/2022/10/26/Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:site_name" content="没有尾巴的小驴">
+<meta property="og:description" content="一、概述Lambda表达式 –&gt; 函数式编程（函数编程思想） 面向对象编程思想： 强调的是【对象】，必须通过对象的形式来做一些事情，一般情况下会比较复杂。 函数编程思想：">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/2022/10/26/Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E8%AF%A6%E8%A7%A3/image-20221026171821465.png">
+<meta property="og:image" content="http://yoursite.com/2022/10/26/Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E8%AF%A6%E8%A7%A3/image-20221026171833810.png">
+<meta property="og:image" content="http://yoursite.com/2022/10/26/Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E8%AF%A6%E8%A7%A3/image-20221026171854787.png">
+<meta property="og:image" content="http://yoursite.com/2022/10/26/Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E8%AF%A6%E8%A7%A3/image-20221026171934511.png">
+<meta property="og:image" content="http://yoursite.com/2022/10/26/Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E8%AF%A6%E8%A7%A3/image-20221026172041517.png">
+<meta property="og:image" content="http://yoursite.com/2022/10/26/Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E8%AF%A6%E8%A7%A3/image-20221026172124390.png">
+<meta property="og:image" content="http://yoursite.com/2022/10/26/Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E8%AF%A6%E8%A7%A3/image-20221026172157511.png">
+<meta property="og:image" content="http://yoursite.com/2022/10/26/Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E8%AF%A6%E8%A7%A3/image-20221026165721571.png">
+<meta property="og:image" content="http://yoursite.com/2022/10/26/Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E8%AF%A6%E8%A7%A3/image-20221026172542797.png">
+<meta property="article:published_time" content="2022-10-26T08:52:24.000Z">
+<meta property="article:modified_time" content="2025-06-25T08:08:45.779Z">
+<meta property="article:author" content="Rui Zhang">
+<meta property="article:tag" content="CoreJava">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2022/10/26/Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E8%AF%A6%E8%A7%A3/image-20221026171821465.png">
+
+<link rel="canonical" href="http://yoursite.com/2022/10/26/Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E8%AF%A6%E8%A7%A3/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true
+  };
+</script>
+
+  <title>Lambda表达式详解 | 没有尾巴的小驴</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">没有尾巴的小驴</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">记录生活</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">22</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">22</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">52</span></a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2022/10/26/Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E8%AF%A6%E8%A7%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/head.jpg">
+      <meta itemprop="name" content="Rui Zhang">
+      <meta itemprop="description" content="不在沉默中爆发，就在沉默中灭亡">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="没有尾巴的小驴">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Lambda表达式详解
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-10-26 16:52:24" itemprop="dateCreated datePublished" datetime="2022-10-26T16:52:24+08:00">2022-10-26</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-06-25 16:08:45" itemprop="dateModified" datetime="2025-06-25T16:08:45+08:00">2025-06-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CoreJava/" itemprop="url" rel="index"><span itemprop="name">CoreJava</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>6.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>6 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h1><p>Lambda表达式 –&gt; 函数式编程（函数编程思想）</p>
+<p><strong>面向对象编程思想：</strong></p>
+<p>强调的是【对象】，必须通过对象的形式来做一些事情，一般情况下会比较复杂。</p>
+<p><strong>函数编程思想：</strong></p>
+<p>函数需要得有输入量、输出量，使用输入量计算得到输出量，【拿什么东西做什么事】</p>
+<p>就是为了尽量忽略对象的复杂用法—强调做什么，而不是以什么实行做，</p>
+<p>同样执行线程任务，使用函数编程思想，可以直接通过传递一段代码给线程对象执行，不需要创建任务对象。</p>
+<p><strong>总之就一句话，函数编程思想可以通过一段代码完成面向对象想要做的代码量</strong></p>
+<h1 id="二、Lambda表达式介绍"><a href="#二、Lambda表达式介绍" class="headerlink" title="二、Lambda表达式介绍"></a>二、Lambda表达式介绍</h1><p>Lambda 表达式是 JDK8 的一个新特性，可以取代大部分的匿名内部类，写出更优雅的Java 代码，尤其在集合的遍历和其他集合操作中，可以极大地优化代码结构。</p>
+<p>在 Java 语言中，可以为变量赋予一个值。</p>
+<p><img src="/2022/10/26/Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E8%AF%A6%E8%A7%A3/image-20221026171821465.png" alt="image-20221026171821465"></p>
+<p>能否把一个代码块赋给一变量吗？</p>
+<p><img src="/2022/10/26/Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E8%AF%A6%E8%A7%A3/image-20221026171833810.png" alt="image-20221026171833810"></p>
+<p>在 Java 8 之前，这个是做不到的。但是 Java 8 问世之后，利用 Lambda 特性，就可以做到了。</p>
+<p><img src="/2022/10/26/Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E8%AF%A6%E8%A7%A3/image-20221026171854787.png" alt="image-20221026171854787"></p>
+<p>甚至我们可以让语法变得更简洁。</p>
+<p><img src="/2022/10/26/Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E8%AF%A6%E8%A7%A3/image-20221026171934511.png" alt="image-20221026171934511"></p>
+<p>这样，我们就成功的非常优雅的把“一块代码”赋给了一个变量。而“这块代码”，或者说“这个被赋给一个变量的函数”，就是一个 Lambda 表达式。但是这里仍然有一个问题，就是变量 aBlockOfCode 的类型应该是什么？</p>
+<p>在 Java 8 里面，所有的 Lambda 的类型都是一个接口，而 Lambda 表达式本身，也就是”那段代码”，需要是这个接口的实现。这是我认为理解 Lambda 的一个关键所在，简而言之就是，Lambda 表达式本身就是一个接口的实现。直接这样说可能还是有点让人困扰，我们继续看看例子。我们给上面的 aBlockOfCode 加上一个类型：</p>
+<p><img src="/2022/10/26/Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E8%AF%A6%E8%A7%A3/image-20221026172041517.png" alt="image-20221026172041517"></p>
+<p>这种只有一个接口函数需要被实现的接口类型，我们叫它”函数式接口“。为了避免后来的人在这个接口中增加接口函数导致其有多个接口函数需要被实现，变成”非函数接口”，我们可以在这个上面加上一个声明@FunctionalInterface, 这样别人就无法在里面添加新的接口函数了。</p>
+<p><img src="/2022/10/26/Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E8%AF%A6%E8%A7%A3/image-20221026172124390.png" alt="image-20221026172124390"></p>
+<p>Lambda最直观的作用就是使得代码变得异常简洁了</p>
+<p><img src="/2022/10/26/Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E8%AF%A6%E8%A7%A3/image-20221026172157511.png" alt="image-20221026172157511"></p>
+<h1 id="三、Lambda表达式的格式"><a href="#三、Lambda表达式的格式" class="headerlink" title="三、Lambda表达式的格式"></a>三、Lambda表达式的格式</h1><p><strong>1.标准格式</strong></p>
+<p>（参数列表） -&gt; {代码}</p>
+<p><strong>2.格式说明</strong></p>
+<ul>
+<li><p>小括内的语法与传统方法参数列表一致，没有参数就留空，有多个参数就用逗号分隔</p>
+</li>
+<li><p>【-&gt;】 是新引入的语法格式，代表指向动作</p>
+</li>
+<li><p>大括号内的语法与传统方法体要求一致</p>
+</li>
+</ul>
+<p><strong>3.案例说明</strong></p>
+<p>第一个线程案例</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Thread thread1 = <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span> <span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"线程需要执行的任务代码1"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line">thread1.start();</span><br><span class="line"></span><br><span class="line"><span class="comment">// Lambda表达式</span></span><br><span class="line">Thread t2 = <span class="keyword">new</span> Thread(()-&gt;&#123;</span><br><span class="line">    System.out.println(<span class="string">"线程需要执行的任务代码2"</span>);</span><br><span class="line">&#125;);</span><br><span class="line">t2.start();</span><br></pre></td></tr></table></figure>
+
+<p>第二个比较器案例</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Integer&gt; list = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">Collections.addAll(list,<span class="number">11</span>,<span class="number">22</span>,<span class="number">33</span>,<span class="number">44</span>,<span class="number">55</span>);</span><br><span class="line">System.out.println(<span class="string">"排序之前的集合："</span> + list);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 比较器的正常书写格式</span></span><br><span class="line">Collections.sort(list, <span class="keyword">new</span> Comparator&lt;Integer&gt;() &#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">compare</span> <span class="params">(Integer o1, Integer o2)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> o2-o1;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Lambda表达式</span></span><br><span class="line">Collections.sort(list,(Integer o1, Integer o2)-&gt;&#123;<span class="keyword">return</span> o2-o1;&#125;);</span><br><span class="line">System.out.println(<span class="string">"排序之后的集合："</span> + list);</span><br></pre></td></tr></table></figure>
+
+<h1 id="四、表达式格式解析"><a href="#四、表达式格式解析" class="headerlink" title="四、表达式格式解析"></a>四、表达式格式解析</h1><p> Lambda表达式格式：（）-&gt;{}</p>
+<p>1.小括号中书写的内容和接口中的抽象方法的参数列表一致</p>
+<p>2.大括号中书写的内容和实现接口中的抽象方法体一致</p>
+<p>3.箭头是固定的</p>
+<h1 id="五、Lambda表达式的使用条件"><a href="#五、Lambda表达式的使用条件" class="headerlink" title="五、Lambda表达式的使用条件"></a>五、Lambda表达式的使用条件</h1><p>首先，都是接口；  其次，接口中有且只有一个接口，才可以使用lambda表达式</p>
+<p>1.接口中只有一个抽象方法的接口，叫做函数式接口</p>
+<p>2.如果是函数式接口，那么就可以用@FunctionalInterface注解标识</p>
+<p><img src="/2022/10/26/Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E8%AF%A6%E8%A7%A3/image-20221026165721571.png" alt="image-20221026165721571"></p>
+<p>上面这个是Thread线程的底层，下面的是Collections的底层</p>
+<p><img src="/2022/10/26/Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E8%AF%A6%E8%A7%A3/image-20221026172542797.png" alt="image-20221026172542797"></p>
+<p><strong>思考（扩展）：</strong></p>
+<p>Collections接口中有且只有一个抽象方法compareTo（），为什么Java底层没有给它@FunctionalInterface注解标识？（底层代码较多，截图不便，放心，我替你们看过了）<br>因为：lambda表达式属于  锦上添花  的功能，每个类都有各自的功能或作用，而Comparable接口目前学习到的主要是为了给自定义类实现比较器方法的，@FunctionalInterface注解标识的作用主要是为了给编译器看，给编译器提供信息的，不管有没有这个注解，只要满足函数式的要求，那么它就是一个函数式接口</p>
+<h1 id="六、Lambda表达式的省略格式"><a href="#六、Lambda表达式的省略格式" class="headerlink" title="六、Lambda表达式的省略格式"></a>六、Lambda表达式的省略格式</h1><p><strong>Lambda表达式的省略格式：</strong></p>
+<p>1.小括号中的形参类型可以省略</p>
+<p>2.如果小括号中只有一个参数的话，那么小括号可以省略</p>
+<p>3.如果大括号中只有一条语句，那么大括号、分号、return可以一起省略</p>
+<p><strong>代码案例：</strong></p>
+<p><strong>1.第一个还是线程案例</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> Thread(()-&gt; System.out.println(<span class="string">"省略"</span>)).start();</span><br></pre></td></tr></table></figure>
+
+<p><strong>2.第二个比较器的案例</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span> <span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 比较器案例</span></span><br><span class="line">    ArrayList&lt;Integer&gt; list = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    list.add(<span class="number">11</span>);</span><br><span class="line">    list.add(<span class="number">22</span>);</span><br><span class="line">    list.add(<span class="number">33</span>);</span><br><span class="line">    list.add(<span class="number">44</span>);</span><br><span class="line">    System.out.println(<span class="string">"排序前："</span> + list);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 比较器常规写法</span></span><br><span class="line">    Collections.sort(list, <span class="keyword">new</span> Comparator&lt;Integer&gt;() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">compare</span> <span class="params">(Integer o1, Integer o2)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> o2 - o1;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Lambda表达式</span></span><br><span class="line">    Collections.sort(list,(o1,o2)-&gt;o2-o1);</span><br><span class="line">    System.out.println(<span class="string">"排序后："</span> + list);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="七、表达式的表现形式"><a href="#七、表达式的表现形式" class="headerlink" title="七、表达式的表现形式"></a>七、表达式的表现形式</h1><p><strong>1. 变量的形式</strong></p>
+<p>变量的类型为函数式接口，就么可以复制一个Lambda表达式【不常用】</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 变量的形式</span></span><br><span class="line">Runnable r = ()-&gt;&#123;</span><br><span class="line">    System.out.println(<span class="string">"任务代码"</span>);</span><br><span class="line">&#125;;</span><br><span class="line"><span class="comment">// 函数式接口类型的变量</span></span><br><span class="line">Thread t = <span class="keyword">new</span> Thread(r);</span><br></pre></td></tr></table></figure>
+
+<p><strong>2. 参数的形式</strong></p>
+<p>方法的形参类型为函数式接口，就可以传入一个Lambda表达式【常用】</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 变量的形式-比较器</span></span><br><span class="line">Comparator&lt;Integer&gt; comparable = (o1, o2)-&gt;&#123;<span class="keyword">return</span> o2 - o1;&#125;;</span><br><span class="line"><span class="comment">// 创建集合</span></span><br><span class="line">ArrayList&lt;Integer&gt; list = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line"><span class="comment">// 存入数据</span></span><br><span class="line">Collections.addAll(list,<span class="number">11</span>,<span class="number">22</span>,<span class="number">33</span>,<span class="number">44</span>,<span class="number">55</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// 将函数式接口类型  的 形参类型，传给Collections</span></span><br><span class="line">Collections.sort(list,comparable);</span><br></pre></td></tr></table></figure>
+
+<p><strong>3. 返回值的形式</strong></p>
+<p>方法的返回值类型为函数式接口，就可以返回一个Lambda表达式【常用】</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 定义一个方法</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Comparator&lt;Integer&gt; <span class="title">getComparator</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (Integer o1,Integer o2)-&gt;&#123;<span class="keyword">return</span>  o2-o1;&#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span> <span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 返回值形式</span></span><br><span class="line">    Collections.sort(list,getComparator());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="八、函数引用"><a href="#八、函数引用" class="headerlink" title="八、函数引用"></a>八、函数引用</h1><p>lambda表达式是为了简化接口的实现的。在lambda表达式中，不应该出现比较复杂的逻辑。如果在lambda表达式中出现了过于复杂的逻辑，会对程序的可读性造成非常大的影响。如果在lambda表达式中需要处理的逻辑比较复杂，⼀般情况会单独的写⼀个方法。在lambda表达式中直接引用这个方法即可。</p>
+<p><strong>函数引用</strong>：引用⼀个已经存在的方法，使其替代lambda表达式完成接口的实现</p>
+<p><strong>1. 静态方法的引用</strong></p>
+<p><strong>语法</strong>：类::静态方法</p>
+<p><strong>注意事项：</strong></p>
+<ul>
+<li>在引用的方法后面，不要添加小括号。</li>
+<li>引用的这个方法，参数（数量、类型）和返回值，必须要跟接口中定义的⼀致</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> test;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test05</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//实现多个参数，一个返回值的接口</span></span><br><span class="line">        <span class="comment">//对一个静态方法的引用，语法：类::静态方法</span></span><br><span class="line">        Test1 test1 = Calculator::calculate;</span><br><span class="line">        System.out.println(test1.test(<span class="number">4</span>,<span class="number">5</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Calculator</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">calculate</span><span class="params">(<span class="keyword">int</span> a,<span class="keyword">int</span> b )</span></span>&#123;</span><br><span class="line">        <span class="comment">// 稍微复杂的逻辑：计算a和b的差值的绝对值</span></span><br><span class="line">        <span class="keyword">if</span> (a &gt; b) &#123;</span><br><span class="line">            <span class="keyword">return</span> a - b;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> b - a;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">Test1</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">test</span><span class="params">(<span class="keyword">int</span> a,<span class="keyword">int</span> b)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>2. 非静态方法的引用</strong></p>
+<p><strong>语法</strong>：对象::非静态方法</p>
+<p><strong>注意事项</strong>:</p>
+<ul>
+<li>在引用的方法后⾯，不要添加小括号。</li>
+<li>引用的这个方法， 参数（数量、类型） 和 返回值， 必须要跟接口中定义的⼀致。</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> test;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test06</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//对非静态方法的引用，需要使用对象来完成</span></span><br><span class="line">        Test2 test2 = <span class="keyword">new</span> Calculator()::calculate;</span><br><span class="line">        System.out.println(test2.calculate(<span class="number">2</span>, <span class="number">3</span>));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Calculator</span></span>&#123;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">calculate</span><span class="params">(<span class="keyword">int</span> a, <span class="keyword">int</span> b)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> a &gt; b ? a - b : b - a;</span><br><span class="line">         &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">Test2</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">int</span> <span class="title">calculate</span><span class="params">(<span class="keyword">int</span> a,<span class="keyword">int</span> b)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>3. 构造方法的引用</strong></p>
+<p><strong>使用场景</strong></p>
+<p>如果某⼀个函数式接口中定义的方法，仅仅是为了得到⼀个类的对象。此时我们就可以使用构造方法的引用，简化这个方法的实现。</p>
+<p><strong>语法</strong>：类名::new</p>
+<p><strong>注意事项</strong>：可以通过接口中的方法的参数， 区分引用不同的构造方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.cq.test;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Dog</span></span>&#123;</span><br><span class="line">        String name;</span><br><span class="line">        <span class="keyword">int</span> age;</span><br><span class="line">        <span class="comment">//无参构造</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">Dog</span><span class="params">()</span></span>&#123;</span><br><span class="line">            System.out.println(<span class="string">"一个Dog对象通过无参构造被实例化了"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//有参构造</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">Dog</span><span class="params">(String name,<span class="keyword">int</span> age)</span></span>&#123;</span><br><span class="line">            System.out.println(<span class="string">"一个Dog对象通过有参构造被实例化了"</span>);</span><br><span class="line">            <span class="keyword">this</span>.name = name;</span><br><span class="line">            <span class="keyword">this</span>.age = age;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//定义一个函数式接口,用以获取无参的对象</span></span><br><span class="line">    <span class="meta">@FunctionalInterface</span></span><br><span class="line">    <span class="keyword">private</span> <span class="class"><span class="keyword">interface</span> <span class="title">GetDog</span></span>&#123;</span><br><span class="line">        <span class="comment">//若此方法仅仅是为了获得一个Dog对象，而且通过无参构造去获取一个Dog对象作为返回值</span></span><br><span class="line">        <span class="function">Dog <span class="title">test</span><span class="params">()</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//定义一个函数式接口,用以获取有参的对象</span></span><br><span class="line">    <span class="meta">@FunctionalInterface</span></span><br><span class="line">    <span class="keyword">private</span> <span class="class"><span class="keyword">interface</span> <span class="title">GetDogWithParameter</span></span>&#123;</span><br><span class="line">        <span class="comment">//若此方法仅仅是为了获得一个Dog对象，而且通过有参构造去获取一个Dog对象作为返回值</span></span><br><span class="line">        <span class="function">Dog <span class="title">test</span><span class="params">(String name,<span class="keyword">int</span> age)</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 测试</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">//lambda表达式实现接口</span></span><br><span class="line">        GetDog lm = Dog::<span class="keyword">new</span>; <span class="comment">//引用到Dog类中的无参构造方法，获取到一个Dog对象</span></span><br><span class="line">        Dog dog = lm.test();</span><br><span class="line">        System.out.println(<span class="string">"修狗的名字："</span>+dog.name+<span class="string">" 修狗的年龄："</span>+dog.age); <span class="comment">//修狗的名字：null 修狗的年龄：0</span></span><br><span class="line">        GetDogWithParameter lm2 = Dog::<span class="keyword">new</span>;<span class="comment">//引用到Dog类中的有参构造，来获取一个Dog对象</span></span><br><span class="line">        Dog dog1 = lm2.test(<span class="string">"萨摩耶"</span>,<span class="number">2</span>);</span><br><span class="line">        System.out.println(<span class="string">"修狗的名字："</span>+dog1.name+<span class="string">" 修狗的年龄："</span>+dog1.age);<span class="comment">//修狗的名字：萨摩耶 修狗的年龄：2</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="九、Lambda表达式需要注意的问题"><a href="#九、Lambda表达式需要注意的问题" class="headerlink" title="九、Lambda表达式需要注意的问题"></a>九、Lambda表达式需要注意的问题</h1><p>这⾥类似于局部内部类、匿名内部类，依然存在闭包的问题。</p>
+<p>什么是闭包？<br>闭包的本质就是代码片断。所以闭包可以理解成一个代码片断的引用。在 Java 中匿名内部类也是闭包的一种实现方式。<br>在闭包中访问外部的变量时，外部变量必须是 final 类型，虚拟机会帮我们加上 final 修饰关键字。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Lambda表达式的使用_闭包问题</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test7</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">         * 如果我们想要去实现一个接口，我们可以使用匿名内部类*/</span></span><br><span class="line">        <span class="keyword">int</span> num = <span class="number">10</span>;</span><br><span class="line">        NoReturnNoParam noReturnNoParam = <span class="keyword">new</span> NoReturnNoParam() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">method</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                System.out.println(num);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">        noReturnNoParam.method();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>简化版:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Lambda表达式的使用_闭包问题</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test7</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">/*</span></span><br><span class="line"><span class="comment">         * 如果我们想要去实现一个接口，我们可以使用匿名内部类*/</span></span><br><span class="line">        <span class="keyword">int</span> num = <span class="number">10</span>;</span><br><span class="line">        NoReturnNoParam noReturnNoParam = ()-&gt;System.out.println(num);</span><br><span class="line">        noReturnNoParam.method();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>如果在lambda表达式中，使用到了局部变量，那么这个局部变量会被隐式的声明为 final。是⼀个常量，不能修改值。</strong></p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Rui Zhang
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://yoursite.com/2022/10/26/Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E8%AF%A6%E8%A7%A3/" title="Lambda表达式详解">http://yoursite.com/2022/10/26/Lambda表达式详解/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/CoreJava/" rel="tag"># CoreJava</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/08/30/%E5%8E%9F%E7%A0%81%E3%80%81%E5%8F%8D%E7%A0%81%E3%80%81%E8%A1%A5%E7%A0%81%E4%B9%8B%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB/" rel="prev" title="原码、反码、补码之间的关系">
+      <i class="fa fa-chevron-left"></i> 原码、反码、补码之间的关系
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2023/07/03/SparkCore%E7%AC%94%E8%AE%B0/" rel="next" title="SparkCore笔记">
+      SparkCore笔记 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一、概述"><span class="nav-number">1.</span> <span class="nav-text">一、概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二、Lambda表达式介绍"><span class="nav-number">2.</span> <span class="nav-text">二、Lambda表达式介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三、Lambda表达式的格式"><span class="nav-number">3.</span> <span class="nav-text">三、Lambda表达式的格式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四、表达式格式解析"><span class="nav-number">4.</span> <span class="nav-text">四、表达式格式解析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五、Lambda表达式的使用条件"><span class="nav-number">5.</span> <span class="nav-text">五、Lambda表达式的使用条件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#六、Lambda表达式的省略格式"><span class="nav-number">6.</span> <span class="nav-text">六、Lambda表达式的省略格式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#七、表达式的表现形式"><span class="nav-number">7.</span> <span class="nav-text">七、表达式的表现形式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#八、函数引用"><span class="nav-number">8.</span> <span class="nav-text">八、函数引用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#九、Lambda表达式需要注意的问题"><span class="nav-number">9.</span> <span class="nav-text">九、Lambda表达式需要注意的问题</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Rui Zhang"
+      src="/images/head.jpg">
+  <p class="site-author-name" itemprop="name">Rui Zhang</p>
+  <div class="site-description" itemprop="description">不在沉默中爆发，就在沉默中灭亡</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">52</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2021 – 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Rui Zhang</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.7m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">25:10</span>
+</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"right","width":120,"height":230},"mobile":{"show":true},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/clicklove.js"></script>

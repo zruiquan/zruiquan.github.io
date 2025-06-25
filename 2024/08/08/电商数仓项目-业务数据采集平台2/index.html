@@ -1,0 +1,2255 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="第1章 电商业务简介1.1 电商业务流程电商的业务流程可以以一个普通用户的浏览足迹为例进行说明，用户点开电商首页开始浏览，可能会通过分类查询也可能通过全文搜索寻找自己中意的商品，这些商品无疑都是存储在后台的管理系统中的。 当用户寻找到自己中意的商品，可能会想要购买，将商品添加到购物车后发现需要登录，登录后对商品进行结算，这时候购物车的管理和商品订单信息的生成都会对业务数据库产生影响，会生成相应的订">
+<meta property="og:type" content="article">
+<meta property="og:title" content="电商数仓项目-业务数据采集平台2">
+<meta property="og:url" content="http://yoursite.com/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/index.html">
+<meta property="og:site_name" content="没有尾巴的小驴">
+<meta property="og:description" content="第1章 电商业务简介1.1 电商业务流程电商的业务流程可以以一个普通用户的浏览足迹为例进行说明，用户点开电商首页开始浏览，可能会通过分类查询也可能通过全文搜索寻找自己中意的商品，这些商品无疑都是存储在后台的管理系统中的。 当用户寻找到自己中意的商品，可能会想要购买，将商品添加到购物车后发现需要登录，登录后对商品进行结算，这时候购物车的管理和商品订单信息的生成都会对业务数据库产生影响，会生成相应的订">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps1.png">
+<meta property="og:image" content="http://yoursite.com/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps2.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps3.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps4.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps5.png">
+<meta property="og:image" content="http://yoursite.com/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps6.png">
+<meta property="og:image" content="http://yoursite.com/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps25.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps26.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps27.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps28.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps29.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps30.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps31.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps32.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps33.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps34.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps35.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps36.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps37.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps38.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps39.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps40.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps41.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps42.jpg">
+<meta property="og:image" content="http://yoursite.com/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps43.png">
+<meta property="og:image" content="http://yoursite.com/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps44.png">
+<meta property="og:image" content="http://yoursite.com/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps45.jpg">
+<meta property="article:published_time" content="2024-08-08T08:03:42.000Z">
+<meta property="article:modified_time" content="2025-06-25T08:08:46.292Z">
+<meta property="article:author" content="Rui Zhang">
+<meta property="article:tag" content="数仓">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps1.png">
+
+<link rel="canonical" href="http://yoursite.com/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true
+  };
+</script>
+
+  <title>电商数仓项目-业务数据采集平台2 | 没有尾巴的小驴</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">没有尾巴的小驴</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">记录生活</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">22</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">22</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">52</span></a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/head.jpg">
+      <meta itemprop="name" content="Rui Zhang">
+      <meta itemprop="description" content="不在沉默中爆发，就在沉默中灭亡">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="没有尾巴的小驴">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          电商数仓项目-业务数据采集平台2
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-08-08 16:03:42" itemprop="dateCreated datePublished" datetime="2024-08-08T16:03:42+08:00">2024-08-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-06-25 16:08:46" itemprop="dateModified" datetime="2025-06-25T16:08:46+08:00">2025-06-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%B0%E4%BB%93/" itemprop="url" rel="index"><span itemprop="name">数仓</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>17k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>16 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="第1章-电商业务简介"><a href="#第1章-电商业务简介" class="headerlink" title="第1章 电商业务简介"></a>第1章 电商业务简介</h1><h2 id="1-1-电商业务流程"><a href="#1-1-电商业务流程" class="headerlink" title="1.1 电商业务流程"></a>1.1 电商业务流程</h2><p>电商的业务流程可以以一个普通用户的浏览足迹为例进行说明，用户点开电商首页开始浏览，可能会通过分类查询也可能通过全文搜索寻找自己中意的商品，这些商品无疑都是存储在后台的管理系统中的。</p>
+<p>当用户寻找到自己中意的商品，可能会想要购买，将商品添加到购物车后发现需要登录，登录后对商品进行结算，这时候购物车的管理和商品订单信息的生成都会对业务数据库产生影响，会生成相应的订单数据和支付数据。</p>
+<p>订单正式生成之后，还会对订单进行跟踪处理，直到订单全部完成。</p>
+<p>电商的主要业务流程包括用户前台浏览商品时的商品详情的管理，用户商品加入购物车进行支付时用户个人中心&amp;支付服务的管理，用户支付完成后订单后台服务的管理，这些流程涉及到了十几个甚至几十个业务数据表，甚至更多。</p>
+<p><img src="/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps1.png" alt="img"> </p>
+<h2 id="1-2-电商常识"><a href="#1-2-电商常识" class="headerlink" title="1.2 电商常识"></a>1.2 电商常识</h2><h3 id="1-2-1-SKU和SPU"><a href="#1-2-1-SKU和SPU" class="headerlink" title="1.2.1 SKU和SPU"></a>1.2.1 SKU和SPU</h3><p> SKU = Stock Keeping Unit（库存量基本单位）。现在已经被引申为产品统一编号的简称，每种产品均对应有唯一的SKU号。</p>
+<p> SPU（Standard Product Unit）：是商品信息聚合的最小单位，是一组可复用、易检索的标准化信息集合。</p>
+<p>例如：iPhoneX手机就是SPU。一台银色、128G内存的、支持联通网络的iPhoneX，就是SKU。</p>
+<p><img src="/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps2.jpg" alt="img"> </p>
+<p>SPU表示一类商品。同一SPU的商品可以共用商品图片、海报、销售属性等。</p>
+<h3 id="1-2-2-平台属性和销售属性"><a href="#1-2-2-平台属性和销售属性" class="headerlink" title="1.2.2 平台属性和销售属性"></a>1.2.2 平台属性和销售属性</h3><p>1）平台属性</p>
+<p><img src="/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps3.jpg" alt="img"> </p>
+<p>2）销售属性</p>
+<p><img src="/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps4.jpg" alt="img"> </p>
+<h1 id="第2章-业务数据介绍"><a href="#第2章-业务数据介绍" class="headerlink" title="第2章 业务数据介绍"></a>第2章 业务数据介绍</h1><h2 id="2-1-电商系统表结构"><a href="#2-1-电商系统表结构" class="headerlink" title="2.1 电商系统表结构"></a>2.1 电商系统表结构</h2><p>以下为本电商数仓系统涉及到的业务数据表结构关系。这34个表以订单表、用户表、SKU商品表、活动表和优惠券表为中心，延伸出了优惠券领用表、支付流水表、活动订单表、订单详情表、订单状态表、商品评论表、编码字典表退单表、SPU商品表等，用户表提供用户的详细信息，支付流水表提供该订单的支付详情，订单详情表提供订单的商品数量等情况，商品表给订单详情表提供商品的详细信息。本次讲解以此34个表为例，实际项目中，业务数据库中表格远远不止这些。</p>
+<h3 id="2-1-1-活动信息表（activity-info）"><a href="#2-1-1-活动信息表（activity-info）" class="headerlink" title="2.1.1 活动信息表（activity_info）"></a>2.1.1 活动信息表（activity_info）</h3><table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>字段说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>活动ID</td>
+</tr>
+<tr>
+<td>activity_name</td>
+<td>活动名称</td>
+</tr>
+<tr>
+<td>activity_type</td>
+<td>活动类型（1：满减，2：折扣）</td>
+</tr>
+<tr>
+<td>activity_desc</td>
+<td>活动描述</td>
+</tr>
+<tr>
+<td>start_time</td>
+<td>开始时间</td>
+</tr>
+<tr>
+<td>end_time</td>
+<td>结束时间</td>
+</tr>
+<tr>
+<td>create_time</td>
+<td>创建时间</td>
+</tr>
+<tr>
+<td>operate_time</td>
+<td>修改时间</td>
+</tr>
+</tbody></table>
+<h3 id="2-1-2-活动规则表（activity-rule）"><a href="#2-1-2-活动规则表（activity-rule）" class="headerlink" title="2.1.2 活动规则表（activity_rule）"></a>2.1.2 活动规则表（activity_rule）</h3><table>
+<thead>
+<tr>
+<th>id</th>
+<th>编号</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>activity_id</td>
+<td>活动ID</td>
+</tr>
+<tr>
+<td>activity_type</td>
+<td>活动类型</td>
+</tr>
+<tr>
+<td>condition_amount</td>
+<td>满减金额</td>
+</tr>
+<tr>
+<td>condition_num</td>
+<td>满减件数</td>
+</tr>
+<tr>
+<td>benefit_amount</td>
+<td>优惠金额</td>
+</tr>
+<tr>
+<td>benefit_discount</td>
+<td>优惠折扣</td>
+</tr>
+<tr>
+<td>benefit_level</td>
+<td>优惠级别</td>
+</tr>
+<tr>
+<td>create_time</td>
+<td>创建时间</td>
+</tr>
+<tr>
+<td>operate_time</td>
+<td>修改时间</td>
+</tr>
+</tbody></table>
+<h3 id="2-1-3-活动商品关联表（activity-sku）"><a href="#2-1-3-活动商品关联表（activity-sku）" class="headerlink" title="2.1.3 活动商品关联表（activity_sku）"></a>2.1.3 活动商品关联表（activity_sku）</h3><table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>字段说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>编号</td>
+</tr>
+<tr>
+<td>activity_id</td>
+<td>活动ID</td>
+</tr>
+<tr>
+<td>sku_id</td>
+<td>SKU_ID</td>
+</tr>
+<tr>
+<td>create_time</td>
+<td>创建时间</td>
+</tr>
+</tbody></table>
+<h3 id="2-1-4-平台属性表（base-attr-info）"><a href="#2-1-4-平台属性表（base-attr-info）" class="headerlink" title="2.1.4 平台属性表（base_attr_info）"></a>2.1.4 平台属性表（base_attr_info）</h3><table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>字段说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>编号</td>
+</tr>
+<tr>
+<td>attr_name</td>
+<td>属性名称</td>
+</tr>
+<tr>
+<td>category_id</td>
+<td>品类ID</td>
+</tr>
+<tr>
+<td>category_level</td>
+<td>品类层级</td>
+</tr>
+</tbody></table>
+<h3 id="2-1-5-平台属性值表（base-attr-value）"><a href="#2-1-5-平台属性值表（base-attr-value）" class="headerlink" title="2.1.5 平台属性值表（base_attr_value）"></a>2.1.5 平台属性值表（base_attr_value）</h3><table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>字段说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>编号</td>
+</tr>
+<tr>
+<td>value_name</td>
+<td>属性值名称</td>
+</tr>
+<tr>
+<td>attr_id</td>
+<td>属性ID</td>
+</tr>
+</tbody></table>
+<h3 id="2-1-6-一级分类表（base-category1）"><a href="#2-1-6-一级分类表（base-category1）" class="headerlink" title="2.1.6 一级分类表（base_category1）"></a>2.1.6 一级分类表（base_category1）</h3><table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>字段说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>一级品类ID</td>
+</tr>
+<tr>
+<td>name</td>
+<td>一级品类名称</td>
+</tr>
+<tr>
+<td>create_time</td>
+<td>创建时间</td>
+</tr>
+<tr>
+<td>operate_time</td>
+<td>修改时间</td>
+</tr>
+</tbody></table>
+<h3 id="2-1-7-二级分类表（base-category2）"><a href="#2-1-7-二级分类表（base-category2）" class="headerlink" title="2.1.7 二级分类表（base_category2）"></a>2.1.7 二级分类表（base_category2）</h3><table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>字段说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>二级品类ID</td>
+</tr>
+<tr>
+<td>name</td>
+<td>二级品类名称</td>
+</tr>
+<tr>
+<td>category1_id</td>
+<td>一级品类ID</td>
+</tr>
+<tr>
+<td>create_time</td>
+<td>创建时间</td>
+</tr>
+<tr>
+<td>operate_time</td>
+<td>修改时间</td>
+</tr>
+</tbody></table>
+<h3 id="2-1-8-三级分类表（base-category3）"><a href="#2-1-8-三级分类表（base-category3）" class="headerlink" title="2.1.8 三级分类表（base_category3）"></a>2.1.8 三级分类表（base_category3）</h3><table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>字段说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>三级品类ID</td>
+</tr>
+<tr>
+<td>name</td>
+<td>三级品类名称</td>
+</tr>
+<tr>
+<td>category2_id</td>
+<td>二级品类ID</td>
+</tr>
+<tr>
+<td>create_time</td>
+<td>创建时间</td>
+</tr>
+<tr>
+<td>operate_time</td>
+<td>修改时间</td>
+</tr>
+</tbody></table>
+<h3 id="2-1-9-字典表（base-dic）"><a href="#2-1-9-字典表（base-dic）" class="headerlink" title="2.1.9 字典表（base_dic）"></a>2.1.9 字典表（base_dic）</h3><table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>字段说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>dic_code</td>
+<td>编号</td>
+</tr>
+<tr>
+<td>dic_name</td>
+<td>编码名称</td>
+</tr>
+<tr>
+<td>parent_code</td>
+<td>父编号</td>
+</tr>
+<tr>
+<td>create_time</td>
+<td>创建日期</td>
+</tr>
+<tr>
+<td>operate_time</td>
+<td>修改日期</td>
+</tr>
+</tbody></table>
+<h3 id="2-1-10-省份表（base-province）"><a href="#2-1-10-省份表（base-province）" class="headerlink" title="2.1.10 省份表（base_province）"></a>2.1.10 省份表（base_province）</h3><table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>字段说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>省份ID</td>
+</tr>
+<tr>
+<td>name</td>
+<td>省份名称</td>
+</tr>
+<tr>
+<td>region_id</td>
+<td>地区ID</td>
+</tr>
+<tr>
+<td>area_code</td>
+<td>行政区位码</td>
+</tr>
+<tr>
+<td>iso_code</td>
+<td>旧版国际标准地区编码</td>
+</tr>
+<tr>
+<td>iso_3166_2</td>
+<td>新版国际标准地区编码</td>
+</tr>
+<tr>
+<td>create_time</td>
+<td>创建时间</td>
+</tr>
+<tr>
+<td>operate_time</td>
+<td>修改时间</td>
+</tr>
+</tbody></table>
+<h3 id="2-1-11-地区表（base-region）"><a href="#2-1-11-地区表（base-region）" class="headerlink" title="2.1.11 地区表（base_region）"></a>2.1.11 地区表（base_region）</h3><table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>字段说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>地区ID</td>
+</tr>
+<tr>
+<td>region_name</td>
+<td>地区名称</td>
+</tr>
+<tr>
+<td>create_time</td>
+<td>创建时间</td>
+</tr>
+<tr>
+<td>operate_time</td>
+<td>修改时间</td>
+</tr>
+</tbody></table>
+<h3 id="2-1-12-品牌表（base-trademark）"><a href="#2-1-12-品牌表（base-trademark）" class="headerlink" title="2.1.12 品牌表（base_trademark）"></a>2.1.12 品牌表（base_trademark）</h3><table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>字段说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>品牌ID</td>
+</tr>
+<tr>
+<td>tm_name</td>
+<td>品牌名称</td>
+</tr>
+<tr>
+<td>logo_url</td>
+<td>品牌LOGO的图片路径</td>
+</tr>
+<tr>
+<td>create_time</td>
+<td>创建时间</td>
+</tr>
+<tr>
+<td>operate_time</td>
+<td>修改时间</td>
+</tr>
+</tbody></table>
+<h3 id="2-1-13-购物车表（cart-info）"><a href="#2-1-13-购物车表（cart-info）" class="headerlink" title="2.1.13 购物车表（cart_info）"></a>2.1.13 购物车表（cart_info）</h3><table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>字段说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>编号</td>
+</tr>
+<tr>
+<td>user_id</td>
+<td>用户ID</td>
+</tr>
+<tr>
+<td>sku_id</td>
+<td>SKU_ID</td>
+</tr>
+<tr>
+<td>cart_price</td>
+<td>放入购物车时价格</td>
+</tr>
+<tr>
+<td>sku_num</td>
+<td>数量</td>
+</tr>
+<tr>
+<td>img_url</td>
+<td>图片连接</td>
+</tr>
+<tr>
+<td>sku_name</td>
+<td>SKU名称 (冗余)</td>
+</tr>
+<tr>
+<td>is_checked</td>
+<td>是否被选中</td>
+</tr>
+<tr>
+<td>create_time</td>
+<td>创建时间</td>
+</tr>
+<tr>
+<td>operate_time</td>
+<td>修改时间</td>
+</tr>
+<tr>
+<td>is_ordered</td>
+<td>是否已下单</td>
+</tr>
+<tr>
+<td>order_time</td>
+<td>下单时间</td>
+</tr>
+<tr>
+<td>source_type</td>
+<td>来源类型</td>
+</tr>
+<tr>
+<td>source_id</td>
+<td>来源编号</td>
+</tr>
+</tbody></table>
+<h3 id="2-1-14-评价表（comment-info）"><a href="#2-1-14-评价表（comment-info）" class="headerlink" title="2.1.14 评价表（comment_info）"></a>2.1.14 评价表（comment_info）</h3><table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>字段说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>编号</td>
+</tr>
+<tr>
+<td>user_id</td>
+<td>用户ID</td>
+</tr>
+<tr>
+<td>nick_name</td>
+<td>用户昵称</td>
+</tr>
+<tr>
+<td>head_img</td>
+<td>图片</td>
+</tr>
+<tr>
+<td>sku_id</td>
+<td>商品SKU_ID</td>
+</tr>
+<tr>
+<td>spu_id</td>
+<td>商品SPU_ID</td>
+</tr>
+<tr>
+<td>order_id</td>
+<td>订单ID</td>
+</tr>
+<tr>
+<td>appraise</td>
+<td>评价 1 好评 2 中评 3 差评</td>
+</tr>
+<tr>
+<td>comment_txt</td>
+<td>评价内容</td>
+</tr>
+<tr>
+<td>create_time</td>
+<td>创建时间</td>
+</tr>
+<tr>
+<td>operate_time</td>
+<td>修改时间</td>
+</tr>
+</tbody></table>
+<h3 id="2-1-15-优惠券信息表（coupon-info）"><a href="#2-1-15-优惠券信息表（coupon-info）" class="headerlink" title="2.1.15 优惠券信息表（coupon_info）"></a>2.1.15 优惠券信息表（coupon_info）</h3><table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>字段说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>购物券编号</td>
+</tr>
+<tr>
+<td>coupon_name</td>
+<td>购物券名称</td>
+</tr>
+<tr>
+<td>coupon_type</td>
+<td>购物券类型 1 现金券 2 折扣券 3 满减券 4 满件打折券</td>
+</tr>
+<tr>
+<td>condition_amount</td>
+<td>满额数</td>
+</tr>
+<tr>
+<td>condition_num</td>
+<td>满件数</td>
+</tr>
+<tr>
+<td>activity_id</td>
+<td>活动编号</td>
+</tr>
+<tr>
+<td>benefit_amount</td>
+<td>减免金额</td>
+</tr>
+<tr>
+<td>benefit_discount</td>
+<td>折扣</td>
+</tr>
+<tr>
+<td>create_time</td>
+<td>创建时间</td>
+</tr>
+<tr>
+<td>range_type</td>
+<td>范围类型 1、商品(spuid) 2、品类(三级分类id) 3、品牌</td>
+</tr>
+<tr>
+<td>limit_num</td>
+<td>最多领用次数</td>
+</tr>
+<tr>
+<td>taken_count</td>
+<td>已领用次数</td>
+</tr>
+<tr>
+<td>start_time</td>
+<td>可以领取的开始时间</td>
+</tr>
+<tr>
+<td>end_time</td>
+<td>可以领取的结束时间</td>
+</tr>
+<tr>
+<td>operate_time</td>
+<td>修改时间</td>
+</tr>
+<tr>
+<td>expire_time</td>
+<td>过期时间</td>
+</tr>
+<tr>
+<td>range_desc</td>
+<td>范围描述</td>
+</tr>
+</tbody></table>
+<h3 id="2-1-16-优惠券优惠范围表（coupon-range）"><a href="#2-1-16-优惠券优惠范围表（coupon-range）" class="headerlink" title="2.1.16 优惠券优惠范围表（coupon_range）"></a>2.1.16 优惠券优惠范围表（coupon_range）</h3><table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>字段说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>编号</td>
+</tr>
+<tr>
+<td>coupon_id</td>
+<td>优惠券ID</td>
+</tr>
+<tr>
+<td>range_type</td>
+<td>范围类型 1、商品(spuid) 2、品类(三级分类id) 3、品牌</td>
+</tr>
+<tr>
+<td>range_id</td>
+<td>范围ID</td>
+</tr>
+</tbody></table>
+<h3 id="2-1-17-优惠券领用表（coupon-use）"><a href="#2-1-17-优惠券领用表（coupon-use）" class="headerlink" title="2.1.17 优惠券领用表（coupon_use）"></a>2.1.17 优惠券领用表（coupon_use）</h3><table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>字段说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>编号</td>
+</tr>
+<tr>
+<td>coupon_id</td>
+<td>购物券ID</td>
+</tr>
+<tr>
+<td>user_id</td>
+<td>用户ID</td>
+</tr>
+<tr>
+<td>order_id</td>
+<td>订单ID</td>
+</tr>
+<tr>
+<td>coupon_status</td>
+<td>购物券状态（1：未使用 2：已使用）</td>
+</tr>
+<tr>
+<td>get_time</td>
+<td>获取时间</td>
+</tr>
+<tr>
+<td>using_time</td>
+<td>使用时间</td>
+</tr>
+<tr>
+<td>used_time</td>
+<td>支付时间</td>
+</tr>
+<tr>
+<td>expire_time</td>
+<td>过期时间</td>
+</tr>
+</tbody></table>
+<h3 id="2-1-18-收藏表（favor-info）"><a href="#2-1-18-收藏表（favor-info）" class="headerlink" title="2.1.18 收藏表（favor_info）"></a>2.1.18 收藏表（favor_info）</h3><table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>字段说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>编号</td>
+</tr>
+<tr>
+<td>user_id</td>
+<td>用户ID</td>
+</tr>
+<tr>
+<td>sku_id</td>
+<td>SKU_ID</td>
+</tr>
+<tr>
+<td>spu_id</td>
+<td>SPU_ID</td>
+</tr>
+<tr>
+<td>is_cancel</td>
+<td>是否已取消 0 正常 1 已取消</td>
+</tr>
+<tr>
+<td>create_time</td>
+<td>创建时间</td>
+</tr>
+<tr>
+<td>operate_time</td>
+<td>修改时间</td>
+</tr>
+</tbody></table>
+<h3 id="2-1-19-订单明细表（order-detail）"><a href="#2-1-19-订单明细表（order-detail）" class="headerlink" title="2.1.19 订单明细表（order_detail）"></a>2.1.19 订单明细表（order_detail）</h3><table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>字段说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>编号</td>
+</tr>
+<tr>
+<td>order_id</td>
+<td>订单ID</td>
+</tr>
+<tr>
+<td>sku_id</td>
+<td>SKU_ID</td>
+</tr>
+<tr>
+<td>sku_name</td>
+<td>SKU名称（冗余)</td>
+</tr>
+<tr>
+<td>img_url</td>
+<td>图片链接（冗余)</td>
+</tr>
+<tr>
+<td>order_price</td>
+<td>购买价格(下单时sku价格）</td>
+</tr>
+<tr>
+<td>sku_num</td>
+<td>购买个数</td>
+</tr>
+<tr>
+<td>create_time</td>
+<td>创建时间</td>
+</tr>
+<tr>
+<td>source_type</td>
+<td>来源类型</td>
+</tr>
+<tr>
+<td>source_id</td>
+<td>来源编号</td>
+</tr>
+<tr>
+<td>split_total_amount</td>
+<td>分摊总金额</td>
+</tr>
+<tr>
+<td>split_activity_amount</td>
+<td>分摊活动减免金额</td>
+</tr>
+<tr>
+<td>split_coupon_amount</td>
+<td>分摊优惠券减免金额</td>
+</tr>
+<tr>
+<td>operate_time</td>
+<td>修改时间</td>
+</tr>
+</tbody></table>
+<h3 id="2-1-20-订单明细活动关联表（order-detail-activity）"><a href="#2-1-20-订单明细活动关联表（order-detail-activity）" class="headerlink" title="2.1.20 订单明细活动关联表（order_detail_activity）"></a>2.1.20 订单明细活动关联表（order_detail_activity）</h3><table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>字段说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>编号</td>
+</tr>
+<tr>
+<td>order_id</td>
+<td>订单ID</td>
+</tr>
+<tr>
+<td>order_detail_id</td>
+<td>订单明细ID</td>
+</tr>
+<tr>
+<td>activity_id</td>
+<td>活动ID</td>
+</tr>
+<tr>
+<td>activity_rule_id</td>
+<td>活动规则ID</td>
+</tr>
+<tr>
+<td>sku_id</td>
+<td>SKU_ID</td>
+</tr>
+<tr>
+<td>create_time</td>
+<td>创建时间</td>
+</tr>
+<tr>
+<td>operate_time</td>
+<td>修改时间</td>
+</tr>
+</tbody></table>
+<h3 id="2-1-21-订单明细优惠券关联表（order-detail-coupon）"><a href="#2-1-21-订单明细优惠券关联表（order-detail-coupon）" class="headerlink" title="2.1.21 订单明细优惠券关联表（order_detail_coupon）"></a>2.1.21 订单明细优惠券关联表（order_detail_coupon）</h3><table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>字段说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>编号</td>
+</tr>
+<tr>
+<td>order_id</td>
+<td>订单ID</td>
+</tr>
+<tr>
+<td>order_detail_id</td>
+<td>订单明细ID</td>
+</tr>
+<tr>
+<td>coupon_id</td>
+<td>购物券ID</td>
+</tr>
+<tr>
+<td>coupon_use_id</td>
+<td>购物券领用ID</td>
+</tr>
+<tr>
+<td>sku_id</td>
+<td>SKU_ID</td>
+</tr>
+<tr>
+<td>create_time</td>
+<td>获取时间</td>
+</tr>
+<tr>
+<td>operate_time</td>
+<td>修改时间</td>
+</tr>
+</tbody></table>
+<h3 id="2-1-22-订单表-order-info）"><a href="#2-1-22-订单表-order-info）" class="headerlink" title="2.1.22 订单表(order_info）"></a>2.1.22 订单表(order_info）</h3><table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>字段说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>编号</td>
+</tr>
+<tr>
+<td>consignee</td>
+<td>收货人</td>
+</tr>
+<tr>
+<td>consignee_tel</td>
+<td>收件人电话</td>
+</tr>
+<tr>
+<td>total_amount</td>
+<td>总金额</td>
+</tr>
+<tr>
+<td>order_status</td>
+<td>订单状态</td>
+</tr>
+<tr>
+<td>user_id</td>
+<td>用户ID</td>
+</tr>
+<tr>
+<td>payment_way</td>
+<td>付款方式</td>
+</tr>
+<tr>
+<td>delivery_address</td>
+<td>送货地址</td>
+</tr>
+<tr>
+<td>order_comment</td>
+<td>订单备注</td>
+</tr>
+<tr>
+<td>out_trade_no</td>
+<td>订单交易编号（第三方支付用)</td>
+</tr>
+<tr>
+<td>trade_body</td>
+<td>订单描述(第三方支付用)</td>
+</tr>
+<tr>
+<td>create_time</td>
+<td>创建时间</td>
+</tr>
+<tr>
+<td>operate_time</td>
+<td>修改时间</td>
+</tr>
+<tr>
+<td>expire_time</td>
+<td>失效时间</td>
+</tr>
+<tr>
+<td>process_status</td>
+<td>进度状态</td>
+</tr>
+<tr>
+<td>tracking_no</td>
+<td>物流单编号</td>
+</tr>
+<tr>
+<td>parent_order_id</td>
+<td>父订单编号</td>
+</tr>
+<tr>
+<td>img_url</td>
+<td>图片路径</td>
+</tr>
+<tr>
+<td>province_id</td>
+<td>省份ID</td>
+</tr>
+<tr>
+<td>activity_reduce_amount</td>
+<td>活动减免金额</td>
+</tr>
+<tr>
+<td>coupon_reduce_amount</td>
+<td>优惠券减免金额</td>
+</tr>
+<tr>
+<td>original_total_amount</td>
+<td>原价金额</td>
+</tr>
+<tr>
+<td>feight_fee</td>
+<td>运费金额</td>
+</tr>
+<tr>
+<td>feight_fee_reduce</td>
+<td>运费减免金额</td>
+</tr>
+<tr>
+<td>refundable_time</td>
+<td>可退款时间（签收后30天）</td>
+</tr>
+</tbody></table>
+<h3 id="2-1-23-退单表（order-refund-info）"><a href="#2-1-23-退单表（order-refund-info）" class="headerlink" title="2.1.23 退单表（order_refund_info）"></a>2.1.23 退单表（order_refund_info）</h3><table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>字段说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>编号</td>
+</tr>
+<tr>
+<td>user_id</td>
+<td>用户ID</td>
+</tr>
+<tr>
+<td>order_id</td>
+<td>订单ID</td>
+</tr>
+<tr>
+<td>sku_id</td>
+<td>SKU_ID</td>
+</tr>
+<tr>
+<td>refund_type</td>
+<td>退款类型</td>
+</tr>
+<tr>
+<td>refund_num</td>
+<td>退货件数</td>
+</tr>
+<tr>
+<td>refund_amount</td>
+<td>退款金额</td>
+</tr>
+<tr>
+<td>refund_reason_type</td>
+<td>原因类型</td>
+</tr>
+<tr>
+<td>refund_reason_txt</td>
+<td>原因内容</td>
+</tr>
+<tr>
+<td>refund_status</td>
+<td>退款状态（0：待审批 1：已退款）</td>
+</tr>
+<tr>
+<td>create_time</td>
+<td>创建时间</td>
+</tr>
+<tr>
+<td>operate_time</td>
+<td>修改时间</td>
+</tr>
+</tbody></table>
+<h3 id="2-1-24-订单状态流水表（order-status-log）"><a href="#2-1-24-订单状态流水表（order-status-log）" class="headerlink" title="2.1.24 订单状态流水表（order_status_log）"></a>2.1.24 订单状态流水表（order_status_log）</h3><table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>字段说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>编号</td>
+</tr>
+<tr>
+<td>order_id</td>
+<td>订单编号</td>
+</tr>
+<tr>
+<td>order_status</td>
+<td>订单状态</td>
+</tr>
+<tr>
+<td>create_time</td>
+<td>创建时间</td>
+</tr>
+<tr>
+<td>operate_time</td>
+<td>修改时间</td>
+</tr>
+</tbody></table>
+<h3 id="2-1-25-支付表（payment-info）"><a href="#2-1-25-支付表（payment-info）" class="headerlink" title="2.1.25 支付表（payment_info）"></a>2.1.25 支付表（payment_info）</h3><table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>字段说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>编号</td>
+</tr>
+<tr>
+<td>out_trade_no</td>
+<td>对外业务编号</td>
+</tr>
+<tr>
+<td>order_id</td>
+<td>订单编号</td>
+</tr>
+<tr>
+<td>user_id</td>
+<td>用户ID</td>
+</tr>
+<tr>
+<td>payment_type</td>
+<td>支付类型（微信 支付宝）</td>
+</tr>
+<tr>
+<td>trade_no</td>
+<td>交易编号</td>
+</tr>
+<tr>
+<td>total_amount</td>
+<td>支付金额</td>
+</tr>
+<tr>
+<td>subject</td>
+<td>交易内容</td>
+</tr>
+<tr>
+<td>payment_status</td>
+<td>支付状态</td>
+</tr>
+<tr>
+<td>create_time</td>
+<td>创建时间</td>
+</tr>
+<tr>
+<td>callback_time</td>
+<td>回调时间</td>
+</tr>
+<tr>
+<td>callback_content</td>
+<td>回调信息</td>
+</tr>
+<tr>
+<td>operate_time</td>
+<td>修改时间</td>
+</tr>
+</tbody></table>
+<h3 id="2-1-26-退款表（refund-payment）"><a href="#2-1-26-退款表（refund-payment）" class="headerlink" title="2.1.26 退款表（refund_payment）"></a>2.1.26 退款表（refund_payment）</h3><table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>字段说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>编号</td>
+</tr>
+<tr>
+<td>out_trade_no</td>
+<td>对外业务编号</td>
+</tr>
+<tr>
+<td>order_id</td>
+<td>订单编号</td>
+</tr>
+<tr>
+<td>sku_id</td>
+<td>SKU_ID</td>
+</tr>
+<tr>
+<td>payment_type</td>
+<td>支付类型（微信 支付宝）</td>
+</tr>
+<tr>
+<td>trade_no</td>
+<td>交易编号</td>
+</tr>
+<tr>
+<td>total_amount</td>
+<td>退款金额</td>
+</tr>
+<tr>
+<td>subject</td>
+<td>交易内容</td>
+</tr>
+<tr>
+<td>refund_status</td>
+<td>退款状态</td>
+</tr>
+<tr>
+<td>create_time</td>
+<td>创建时间</td>
+</tr>
+<tr>
+<td>callback_time</td>
+<td>回调时间</td>
+</tr>
+<tr>
+<td>callback_content</td>
+<td>回调信息</td>
+</tr>
+<tr>
+<td>operate_time</td>
+<td>修改时间</td>
+</tr>
+</tbody></table>
+<h3 id="2-1-27-SKU平台属性表（sku-attr-value）"><a href="#2-1-27-SKU平台属性表（sku-attr-value）" class="headerlink" title="2.1.27 SKU平台属性表（sku_attr_value）"></a>2.1.27 SKU平台属性表（sku_attr_value）</h3><table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>字段说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>编号</td>
+</tr>
+<tr>
+<td>attr_id</td>
+<td>属性ID（冗余)</td>
+</tr>
+<tr>
+<td>value_id</td>
+<td>属性值ID</td>
+</tr>
+<tr>
+<td>sku_id</td>
+<td>SKU_ID</td>
+</tr>
+<tr>
+<td>attr_name</td>
+<td>属性名称</td>
+</tr>
+<tr>
+<td>value_name</td>
+<td>属性值名称</td>
+</tr>
+<tr>
+<td>create_time</td>
+<td>创建时间</td>
+</tr>
+<tr>
+<td>operate_time</td>
+<td>修改时间</td>
+</tr>
+</tbody></table>
+<h3 id="2-1-28-SKU信息表（sku-info）"><a href="#2-1-28-SKU信息表（sku-info）" class="headerlink" title="2.1.28 SKU信息表（sku_info）"></a>2.1.28 SKU信息表（sku_info）</h3><table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>字段说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>SKU_ID</td>
+</tr>
+<tr>
+<td>spu_id</td>
+<td>SPU_ID</td>
+</tr>
+<tr>
+<td>price</td>
+<td>价格</td>
+</tr>
+<tr>
+<td>sku_name</td>
+<td>SKU名称</td>
+</tr>
+<tr>
+<td>sku_desc</td>
+<td>商品规格描述</td>
+</tr>
+<tr>
+<td>weight</td>
+<td>重量</td>
+</tr>
+<tr>
+<td>tm_id</td>
+<td>品牌ID(冗余)</td>
+</tr>
+<tr>
+<td>category3_id</td>
+<td>三级品类ID（冗余)</td>
+</tr>
+<tr>
+<td>sku_default_img</td>
+<td>默认显示图片(冗余)</td>
+</tr>
+<tr>
+<td>is_sale</td>
+<td>是否销售（1：是 0：否）</td>
+</tr>
+<tr>
+<td>create_time</td>
+<td>创建时间</td>
+</tr>
+<tr>
+<td>operate_time</td>
+<td>修改时间</td>
+</tr>
+</tbody></table>
+<h3 id="2-1-29-SKU销售属性表（sku-sale-attr-value）"><a href="#2-1-29-SKU销售属性表（sku-sale-attr-value）" class="headerlink" title="2.1.29 SKU销售属性表（sku_sale_attr_value）"></a>2.1.29 SKU销售属性表（sku_sale_attr_value）</h3><table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>字段说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>编号</td>
+</tr>
+<tr>
+<td>sku_id</td>
+<td>SKU_ID</td>
+</tr>
+<tr>
+<td>spu_id</td>
+<td>SPU_ID（冗余）</td>
+</tr>
+<tr>
+<td>sale_attr_value_id</td>
+<td>销售属性值ID</td>
+</tr>
+<tr>
+<td>sale_attr_id</td>
+<td>销售属性ID</td>
+</tr>
+<tr>
+<td>sale_attr_name</td>
+<td>销售属性名称</td>
+</tr>
+<tr>
+<td>sale_attr_value_name</td>
+<td>销售属性值名称</td>
+</tr>
+<tr>
+<td>create_time</td>
+<td>创建时间</td>
+</tr>
+<tr>
+<td>operate_time</td>
+<td>修改时间</td>
+</tr>
+</tbody></table>
+<h3 id="2-1-30-SPU信息表（spu-info）"><a href="#2-1-30-SPU信息表（spu-info）" class="headerlink" title="2.1.30 SPU信息表（spu_info）"></a>2.1.30 SPU信息表（spu_info）</h3><table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>字段说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>SPU_ID</td>
+</tr>
+<tr>
+<td>spu_name</td>
+<td>SPU名称</td>
+</tr>
+<tr>
+<td>description</td>
+<td>商品描述(后台简述）</td>
+</tr>
+<tr>
+<td>category3_id</td>
+<td>三级品类ID</td>
+</tr>
+<tr>
+<td>tm_id</td>
+<td>品牌ID</td>
+</tr>
+<tr>
+<td>create_time</td>
+<td>创建时间</td>
+</tr>
+<tr>
+<td>operate_time</td>
+<td>修改时间</td>
+</tr>
+</tbody></table>
+<h3 id="2-1-31-SPU销售属性表（spu-sale-attr）"><a href="#2-1-31-SPU销售属性表（spu-sale-attr）" class="headerlink" title="2.1.31 SPU销售属性表（spu_sale_attr）"></a>2.1.31 SPU销售属性表（spu_sale_attr）</h3><table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>字段说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>编号（业务中无关联）</td>
+</tr>
+<tr>
+<td>spu_id</td>
+<td>SPU_ID</td>
+</tr>
+<tr>
+<td>base_sale_attr_id</td>
+<td>销售属性ID</td>
+</tr>
+<tr>
+<td>sale_attr_name</td>
+<td>销售属性名称（冗余）</td>
+</tr>
+<tr>
+<td>create_time</td>
+<td>创建时间</td>
+</tr>
+<tr>
+<td>operate_time</td>
+<td>修改时间</td>
+</tr>
+</tbody></table>
+<h3 id="2-1-32-SPU销售属性值表（spu-sale-attr-value）"><a href="#2-1-32-SPU销售属性值表（spu-sale-attr-value）" class="headerlink" title="2.1.32 SPU销售属性值表（spu_sale_attr_value）"></a>2.1.32 SPU销售属性值表（spu_sale_attr_value）</h3><table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>字段说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>销售属性值编号</td>
+</tr>
+<tr>
+<td>spu_id</td>
+<td>SPU_ID</td>
+</tr>
+<tr>
+<td>base_sale_attr_id</td>
+<td>销售属性ID</td>
+</tr>
+<tr>
+<td>sale_attr_value_name</td>
+<td>销售属性值名称</td>
+</tr>
+<tr>
+<td>sale_attr_name</td>
+<td>销售属性名称（冗余）</td>
+</tr>
+<tr>
+<td>create_time</td>
+<td>创建时间</td>
+</tr>
+<tr>
+<td>operate_time</td>
+<td>修改时间</td>
+</tr>
+</tbody></table>
+<h3 id="2-1-33-用户地址表（user-address）"><a href="#2-1-33-用户地址表（user-address）" class="headerlink" title="2.1.33 用户地址表（user_address）"></a>2.1.33 用户地址表（user_address）</h3><table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>字段说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>编号</td>
+</tr>
+<tr>
+<td>user_id</td>
+<td>用户ID</td>
+</tr>
+<tr>
+<td>province_id</td>
+<td>省份ID</td>
+</tr>
+<tr>
+<td>user_address</td>
+<td>用户地址</td>
+</tr>
+<tr>
+<td>consignee</td>
+<td>收件人</td>
+</tr>
+<tr>
+<td>phone_num</td>
+<td>联系方式</td>
+</tr>
+<tr>
+<td>is_default</td>
+<td>是否是默认</td>
+</tr>
+<tr>
+<td>create_time</td>
+<td>创建时间</td>
+</tr>
+<tr>
+<td>operate_time</td>
+<td>修改时间</td>
+</tr>
+</tbody></table>
+<h3 id="2-1-34-用户信息表（user-info）"><a href="#2-1-34-用户信息表（user-info）" class="headerlink" title="2.1.34 用户信息表（user_info）"></a>2.1.34 用户信息表（user_info）</h3><table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>字段说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>编号</td>
+</tr>
+<tr>
+<td>login_name</td>
+<td>用户名称</td>
+</tr>
+<tr>
+<td>nick_name</td>
+<td>用户昵称</td>
+</tr>
+<tr>
+<td>passwd</td>
+<td>用户密码</td>
+</tr>
+<tr>
+<td>name</td>
+<td>用户姓名</td>
+</tr>
+<tr>
+<td>phone_num</td>
+<td>手机号</td>
+</tr>
+<tr>
+<td>email</td>
+<td>邮箱</td>
+</tr>
+<tr>
+<td>head_img</td>
+<td>头像</td>
+</tr>
+<tr>
+<td>user_level</td>
+<td>用户级别</td>
+</tr>
+<tr>
+<td>birthday</td>
+<td>用户生日</td>
+</tr>
+<tr>
+<td>gender</td>
+<td>性别 M男,F女</td>
+</tr>
+<tr>
+<td>create_time</td>
+<td>创建时间</td>
+</tr>
+<tr>
+<td>operate_time</td>
+<td>修改时间</td>
+</tr>
+<tr>
+<td>status</td>
+<td>状态</td>
+</tr>
+</tbody></table>
+<h3 id="2-1-35-营销坑位表（promotion-pos）"><a href="#2-1-35-营销坑位表（promotion-pos）" class="headerlink" title="2.1.35 营销坑位表（promotion_pos）"></a>2.1.35 营销坑位表（promotion_pos）</h3><table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>字段说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>营销坑位ID</td>
+</tr>
+<tr>
+<td>pos_location</td>
+<td>营销坑位位置</td>
+</tr>
+<tr>
+<td>pos_type</td>
+<td>营销坑位类型</td>
+</tr>
+<tr>
+<td>promotion_type</td>
+<td>营销类型</td>
+</tr>
+<tr>
+<td>create_time</td>
+<td>创建时间</td>
+</tr>
+<tr>
+<td>operate_time</td>
+<td>修改时间</td>
+</tr>
+</tbody></table>
+<h3 id="2-1-36-营销渠道表（promotion-refer）"><a href="#2-1-36-营销渠道表（promotion-refer）" class="headerlink" title="2.1.36 营销渠道表（promotion_refer）"></a>2.1.36 营销渠道表（promotion_refer）</h3><table>
+<thead>
+<tr>
+<th>字段名</th>
+<th>字段说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>id</td>
+<td>营销渠道ID</td>
+</tr>
+<tr>
+<td>refer_name</td>
+<td>营销渠道名称</td>
+</tr>
+<tr>
+<td>create_time</td>
+<td>创建时间</td>
+</tr>
+<tr>
+<td>operate_time</td>
+<td>修改时间</td>
+</tr>
+</tbody></table>
+<p><img src="/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps5.png" alt="img"></p>
+<p><img src="/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps6.png" alt="img"></p>
+<h2 id="2-2-数据模拟"><a href="#2-2-数据模拟" class="headerlink" title="2.2 数据模拟"></a>2.2 数据模拟</h2><h3 id="2-2-1-MySQL安装"><a href="#2-2-1-MySQL安装" class="headerlink" title="2.2.1 MySQL安装"></a>2.2.1 MySQL安装</h3><h4 id="2-2-1-1-安装包准备"><a href="#2-2-1-1-安装包准备" class="headerlink" title="2.2.1.1 安装包准备"></a>2.2.1.1 安装包准备</h4><p>1）将资料里mysql文件夹及里面所有内容上传到/opt/software/mysql目录下</p>
+<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[<span class="symbol">atguigu@</span>hadoop102~]# mkdir /opt/software/mysql</span><br><span class="line">[<span class="symbol">atguigu@</span>hadoop102 software]$ cd /opt/software/mysql/</span><br><span class="line"></span><br><span class="line">install_mysql.sh</span><br><span class="line">mysql-community-client<span class="number">-8.0</span><span class="number">.31</span><span class="number">-1.</span>el7.x86_64.rpm</span><br><span class="line">mysql-community-client-plugins<span class="number">-8.0</span><span class="number">.31</span><span class="number">-1.</span>el7.x86_64.rpm</span><br><span class="line">mysql-community-common<span class="number">-8.0</span><span class="number">.31</span><span class="number">-1.</span>el7.x86_64.rpm</span><br><span class="line">mysql-community-icu-data-files<span class="number">-8.0</span><span class="number">.31</span><span class="number">-1.</span>el7.x86_64.rpm</span><br><span class="line">mysql-community-libs<span class="number">-8.0</span><span class="number">.31</span><span class="number">-1.</span>el7.x86_64.rpm</span><br><span class="line">mysql-community-libs-compat<span class="number">-8.0</span><span class="number">.31</span><span class="number">-1.</span>el7.x86_64.rpm</span><br><span class="line">mysql-community-server<span class="number">-8.0</span><span class="number">.31</span><span class="number">-1.</span>el7.x86_64.rpm</span><br><span class="line">mysql-connector-j<span class="number">-8.0</span><span class="number">.31</span>.jar</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-2-1-2-安装MySQL"><a href="#2-2-1-2-安装MySQL" class="headerlink" title="2.2.1.2 安装MySQL"></a>2.2.1.2 安装MySQL</h4><p>1）如果是阿里云服务器按照如下步骤执行</p>
+<p>说明：由于阿里云服务器安装的是Linux最小系统版，没有如下工具，所以需要安装。</p>
+<p>（1）卸载MySQL依赖，虽然机器上没有装MySQL，但是这一步不可少</p>
+<figure class="highlight autoit"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[atguigu<span class="symbol">@hadoop102</span> mysql]<span class="meta"># sudo yum remove mysql-libs</span></span><br></pre></td></tr></table></figure>
+
+<p>（2）下载依赖并安装</p>
+<figure class="highlight autoit"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[atguigu<span class="symbol">@hadoop102</span> mysql]<span class="meta"># sudo yum install libaio</span></span><br><span class="line">[atguigu<span class="symbol">@hadoop102</span> mysql]<span class="meta"># sudo yum -y install autoconf</span></span><br></pre></td></tr></table></figure>
+
+<p>2）切换到hadoop102的root用户</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[atguigu<span class="variable">@hadoop102</span> mysql]<span class="variable">$ </span>su root</span><br></pre></td></tr></table></figure>
+
+<p>3）执行/opt/software/mysql/目录下install_mysql.sh</p>
+<figure class="highlight subunit"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">[root@hadoop102 mysql]# vim install_mysql.sh</span><br><span class="line"></span><br><span class="line">#!/bin/bash</span><br><span class="line">set -x</span><br><span class="line">[ "$(whoami)" = "root" ] || exit 1</span><br><span class="line">[ "$(ls .rpm | wc -l)" = "7" ] || exit 1</span><br><span class="line"><span class="keyword">test </span>-f mysql-community-client<span class="string">-8</span>.0.31<span class="string">-1</span>.el7.x86_64.rpm &amp;&amp; </span><br><span class="line"><span class="keyword">test </span>-f mysql-community-client-plugins<span class="string">-8</span>.0.31<span class="string">-1</span>.el7.x86_64.rpm &amp;&amp; </span><br><span class="line"><span class="keyword">test </span>-f mysql-community-common<span class="string">-8</span>.0.31<span class="string">-1</span>.el7.x86_64.rpm &amp;&amp; </span><br><span class="line"><span class="keyword">test </span>-f mysql-community-icu-data-files<span class="string">-8</span>.0.31<span class="string">-1</span>.el7.x86_64.rpm &amp;&amp; </span><br><span class="line"><span class="keyword">test </span>-f mysql-community-libs<span class="string">-8</span>.0.31<span class="string">-1</span>.el7.x86_64.rpm &amp;&amp; </span><br><span class="line"><span class="keyword">test </span>-f mysql-community-libs-compat<span class="string">-8</span>.0.31<span class="string">-1</span>.el7.x86_64.rpm &amp;&amp; </span><br><span class="line"><span class="keyword">test </span>-f mysql-community-server<span class="string">-8</span>.0.31<span class="string">-1</span>.el7.x86_64.rpm || exit 1</span><br><span class="line"></span><br><span class="line"># 卸载MySQL</span><br><span class="line">systemctl stop mysql mysqld 2&gt;/dev/null</span><br><span class="line">rpm -qa | grep -i 'mysql|mariadb' | xargs -n1 rpm -e --nodeps 2&gt;/dev/null</span><br><span class="line">rm -rf /var/lib/mysql /var/log/mysqld.log /usr/lib64/mysql /etc/my.cnf /usr/my.cnf</span><br><span class="line"></span><br><span class="line">set -e</span><br><span class="line"># 安装并启动MySQL</span><br><span class="line">yum install -y .rpm &gt;/dev/null 2&gt;&amp;1</span><br><span class="line">systemctl start mysqld</span><br><span class="line"></span><br><span class="line">#更改密码级别并重启MySQL</span><br><span class="line">sed -i '/[mysqld]/avalidate_password.length=4nvalidate_password.policy=0' /etc/my.cnf</span><br><span class="line">systemctl restart mysqld</span><br><span class="line"></span><br><span class="line"># 更改MySQL配置</span><br><span class="line">tpass=$(cat /var/log/mysqld.log | grep "temporary password" | awk '&#123;print $NF&#125;')</span><br><span class="line">cat &lt;&lt; EOF | mysql -uroot -p"$&#123;tpass&#125;" --connect-expired-password &gt;/dev/null 2&gt;&amp;1</span><br><span class="line">set password='000000';</span><br><span class="line">update mysql.user set host='%' where user='root';</span><br><span class="line">alter user 'root'@'%' identified with mysql_native_password by '000000';</span><br><span class="line">flush privileges;</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+
+<p>执行脚本。</p>
+<figure class="highlight autoit"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root<span class="symbol">@hadoop102</span> mysql]<span class="meta"># sh install_mysql.sh</span></span><br></pre></td></tr></table></figure>
+
+<p>4）退出root用户到atguigu用户</p>
+<figure class="highlight autoit"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[root<span class="symbol">@hadoop102</span> mysql]<span class="meta"># exit</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-2-2-连接MySQL"><a href="#2-2-2-连接MySQL" class="headerlink" title="2.2.2 连接MySQL"></a>2.2.2 连接MySQL</h3><p>通过MySQL可视化客户端连接数据库。</p>
+<p><img src="/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps25.jpg" alt="img"> </p>
+<h3 id="2-2-3-建表语句"><a href="#2-2-3-建表语句" class="headerlink" title="2.2.3 建表语句"></a>2.2.3 建表语句</h3><p>1）通过Navicat创建数据库</p>
+<p><img src="/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps26.jpg" alt="img"> </p>
+<p>2）设置数据库名称为gmall，编码为utf8mb4，排序规则为utf8mb4_general_ci</p>
+<p><img src="/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps27.jpg" alt="img"> </p>
+<p>3）导入数据库结构脚本（gmall.sql）</p>
+<p><img src="/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps28.jpg" alt="img"> </p>
+<p><img src="/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps29.jpg" alt="img"> </p>
+<p><img src="/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps30.jpg" alt="img"> </p>
+<p><img src="/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps31.jpg" alt="img"> </p>
+<h3 id="2-2-4-业务数据建模"><a href="#2-2-4-业务数据建模" class="headerlink" title="2.2.4 业务数据建模"></a>2.2.4 业务数据建模</h3><p>可借助EZDML这款数据库设计工具，来辅助我们梳理复杂的业务表关系。</p>
+<p>1）下载地址</p>
+<p><a href="http://www.ezdml.com/download_cn.html" target="_blank" rel="noopener">http://www.ezdml.com/download_cn.html</a></p>
+<p>2）使用说明</p>
+<p>（1）新建模型</p>
+<p><img src="/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps32.jpg" alt="img"> </p>
+<p>（2）命名模型</p>
+<p><img src="/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps33.jpg" alt="img"> </p>
+<p>（3）点击图标，选中模型</p>
+<p><img src="/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps34.jpg" alt="img"> </p>
+<p>（4）导入数据库</p>
+<p><img src="/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps35.jpg" alt="img"> </p>
+<p>（5）配置数据库连接</p>
+<p><img src="/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps36.jpg" alt="img"> </p>
+<p>（6）选择导入的表（标注红点的表不需要导入）</p>
+<p><img src="/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps37.jpg" alt="img"> </p>
+<p>（7）建立表关系</p>
+<p>第一步：点击选中主表（主键所在的表）</p>
+<p><img src="/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps38.jpg" alt="img"> </p>
+<p>第二步：点击连接按钮</p>
+<p><img src="/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps39.jpg" alt="img"> </p>
+<p>第三步：点击从表，配置连接条件</p>
+<p><img src="/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps40.jpg" alt="img"> </p>
+<p>第四步：效果展示</p>
+<p><img src="/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps41.jpg" alt="img"> </p>
+<p>3）使用技巧</p>
+<p>（1）缩略图</p>
+<p><img src="/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps42.jpg" alt="img"> </p>
+<p>（2）热键</p>
+<p>按住shift键，用鼠标点击表，进行多选，可实现批量移动。</p>
+<p>按住ctrl键，用鼠标圈选表，也可进行多选，实现批量移。</p>
+<h1 id="第3章-业务数据采集模块"><a href="#第3章-业务数据采集模块" class="headerlink" title="第3章 业务数据采集模块"></a>第3章 业务数据采集模块</h1><h2 id="3-1-采集通道"><a href="#3-1-采集通道" class="headerlink" title="3.1 采集通道"></a>3.1 采集通道</h2><p><img src="/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps43.png" alt="img"></p>
+<h2 id="3-2-采集工具"><a href="#3-2-采集工具" class="headerlink" title="3.2 采集工具"></a>3.2 采集工具</h2><h3 id="3-2-1-Maxwell简介"><a href="#3-2-1-Maxwell简介" class="headerlink" title="3.2.1 Maxwell简介"></a>3.2.1 Maxwell简介</h3><h4 id="3-2-1-1-Maxwell概述"><a href="#3-2-1-1-Maxwell概述" class="headerlink" title="3.2.1.1 Maxwell概述"></a>3.2.1.1 Maxwell概述</h4><p>Maxwell 是由美国Zendesk公司开源，用Java编写的MySQL变更数据抓取软件。它会实时监控MySQL数据库的数据变更操作（包括insert、update、delete），并将变更数据以 JSON 格式发送给 Kafka、Kinesi等流数据处理平台。官网地址：<a href="http://maxwells-daemon.io/" target="_blank" rel="noopener">http://maxwells-daemon.io/</a></p>
+<h4 id="3-2-1-2-Maxwell输出数据格式"><a href="#3-2-1-2-Maxwell输出数据格式" class="headerlink" title="3.2.1.2 Maxwell输出数据格式"></a>3.2.1.2 Maxwell输出数据格式</h4><p><img src="/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps44.png" alt="img"></p>
+<p>注：Maxwell输出的json字段说明：</p>
+<table>
+<thead>
+<tr>
+<th>字段</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>database</td>
+<td>变更数据所属的数据库</td>
+</tr>
+<tr>
+<td>table</td>
+<td>表更数据所属的表</td>
+</tr>
+<tr>
+<td>type</td>
+<td>数据变更类型</td>
+</tr>
+<tr>
+<td>ts</td>
+<td>数据变更发生的时间</td>
+</tr>
+<tr>
+<td>xid</td>
+<td>事务id</td>
+</tr>
+<tr>
+<td>commit</td>
+<td>事务提交标志，可用于重新组装事务</td>
+</tr>
+<tr>
+<td>data</td>
+<td>对于insert类型，表示插入的数据；对于update类型，标识修改之后的数据；对于delete类型，表示删除的数据</td>
+</tr>
+<tr>
+<td>old</td>
+<td>对于update类型，表示修改之前的数据，只包含变更字段</td>
+</tr>
+</tbody></table>
+<h3 id="3-2-2-Maxwell原理"><a href="#3-2-2-Maxwell原理" class="headerlink" title="3.2.2 Maxwell原理"></a>3.2.2 Maxwell原理</h3><p>Maxwell的工作原理是实时读取MySQL数据库的二进制日志（Binlog），从中获取变更数据，再将变更数据以JSON格式发送至Kafka等流处理平台。</p>
+<h4 id="3-2-2-1-MySQL二进制日志"><a href="#3-2-2-1-MySQL二进制日志" class="headerlink" title="3.2.2.1 MySQL二进制日志"></a>3.2.2.1 MySQL二进制日志</h4><p>二进制日志（Binlog）是MySQL服务端非常重要的一种日志，它会保存MySQL数据库的所有数据变更记录。Binlog的主要作用包括主从复制和数据恢复。Maxwell的工作原理和主从复制密切相关。</p>
+<h4 id="3-2-2-2-MySQL主从复制"><a href="#3-2-2-2-MySQL主从复制" class="headerlink" title="3.2.2.2 MySQL主从复制"></a>3.2.2.2 MySQL主从复制</h4><p>MySQL的主从复制，就是用来建立一个和主数据库完全一样的数据库环境，这个数据库称为从数据库。</p>
+<p>1）主从复制的应用场景如下</p>
+<p>（1）做数据库的热备：主数据库服务器故障后，可切换到从数据库继续工作。</p>
+<p>（2）读写分离：主数据库只负责业务数据的写入操作，而多个从数据库只负责业务数据的查询工作，在读多写少场景下，可以提高数据库工作效率。</p>
+<p>2）主从复制的工作原理如下</p>
+<p>（1）Master主库将数据变更记录，写到二进制日志（binary log）中</p>
+<p>（2）Slave从库向mysql master发送dump协议，将master主库的binary log events拷贝到它的中继日志（relay log）</p>
+<p>（3）Slave从库读取并回放中继日志中的事件，将改变的数据同步到自己的数据库</p>
+<p><img src="/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/wps45.jpg" alt="img"> </p>
+<h4 id="3-2-2-3-Maxwell原理"><a href="#3-2-2-3-Maxwell原理" class="headerlink" title="3.2.2.3 Maxwell原理"></a>3.2.2.3 Maxwell原理</h4><p>很简单，就是将自己伪装成slave，并遵循MySQL主从复制的协议，从master同步数据。</p>
+<h3 id="3-2-3-Maxwell部署"><a href="#3-2-3-Maxwell部署" class="headerlink" title="3.2.3 Maxwell部署"></a>3.2.3 Maxwell部署</h3><h4 id="3-2-3-1-安装Maxwell"><a href="#3-2-3-1-安装Maxwell" class="headerlink" title="3.2.3.1 安装Maxwell"></a>3.2.3.1 安装Maxwell</h4><p>1）下载安装包</p>
+<p>（1）地址：<a href="https://github.com/zendesk/maxwell/releases/download/v1.29.2/maxwell-1.29.2.tar.gz" target="_blank" rel="noopener">https://github.com/zendesk/maxwell/releases/download/v1.29.2/maxwell-1.29.2.tar.gz</a></p>
+<p>注：Maxwell-1.30.0及以上版本不再支持JDK1.8。</p>
+<p>（2）将安装包上传到hadoop102节点的/opt/software目录</p>
+<p>2）将安装包解压至/opt/module</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[atguigu@hadoop102 mysql]$ cd /opt/software/ </span><br><span class="line">[atguigu@hadoop102 software]$ tar -zxvf maxwell-1.29.2.tar.gz -C /opt/module/</span><br></pre></td></tr></table></figure>
+
+<p>3）修改名称</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[atguigu@hadoop102 software]$ cd ../module/</span><br><span class="line">[atguigu@hadoop102 module]$ mv maxwell-1.29.2/ maxwell</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-2-3-2-配置MySQL"><a href="#3-2-3-2-配置MySQL" class="headerlink" title="3.2.3.2 配置MySQL"></a>3.2.3.2 配置MySQL</h4><h5 id="3-2-3-2-1-启用MySQL-Binlog"><a href="#3-2-3-2-1-启用MySQL-Binlog" class="headerlink" title="3.2.3.2.1 启用MySQL Binlog"></a>3.2.3.2.1 启用MySQL Binlog</h5><p>MySQL服务器的Binlog默认是未开启的，如需进行同步，需要先进行开启。</p>
+<p>1）修改MySQL配置文件/etc/my.cnf</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[atguigu@hadoop102 ~]$ sudo vim /etc/my.cnf</span><br></pre></td></tr></table></figure>
+
+<p>2）增加如下配置</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">数据库id</span></span><br><span class="line">server-id = 1</span><br><span class="line"><span class="meta">#</span><span class="bash">启动binlog，该参数的值会作为binlog的文件名</span></span><br><span class="line">log-bin=mysql-bin</span><br><span class="line"><span class="meta">#</span><span class="bash">binlog类型，maxwell要求为row类型</span></span><br><span class="line">binlog_format=row</span><br><span class="line"><span class="meta">#</span><span class="bash">启用binlog的数据库，需根据实际情况作出修改</span></span><br><span class="line">binlog-do-db=gmall</span><br></pre></td></tr></table></figure>
+
+<p>注：MySQL Binlog模式</p>
+<p>Statement-based：基于语句，Binlog会记录所有写操作的SQL语句，包括insert、update、delete等。</p>
+<p>优点：节省空间</p>
+<p>缺点：有可能造成数据不一致，例如insert语句中包含now()函数。</p>
+<p>Row-based：基于行，Binlog会记录每次写操作后被操作行记录的变化。</p>
+<p>优点：保持数据的绝对一致性。</p>
+<p>缺点：占用较大空间。</p>
+<p>mixed：混合模式，默认是Statement-based，如果SQL语句可能导致数据不一致，就自动切换到Row-based。</p>
+<p>Maxwell要求Binlog采用Row-based模式。</p>
+<p>3）重启MySQL服务</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[atguigu@hadoop102 ~]$ sudo systemctl restart mysqld</span><br></pre></td></tr></table></figure>
+
+<h5 id="3-2-3-2-2-创建Maxwell所需数据库和用户"><a href="#3-2-3-2-2-创建Maxwell所需数据库和用户" class="headerlink" title="3.2.3.2.2 创建Maxwell所需数据库和用户"></a>3.2.3.2.2 创建Maxwell所需数据库和用户</h5><p>Maxwell需要在MySQL中存储其运行过程中的所需的一些数据，包括binlog同步的断点位置（Maxwell支持断点续传）等等，故需要在MySQL为Maxwell创建数据库及用户。</p>
+<p>1）创建数据库</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">msyql&gt; CREATE DATABASE maxwell;</span><br></pre></td></tr></table></figure>
+
+<p>2）创建Maxwell用户并赋予其必要权限</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; CREATE USER &#39;maxwell&#39;@&#39;%&#39; IDENTIFIED BY &#39;maxwell&#39;;</span><br><span class="line">mysql&gt; GRANT ALL ON maxwell.* TO &#39;maxwell&#39;@&#39;%&#39;;</span><br><span class="line">mysql&gt; GRANT SELECT, REPLICATION CLIENT, REPLICATION SLAVE ON *.* TO &#39;maxwell&#39;@&#39;%&#39;;</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-2-3-3-配置Maxwell"><a href="#3-2-3-3-配置Maxwell" class="headerlink" title="3.2.3.3 配置Maxwell"></a>3.2.3.3 配置Maxwell</h4><p>1）修改Maxwell配置文件名称</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[atguigu@hadoop102 maxwell]$ cd /opt/module/maxwell</span><br><span class="line">[atguigu@hadoop102 maxwell]$ cp config.properties.example config.properties</span><br></pre></td></tr></table></figure>
+
+<p>2）修改Maxwell配置文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">[atguigu@hadoop102 maxwell]$ vim config.properties</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash">Maxwell数据发送目的地，可选配置有stdout|file|kafka|kinesis|pubsub|sqs|rabbitmq|redis</span></span><br><span class="line">producer=kafka</span><br><span class="line"><span class="meta">#</span><span class="bash"> 目标Kafka集群地址</span></span><br><span class="line">kafka.bootstrap.servers=hadoop102:9092,hadoop103:9092,hadoop104:9092</span><br><span class="line"><span class="meta">#</span><span class="bash">目标Kafka topic，可静态配置，例如:maxwell，也可动态配置，例如：%&#123;database&#125;_%&#123;table&#125;</span></span><br><span class="line">kafka_topic=topic_db</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> MySQL相关配置</span></span><br><span class="line">host=hadoop102</span><br><span class="line">user=maxwell</span><br><span class="line">password=maxwell</span><br><span class="line">jdbc_options=useSSL=false&amp;serverTimezone=Asia/Shanghai&amp;allowPublicKeyRetrieval=true</span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 过滤gmall中的z_log表数据，该表是日志数据的备份，无须采集</span></span><br><span class="line">filter=exclude:gmall.z_log</span><br><span class="line"><span class="meta">#</span><span class="bash"> 指定数据按照主键分组进入Kafka不同分区，避免数据倾斜</span></span><br><span class="line">producer_partition_by=primary_key</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-2-4-Maxwell使用"><a href="#3-2-4-Maxwell使用" class="headerlink" title="3.2.4 Maxwell使用"></a>3.2.4 Maxwell使用</h3><h4 id="3-2-4-1-启动Kafka集群"><a href="#3-2-4-1-启动Kafka集群" class="headerlink" title="3.2.4.1 启动Kafka集群"></a>3.2.4.1 启动Kafka集群</h4><p>若Maxwell发送数据的目的地为Kafka集群，则需要先确保Kafka集群为启动状态。</p>
+<h4 id="3-2-4-2-Maxwell启停"><a href="#3-2-4-2-Maxwell启停" class="headerlink" title="3.2.4.2 Maxwell启停"></a>3.2.4.2 Maxwell启停</h4><p>1）启动Maxwell</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[atguigu@hadoop102 ~]$ /opt/module/maxwell/bin/maxwell --config /opt/module/maxwell/config.properties --daemon</span><br></pre></td></tr></table></figure>
+
+<p>2）停止Maxwell</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[atguigu@hadoop102 ~]$ ps -ef | grep com.zendesk.maxwell.Maxwell | grep -v grep | awk '&#123;print $2&#125;' | xargs kill -9</span><br></pre></td></tr></table></figure>
+
+<p>3）Maxwell启停脚本</p>
+<p>（1）创建并编辑Maxwell启停脚本</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[atguigu@hadoop102 bin]$ vim mxw.sh</span><br></pre></td></tr></table></figure>
+
+<p>（2）脚本内容如下</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line"></span><br><span class="line">MAXWELL_HOME=/opt/module/maxwell</span><br><span class="line"></span><br><span class="line">status_maxwell()&#123;</span><br><span class="line">    result=`ps -ef | grep com.zendesk.maxwell.Maxwell | grep -v grep | wc -l`</span><br><span class="line">    return $result</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">start_maxwell()&#123;</span><br><span class="line">    status_maxwell</span><br><span class="line">    if [[ $? -lt 1 ]]; then</span><br><span class="line">        echo "启动Maxwell"</span><br><span class="line">        $MAXWELL_HOME/bin/maxwell --config $MAXWELL_HOME/config.properties --daemon</span><br><span class="line">    else</span><br><span class="line">        echo "Maxwell正在运行"</span><br><span class="line">    fi</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">stop_maxwell()&#123;</span><br><span class="line">    status_maxwell</span><br><span class="line">    if [[ $? -gt 0 ]]; then</span><br><span class="line">        echo "停止Maxwell"</span><br><span class="line">        ps -ef | grep com.zendesk.maxwell.Maxwell | grep -v grep | awk '&#123;print $2&#125;' | xargs kill -9</span><br><span class="line">    else</span><br><span class="line">        echo "Maxwell未在运行"</span><br><span class="line">    fi</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">case $1 in</span><br><span class="line">    start )</span><br><span class="line">        start_maxwell</span><br><span class="line">    ;;</span><br><span class="line">    stop )</span><br><span class="line">        stop_maxwell</span><br><span class="line">    ;;</span><br><span class="line">    restart )</span><br><span class="line">       stop_maxwell</span><br><span class="line">       start_maxwell</span><br><span class="line">    ;;</span><br><span class="line">esac</span><br></pre></td></tr></table></figure>
+
+<p>保存退出</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">:wq</span><br></pre></td></tr></table></figure>
+
+<p>（3）赋予权限</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[atguigu@hadoop102 bin]$ chmod 777 mxw.sh</span><br></pre></td></tr></table></figure>
+
+<p>（4）启动Maxwell</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[atguigu@hadoop102 bin]$ mxw.sh start</span><br><span class="line">启动Maxwell</span><br><span class="line">Redirecting STDOUT to /opt/module/maxwell/bin/../logs/MaxwellDaemon.out</span><br><span class="line">Using kafka version: 1.0.0</span><br></pre></td></tr></table></figure>
+
+<p>查看进程</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[atguigu@hadoop102 bin]$ jps</span><br><span class="line">5813 Jps</span><br><span class="line">3768 QuorumPeerMain</span><br><span class="line">4251 Kafka</span><br><span class="line">5725 Maxwell</span><br></pre></td></tr></table></figure>
+
+<p>（5）停止Maxwell</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[atguigu@hadoop102 bin]$ mxw.sh stop</span><br><span class="line">停止Maxwell</span><br></pre></td></tr></table></figure>
+
+<p>查看进程</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[atguigu@hadoop102 bin]$ jps</span><br><span class="line">5845 Jps</span><br><span class="line">3768 QuorumPeerMain</span><br><span class="line">4251 Kafka</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-2-4-3-增量数据同步"><a href="#3-2-4-3-增量数据同步" class="headerlink" title="3.2.4.3 增量数据同步"></a>3.2.4.3 增量数据同步</h4><p>1）启动Kafka消费者</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[atguigu@hadoop102 bin]$ cd $KAFKA_HOME </span><br><span class="line">[atguigu@hadoop102 kafka]$ bin/kafka-console-consumer.sh --bootstrap-server hadoop102:9092 --topic topic_db</span><br></pre></td></tr></table></figure>
+
+<p>2）模拟生成数据</p>
+<p>（1）修改application.yml</p>
+<p>确保mysql url的数据库为gmall</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">    <span class="attr">datasource:</span></span><br><span class="line">      <span class="attr">type:</span> <span class="string">com.alibaba.druid.pool.DruidDataSource</span></span><br><span class="line">      <span class="attr">druid:</span></span><br><span class="line">        <span class="attr">url:</span> <span class="string">jdbc:mysql://hadoop102:3306/gmall?characterEncoding=utf-8&amp;allowPublicKeyRetrieval=true&amp;useSSL=false&amp;serverTimezone=GMT%2B8</span></span><br><span class="line">        <span class="attr">username:</span> <span class="string">root</span></span><br><span class="line">        <span class="attr">password:</span> <span class="string">"000000"</span></span><br><span class="line">        <span class="attr">driver-class-name:</span>  <span class="string">com.mysql.cj.jdbc.Driver</span></span><br><span class="line">        <span class="attr">max-active:</span> <span class="number">20</span></span><br><span class="line">        <span class="attr">test-on-borrow:</span> <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<p>（2）生成数据</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[atguigu@hadoop102 applog]$ lg.sh</span><br></pre></td></tr></table></figure>
+
+<p>3）观察Kafka消费者</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"database"</span>: <span class="string">"gmall"</span>,</span><br><span class="line">    <span class="attr">"table"</span>: <span class="string">"order_refund_info"</span>,</span><br><span class="line">    <span class="attr">"type"</span>: <span class="string">"update"</span>,</span><br><span class="line">    <span class="attr">"ts"</span>: <span class="number">1675414185</span>,</span><br><span class="line">    <span class="attr">"xid"</span>: <span class="number">38713</span>,</span><br><span class="line">    <span class="attr">"commit"</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">"data"</span>: &#123;</span><br><span class="line">        <span class="attr">"id"</span>: <span class="number">6903</span>,</span><br><span class="line">        <span class="attr">"user_id"</span>: <span class="number">191</span>,</span><br><span class="line">        <span class="attr">"order_id"</span>: <span class="number">36103</span>,</span><br><span class="line">        <span class="attr">"sku_id"</span>: <span class="number">34</span>,</span><br><span class="line">        <span class="attr">"refund_type"</span>: <span class="string">"1502"</span>,</span><br><span class="line">        <span class="attr">"refund_num"</span>: <span class="number">1</span>,</span><br><span class="line">        <span class="attr">"refund_amount"</span>: <span class="number">3927</span>,</span><br><span class="line">        <span class="attr">"refund_reason_type"</span>: <span class="string">"1301"</span>,</span><br><span class="line">        <span class="attr">"refund_reason_txt"</span>: <span class="string">"退款原因具体：0445847967"</span>,</span><br><span class="line">        <span class="attr">"refund_status"</span>: <span class="string">"0705"</span>,</span><br><span class="line">        <span class="attr">"create_time"</span>: <span class="string">"2022-06-14 11:00:53"</span>,</span><br><span class="line">        <span class="attr">"operate_time"</span>: <span class="string">"2022-06-14 12:00:58"</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">"old"</span>: &#123;</span><br><span class="line">        <span class="attr">"refund_status"</span>: <span class="string">"1006"</span>,</span><br><span class="line">        <span class="attr">"operate_time"</span>: <span class="string">"2022-06-14 12:00:53"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-2-4-4-历史数据全量同步"><a href="#3-2-4-4-历史数据全量同步" class="headerlink" title="3.2.4.4 历史数据全量同步"></a>3.2.4.4 历史数据全量同步</h4><p>上一节，我们已经实现了使用Maxwell实时增量同步MySQL变更数据的功能。但有时只有增量数据是不够的，我们可能需要使用到MySQL数据库中从历史至今的一个完整的数据集。这就需要我们在进行增量同步之前，先进行一次历史数据的全量同步。这样就能保证得到一个完整的数据集。</p>
+<h5 id="3-2-4-4-1-Maxwell-bootstrap"><a href="#3-2-4-4-1-Maxwell-bootstrap" class="headerlink" title="3.2.4.4.1 Maxwell-bootstrap"></a>3.2.4.4.1 Maxwell-bootstrap</h5><p>Maxwell提供了bootstrap功能来进行历史数据的全量同步，命令如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[atguigu@hadoop102 maxwell]$ /opt/module/maxwell/bin/maxwell-bootstrap --database gmall --table user_info --config /opt/module/maxwell/config.properties</span><br></pre></td></tr></table></figure>
+
+<h5 id="3-2-4-4-2-boostrap数据格式"><a href="#3-2-4-4-2-boostrap数据格式" class="headerlink" title="3.2.4.4.2 boostrap数据格式"></a>3.2.4.4.2 boostrap数据格式</h5><p>采用bootstrap方式同步的输出数据格式如下：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"database"</span>: <span class="string">"fooDB"</span>,</span><br><span class="line">    <span class="attr">"table"</span>: <span class="string">"barTable"</span>,</span><br><span class="line">    <span class="attr">"type"</span>: <span class="string">"bootstrap-start"</span>,</span><br><span class="line">    <span class="attr">"ts"</span>: <span class="number">1450557744</span>,</span><br><span class="line">    <span class="attr">"data"</span>: &#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">"database"</span>: <span class="string">"fooDB"</span>,</span><br><span class="line">    <span class="attr">"table"</span>: <span class="string">"barTable"</span>,</span><br><span class="line">    <span class="attr">"type"</span>: <span class="string">"bootstrap-insert"</span>,</span><br><span class="line">    <span class="attr">"ts"</span>: <span class="number">1450557744</span>,</span><br><span class="line">    <span class="attr">"data"</span>: &#123;</span><br><span class="line">        <span class="attr">"txt"</span>: <span class="string">"hello"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">"database"</span>: <span class="string">"fooDB"</span>,</span><br><span class="line">    <span class="attr">"table"</span>: <span class="string">"barTable"</span>,</span><br><span class="line">    <span class="attr">"type"</span>: <span class="string">"bootstrap-insert"</span>,</span><br><span class="line">    <span class="attr">"ts"</span>: <span class="number">1450557744</span>,</span><br><span class="line">    <span class="attr">"data"</span>: &#123;</span><br><span class="line">        <span class="attr">"txt"</span>: <span class="string">"bootstrap!"</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="attr">"database"</span>: <span class="string">"fooDB"</span>,</span><br><span class="line">    <span class="attr">"table"</span>: <span class="string">"barTable"</span>,</span><br><span class="line">    <span class="attr">"type"</span>: <span class="string">"bootstrap-complete"</span>,</span><br><span class="line">    <span class="attr">"ts"</span>: <span class="number">1450557744</span>,</span><br><span class="line">    <span class="attr">"data"</span>: &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意事项：</p>
+<p>（1）第一条type为bootstrap-start和最后一条type为bootstrap-complete的数据，是bootstrap开始和结束的标志，不包含数据，中间的type为bootstrap-insert的数据才包含数据。</p>
+<p>（2）一次bootstrap输出的所有记录的ts都相同，为bootstrap开始的时间。</p>
+<h2 id="3-3-采集通道Maxwell配置"><a href="#3-3-采集通道Maxwell配置" class="headerlink" title="3.3 采集通道Maxwell配置"></a>3.3 采集通道Maxwell配置</h2><p>（1）启动Zookeeper、Kafka集群及Maxwell</p>
+<p>（2）启动一个Kafka Console Consumer，消费topic_db数据</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[atguigu@hadoop102 maxwell]$ cd $KAFKA_HOME</span><br><span class="line">[atguigu@hadoop103 kafka]$ bin/kafka-console-consumer.sh --bootstrap-server hadoop102:9092 --topic topic_db</span><br></pre></td></tr></table></figure>
+
+<p>（3）生成模拟数据</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[atguigu@hadoop102 bin]$ lg.sh</span><br></pre></td></tr></table></figure>
+
+<p>（4）观察Kafka消费者是否能消费到数据</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    <span class="attr">"database"</span>: <span class="string">"gmall"</span>,</span><br><span class="line">    <span class="attr">"table"</span>: <span class="string">"cart_info"</span>,</span><br><span class="line">    <span class="attr">"type"</span>: <span class="string">"update"</span>,</span><br><span class="line">    <span class="attr">"ts"</span>: <span class="number">1592270938</span>,</span><br><span class="line">    <span class="attr">"xid"</span>: <span class="number">13090</span>,</span><br><span class="line">    <span class="attr">"xoffset"</span>: <span class="number">1573</span>,</span><br><span class="line">    <span class="attr">"data"</span>: &#123;</span><br><span class="line">        <span class="attr">"id"</span>: <span class="number">100924</span>,</span><br><span class="line">        <span class="attr">"user_id"</span>: <span class="string">"93"</span>,</span><br><span class="line">        <span class="attr">"sku_id"</span>: <span class="number">16</span>,</span><br><span class="line">        <span class="attr">"cart_price"</span>: <span class="number">4488</span>,</span><br><span class="line">        <span class="attr">"sku_num"</span>: <span class="number">1</span>,</span><br><span class="line">        <span class="attr">"img_url"</span>: <span class="string">"http://47.93.148.192:8080/group1/M00/00/02/rBHu8l-sklaALrngAAHGDqdpFtU741.jpg"</span>,</span><br><span class="line">        <span class="attr">"sku_name"</span>: <span class="string">"华为 HUAWEI P40 麒麟990 5G SoC芯片 5000万超感知徕卡三摄 30倍数字变焦 8GB+128GB亮黑色全网通5G手机"</span>,</span><br><span class="line">        <span class="attr">"is_checked"</span>: <span class="literal">null</span>,</span><br><span class="line">        <span class="attr">"create_time"</span>: <span class="string">"2022-06-08 09:28:57"</span>,</span><br><span class="line">        <span class="attr">"operate_time"</span>: <span class="literal">null</span>,</span><br><span class="line">        <span class="attr">"is_ordered"</span>: <span class="number">1</span>,</span><br><span class="line">        <span class="attr">"order_time"</span>: <span class="string">"2021-10-17 09:28:58"</span>,</span><br><span class="line">        <span class="attr">"source_type"</span>: <span class="string">"2401"</span>,</span><br><span class="line">        <span class="attr">"source_id"</span>: <span class="literal">null</span></span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="attr">"old"</span>: &#123;</span><br><span class="line">        <span class="attr">"is_ordered"</span>: <span class="number">0</span>,</span><br><span class="line">        <span class="attr">"order_time"</span>: <span class="literal">null</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Rui Zhang
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://yoursite.com/2024/08/08/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E4%B8%9A%E5%8A%A1%E6%95%B0%E6%8D%AE%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B02/" title="电商数仓项目-业务数据采集平台2">http://yoursite.com/2024/08/08/电商数仓项目-业务数据采集平台2/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%95%B0%E4%BB%93/" rel="tag"># 数仓</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/07/31/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B01/" rel="prev" title="电商数仓项目-用户行为采集平台1">
+      <i class="fa fa-chevron-left"></i> 电商数仓项目-用户行为采集平台1
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/08/14/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E6%95%B0%E4%BB%93%E6%95%B0%E6%8D%AE%E5%90%8C%E6%AD%A5%E7%AD%96%E7%95%A53/" rel="next" title="电商数仓项目-数仓数据同步策略3">
+      电商数仓项目-数仓数据同步策略3 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#第1章-电商业务简介"><span class="nav-number">1.</span> <span class="nav-text">第1章 电商业务简介</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-电商业务流程"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 电商业务流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-电商常识"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 电商常识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-1-SKU和SPU"><span class="nav-number">1.2.1.</span> <span class="nav-text">1.2.1 SKU和SPU</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-2-平台属性和销售属性"><span class="nav-number">1.2.2.</span> <span class="nav-text">1.2.2 平台属性和销售属性</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第2章-业务数据介绍"><span class="nav-number">2.</span> <span class="nav-text">第2章 业务数据介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-电商系统表结构"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 电商系统表结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-1-活动信息表（activity-info）"><span class="nav-number">2.1.1.</span> <span class="nav-text">2.1.1 活动信息表（activity_info）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-2-活动规则表（activity-rule）"><span class="nav-number">2.1.2.</span> <span class="nav-text">2.1.2 活动规则表（activity_rule）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-3-活动商品关联表（activity-sku）"><span class="nav-number">2.1.3.</span> <span class="nav-text">2.1.3 活动商品关联表（activity_sku）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-4-平台属性表（base-attr-info）"><span class="nav-number">2.1.4.</span> <span class="nav-text">2.1.4 平台属性表（base_attr_info）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-5-平台属性值表（base-attr-value）"><span class="nav-number">2.1.5.</span> <span class="nav-text">2.1.5 平台属性值表（base_attr_value）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-6-一级分类表（base-category1）"><span class="nav-number">2.1.6.</span> <span class="nav-text">2.1.6 一级分类表（base_category1）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-7-二级分类表（base-category2）"><span class="nav-number">2.1.7.</span> <span class="nav-text">2.1.7 二级分类表（base_category2）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-8-三级分类表（base-category3）"><span class="nav-number">2.1.8.</span> <span class="nav-text">2.1.8 三级分类表（base_category3）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-9-字典表（base-dic）"><span class="nav-number">2.1.9.</span> <span class="nav-text">2.1.9 字典表（base_dic）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-10-省份表（base-province）"><span class="nav-number">2.1.10.</span> <span class="nav-text">2.1.10 省份表（base_province）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-11-地区表（base-region）"><span class="nav-number">2.1.11.</span> <span class="nav-text">2.1.11 地区表（base_region）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-12-品牌表（base-trademark）"><span class="nav-number">2.1.12.</span> <span class="nav-text">2.1.12 品牌表（base_trademark）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-13-购物车表（cart-info）"><span class="nav-number">2.1.13.</span> <span class="nav-text">2.1.13 购物车表（cart_info）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-14-评价表（comment-info）"><span class="nav-number">2.1.14.</span> <span class="nav-text">2.1.14 评价表（comment_info）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-15-优惠券信息表（coupon-info）"><span class="nav-number">2.1.15.</span> <span class="nav-text">2.1.15 优惠券信息表（coupon_info）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-16-优惠券优惠范围表（coupon-range）"><span class="nav-number">2.1.16.</span> <span class="nav-text">2.1.16 优惠券优惠范围表（coupon_range）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-17-优惠券领用表（coupon-use）"><span class="nav-number">2.1.17.</span> <span class="nav-text">2.1.17 优惠券领用表（coupon_use）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-18-收藏表（favor-info）"><span class="nav-number">2.1.18.</span> <span class="nav-text">2.1.18 收藏表（favor_info）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-19-订单明细表（order-detail）"><span class="nav-number">2.1.19.</span> <span class="nav-text">2.1.19 订单明细表（order_detail）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-20-订单明细活动关联表（order-detail-activity）"><span class="nav-number">2.1.20.</span> <span class="nav-text">2.1.20 订单明细活动关联表（order_detail_activity）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-21-订单明细优惠券关联表（order-detail-coupon）"><span class="nav-number">2.1.21.</span> <span class="nav-text">2.1.21 订单明细优惠券关联表（order_detail_coupon）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-22-订单表-order-info）"><span class="nav-number">2.1.22.</span> <span class="nav-text">2.1.22 订单表(order_info）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-23-退单表（order-refund-info）"><span class="nav-number">2.1.23.</span> <span class="nav-text">2.1.23 退单表（order_refund_info）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-24-订单状态流水表（order-status-log）"><span class="nav-number">2.1.24.</span> <span class="nav-text">2.1.24 订单状态流水表（order_status_log）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-25-支付表（payment-info）"><span class="nav-number">2.1.25.</span> <span class="nav-text">2.1.25 支付表（payment_info）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-26-退款表（refund-payment）"><span class="nav-number">2.1.26.</span> <span class="nav-text">2.1.26 退款表（refund_payment）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-27-SKU平台属性表（sku-attr-value）"><span class="nav-number">2.1.27.</span> <span class="nav-text">2.1.27 SKU平台属性表（sku_attr_value）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-28-SKU信息表（sku-info）"><span class="nav-number">2.1.28.</span> <span class="nav-text">2.1.28 SKU信息表（sku_info）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-29-SKU销售属性表（sku-sale-attr-value）"><span class="nav-number">2.1.29.</span> <span class="nav-text">2.1.29 SKU销售属性表（sku_sale_attr_value）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-30-SPU信息表（spu-info）"><span class="nav-number">2.1.30.</span> <span class="nav-text">2.1.30 SPU信息表（spu_info）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-31-SPU销售属性表（spu-sale-attr）"><span class="nav-number">2.1.31.</span> <span class="nav-text">2.1.31 SPU销售属性表（spu_sale_attr）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-32-SPU销售属性值表（spu-sale-attr-value）"><span class="nav-number">2.1.32.</span> <span class="nav-text">2.1.32 SPU销售属性值表（spu_sale_attr_value）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-33-用户地址表（user-address）"><span class="nav-number">2.1.33.</span> <span class="nav-text">2.1.33 用户地址表（user_address）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-34-用户信息表（user-info）"><span class="nav-number">2.1.34.</span> <span class="nav-text">2.1.34 用户信息表（user_info）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-35-营销坑位表（promotion-pos）"><span class="nav-number">2.1.35.</span> <span class="nav-text">2.1.35 营销坑位表（promotion_pos）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-36-营销渠道表（promotion-refer）"><span class="nav-number">2.1.36.</span> <span class="nav-text">2.1.36 营销渠道表（promotion_refer）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-数据模拟"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 数据模拟</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-1-MySQL安装"><span class="nav-number">2.2.1.</span> <span class="nav-text">2.2.1 MySQL安装</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-1-1-安装包准备"><span class="nav-number">2.2.1.1.</span> <span class="nav-text">2.2.1.1 安装包准备</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-1-2-安装MySQL"><span class="nav-number">2.2.1.2.</span> <span class="nav-text">2.2.1.2 安装MySQL</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-2-连接MySQL"><span class="nav-number">2.2.2.</span> <span class="nav-text">2.2.2 连接MySQL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-3-建表语句"><span class="nav-number">2.2.3.</span> <span class="nav-text">2.2.3 建表语句</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-4-业务数据建模"><span class="nav-number">2.2.4.</span> <span class="nav-text">2.2.4 业务数据建模</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#第3章-业务数据采集模块"><span class="nav-number">3.</span> <span class="nav-text">第3章 业务数据采集模块</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-采集通道"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 采集通道</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-采集工具"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 采集工具</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-1-Maxwell简介"><span class="nav-number">3.2.1.</span> <span class="nav-text">3.2.1 Maxwell简介</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-1-1-Maxwell概述"><span class="nav-number">3.2.1.1.</span> <span class="nav-text">3.2.1.1 Maxwell概述</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-1-2-Maxwell输出数据格式"><span class="nav-number">3.2.1.2.</span> <span class="nav-text">3.2.1.2 Maxwell输出数据格式</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-2-Maxwell原理"><span class="nav-number">3.2.2.</span> <span class="nav-text">3.2.2 Maxwell原理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-2-1-MySQL二进制日志"><span class="nav-number">3.2.2.1.</span> <span class="nav-text">3.2.2.1 MySQL二进制日志</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-2-2-MySQL主从复制"><span class="nav-number">3.2.2.2.</span> <span class="nav-text">3.2.2.2 MySQL主从复制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-2-3-Maxwell原理"><span class="nav-number">3.2.2.3.</span> <span class="nav-text">3.2.2.3 Maxwell原理</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-3-Maxwell部署"><span class="nav-number">3.2.3.</span> <span class="nav-text">3.2.3 Maxwell部署</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-3-1-安装Maxwell"><span class="nav-number">3.2.3.1.</span> <span class="nav-text">3.2.3.1 安装Maxwell</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-3-2-配置MySQL"><span class="nav-number">3.2.3.2.</span> <span class="nav-text">3.2.3.2 配置MySQL</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#3-2-3-2-1-启用MySQL-Binlog"><span class="nav-number">3.2.3.2.1.</span> <span class="nav-text">3.2.3.2.1 启用MySQL Binlog</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-2-3-2-2-创建Maxwell所需数据库和用户"><span class="nav-number">3.2.3.2.2.</span> <span class="nav-text">3.2.3.2.2 创建Maxwell所需数据库和用户</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-3-3-配置Maxwell"><span class="nav-number">3.2.3.3.</span> <span class="nav-text">3.2.3.3 配置Maxwell</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-4-Maxwell使用"><span class="nav-number">3.2.4.</span> <span class="nav-text">3.2.4 Maxwell使用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-4-1-启动Kafka集群"><span class="nav-number">3.2.4.1.</span> <span class="nav-text">3.2.4.1 启动Kafka集群</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-4-2-Maxwell启停"><span class="nav-number">3.2.4.2.</span> <span class="nav-text">3.2.4.2 Maxwell启停</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-4-3-增量数据同步"><span class="nav-number">3.2.4.3.</span> <span class="nav-text">3.2.4.3 增量数据同步</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-4-4-历史数据全量同步"><span class="nav-number">3.2.4.4.</span> <span class="nav-text">3.2.4.4 历史数据全量同步</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#3-2-4-4-1-Maxwell-bootstrap"><span class="nav-number">3.2.4.4.1.</span> <span class="nav-text">3.2.4.4.1 Maxwell-bootstrap</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-2-4-4-2-boostrap数据格式"><span class="nav-number">3.2.4.4.2.</span> <span class="nav-text">3.2.4.4.2 boostrap数据格式</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-采集通道Maxwell配置"><span class="nav-number">3.3.</span> <span class="nav-text">3.3 采集通道Maxwell配置</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Rui Zhang"
+      src="/images/head.jpg">
+  <p class="site-author-name" itemprop="name">Rui Zhang</p>
+  <div class="site-description" itemprop="description">不在沉默中爆发，就在沉默中灭亡</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">52</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2021 – 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Rui Zhang</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.7m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">25:10</span>
+</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"right","width":120,"height":230},"mobile":{"show":true},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/clicklove.js"></script>

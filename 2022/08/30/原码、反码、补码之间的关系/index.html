@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="机器数一个数在计算机中的表现形式叫做机器数，这个数有正负之分，在计算机中用一个数的最高位（符号位）用来表示它的正负，其中0表示正数，1表示负数。 例如正数7，在计算机中用一个8位的二进制数来表示，是00000111，而负数-7，则用10000111表示，这里的00000111和10000111是机器数 真数计算机中的机器数对应的真实的值就是真数，对最高位（符号位）后面的二进制数转换成10进制，并根">
+<meta property="og:type" content="article">
+<meta property="og:title" content="原码、反码、补码之间的关系">
+<meta property="og:url" content="http://yoursite.com/2022/08/30/%E5%8E%9F%E7%A0%81%E3%80%81%E5%8F%8D%E7%A0%81%E3%80%81%E8%A1%A5%E7%A0%81%E4%B9%8B%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB/index.html">
+<meta property="og:site_name" content="没有尾巴的小驴">
+<meta property="og:description" content="机器数一个数在计算机中的表现形式叫做机器数，这个数有正负之分，在计算机中用一个数的最高位（符号位）用来表示它的正负，其中0表示正数，1表示负数。 例如正数7，在计算机中用一个8位的二进制数来表示，是00000111，而负数-7，则用10000111表示，这里的00000111和10000111是机器数 真数计算机中的机器数对应的真实的值就是真数，对最高位（符号位）后面的二进制数转换成10进制，并根">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/2022/08/30/%E5%8E%9F%E7%A0%81%E3%80%81%E5%8F%8D%E7%A0%81%E3%80%81%E8%A1%A5%E7%A0%81%E4%B9%8B%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB/20180403092524169.png">
+<meta property="og:image" content="http://yoursite.com/2022/08/30/%E5%8E%9F%E7%A0%81%E3%80%81%E5%8F%8D%E7%A0%81%E3%80%81%E8%A1%A5%E7%A0%81%E4%B9%8B%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB/20180403095015188.png">
+<meta property="og:image" content="http://yoursite.com/2022/08/30/%E5%8E%9F%E7%A0%81%E3%80%81%E5%8F%8D%E7%A0%81%E3%80%81%E8%A1%A5%E7%A0%81%E4%B9%8B%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB/20180403101055691.png">
+<meta property="og:image" content="http://yoursite.com/2022/08/30/%E5%8E%9F%E7%A0%81%E3%80%81%E5%8F%8D%E7%A0%81%E3%80%81%E8%A1%A5%E7%A0%81%E4%B9%8B%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB/webp-166193847969410.webp">
+<meta property="og:image" content="http://yoursite.com/2022/08/30/%E5%8E%9F%E7%A0%81%E3%80%81%E5%8F%8D%E7%A0%81%E3%80%81%E8%A1%A5%E7%A0%81%E4%B9%8B%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB/webp-166193848687313.webp">
+<meta property="article:published_time" content="2022-08-30T09:49:15.000Z">
+<meta property="article:modified_time" content="2025-06-25T08:08:46.159Z">
+<meta property="article:author" content="Rui Zhang">
+<meta property="article:tag" content="计算机基础">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2022/08/30/%E5%8E%9F%E7%A0%81%E3%80%81%E5%8F%8D%E7%A0%81%E3%80%81%E8%A1%A5%E7%A0%81%E4%B9%8B%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB/20180403092524169.png">
+
+<link rel="canonical" href="http://yoursite.com/2022/08/30/%E5%8E%9F%E7%A0%81%E3%80%81%E5%8F%8D%E7%A0%81%E3%80%81%E8%A1%A5%E7%A0%81%E4%B9%8B%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true
+  };
+</script>
+
+  <title>原码、反码、补码之间的关系 | 没有尾巴的小驴</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">没有尾巴的小驴</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">记录生活</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">22</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">22</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">52</span></a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2022/08/30/%E5%8E%9F%E7%A0%81%E3%80%81%E5%8F%8D%E7%A0%81%E3%80%81%E8%A1%A5%E7%A0%81%E4%B9%8B%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/head.jpg">
+      <meta itemprop="name" content="Rui Zhang">
+      <meta itemprop="description" content="不在沉默中爆发，就在沉默中灭亡">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="没有尾巴的小驴">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          原码、反码、补码之间的关系
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-08-30 17:49:15" itemprop="dateCreated datePublished" datetime="2022-08-30T17:49:15+08:00">2022-08-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-06-25 16:08:46" itemprop="dateModified" datetime="2025-06-25T16:08:46+08:00">2025-06-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/" itemprop="url" rel="index"><span itemprop="name">计算机基础</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="机器数"><a href="#机器数" class="headerlink" title="机器数"></a>机器数</h3><p>一个数在计算机中的表现形式叫做机器数，这个数有正负之分，在计算机中用一个数的最高位（符号位）用来表示它的正负，其中0表示正数，1表示负数。</p>
+<p>例如正数7，在计算机中用一个8位的二进制数来表示，是00000111，而负数-7，则用10000111表示，这里的00000111和10000111是机器数</p>
+<h3 id="真数"><a href="#真数" class="headerlink" title="真数"></a>真数</h3><p>计算机中的机器数对应的真实的值就是真数，对最高位（符号位）后面的二进制数转换成10进制，并根据最高位来确定这个数的正负。对于上面的00000111和10000111来说，对最高位后面的二进制数转换成10进制是7，在结合最高位的值，得出对应的真数分别是7和-7</p>
+<h3 id="原码"><a href="#原码" class="headerlink" title="原码"></a>原码</h3><p>用第一位表示符号，其余位表示值。因为第一位是符号位，所以8位二进制数的取值范围就是：[1111_1111 , 0111_1111]  即 [-127 , 127] ,原码是容易被人脑所理解的表达方式</p>
+<h3 id="反码"><a href="#反码" class="headerlink" title="反码"></a>反码</h3><p>正数的补码反码是其本身，负数的反码是符号位保持不变，其余位取反。例如正数1的原码是[0000_0001]，它的反码是是其本身[0000_0001],-1的原码是[1000_0001],其反码是[1111_1110]</p>
+<h3 id="补码"><a href="#补码" class="headerlink" title="补码"></a>补码</h3><p>正数的补码是其本身，负数的补码是在其反码的基础上+1，例如正数1的原码是[0000_0001],他的补码是其本身[0000_0001],</p>
+<p>-1的补码是[1111_1111]</p>
+<h3 id="有了原码为什么要使用反码和补码"><a href="#有了原码为什么要使用反码和补码" class="headerlink" title="有了原码为什么要使用反码和补码"></a>有了原码为什么要使用反码和补码</h3><p>因为人脑可以知道第一位是符号位，可以根据符号位对真值的绝对值进行加减乘除，但是对于计算机来说，加减乘除是最最最基本的运算，要设计的尽量简单，计算机辨别符号位会让计算机的设计电路变得很复杂，于是人们想出了让符号位也参与到运算上来。减去一个数，等于加上他的负数。</p>
+<p>使用原码参数运算的缺陷</p>
+<p><img src="/2022/08/30/%E5%8E%9F%E7%A0%81%E3%80%81%E5%8F%8D%E7%A0%81%E3%80%81%E8%A1%A5%E7%A0%81%E4%B9%8B%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB/20180403092524169.png" alt="img"></p>
+<p>从上面的原码表中可以看见左边每增加一个二进制单位对应的真数是递减的，而右边每增加一个二进制单位对应的真数是递增的，所以对于原码来说，能满足正数的加法，但无法满足负数的加法</p>
+<p>2 + 1 = [0000_0010]原 + [0000_0001]原 = [0000_0011]原 = 3</p>
+<p>1 + -1 = [0000_00001]原 + [1000_0001]原 = [1000_0010]原 =  -2</p>
+<p>为了满足负数对加法的需求，就必须让负数与他对应的二进制码是同步递增或者同步递减</p>
+<p>于是就通过符号位不变，其余位取反来满足这个同步递增或者递减的要求，由于正数本来就满足它本身的加法，所以不需要做任何改变。这就是反码的定义由来。</p>
+<p><img src="/2022/08/30/%E5%8E%9F%E7%A0%81%E3%80%81%E5%8F%8D%E7%A0%81%E3%80%81%E8%A1%A5%E7%A0%81%E4%B9%8B%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB/20180403095015188.png" alt="img"></p>
+<p>从上图的反码表中可以看到在运算不跨过0的时候，正负数的加法已经能满足要求</p>
+<p>-2 + 1 = [1111_1101]反 + [0000_0001]反 = [1111_1110]反 = -1</p>
+<p>127 + 1 = [1000_0000]反 = -127 = 128 加法算出来是128，由于128超过最大值，余1，所以取最小值开始的第一位，也就是最小值-127，但是这里有个不合理的地方，就是 [1111_1111] 和 [0000_0000] 都表示0，这导致在实际计算中每当跨过0一次，就有一个单位的误差</p>
+<p>-1 + 2 = [1111_1110]反 + [0000_0010]反 = [0000_0000]反 = 0</p>
+<p>要解决这个问题就必须让反码中的 [1111_1111] 和 [0000_0000] 合并，</p>
+<p>由于[1111_1111] + [0000_0001] = [0000_0000],所以在负数反码的基础上+1就可以解决反码中跨0的误差问题，同时不会对负数与它对应的二进制反码的同步递增产生影响，所以在反码的基础上 +1 就完美的解决了符号参与预算的问题，这就是补码为什么是在负数反码的基础上+1的由来。</p>
+<p><img src="/2022/08/30/%E5%8E%9F%E7%A0%81%E3%80%81%E5%8F%8D%E7%A0%81%E3%80%81%E8%A1%A5%E7%A0%81%E4%B9%8B%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB/20180403101055691.png" alt="img"></p>
+<p>从上面的图中发现还有一个[1000_0000]的二进制没有对应任何真数，于是就规定了这个数的真数是-128</p>
+<p>所以补码的表示范围是[-128~127] ，这样一来256个二进制正好表示256个整数，在实际二进制的运算中超过范围其实就是对256的取余预算（x+128）mod 256 - 128。</p>
+<hr>
+<p>补码首先要计算反码，也就是取反得到反码。</p>
+<p>例如：</p>
+<p>-5的8位二进制为10000101 #第一位1表示位符号负数，</p>
+<p>-5的反码为：11111010</p>
+<p>-5的补码为：11111011 #反码加1</p>
+<p>5的8位二进制为00000101 #第一个0表示符号位正数+，由于5位正数，其反码与补码均保持不变（原因下面会提到）</p>
+<p>那么为什么补码要取反加1？</p>
+<p>这涉及到“模(mod)”的概念。“模(mod)”是指一个计量系统的计数范围，例如：时钟的计量范围是0~11，模=12。同样计算机也可以看成一个计量机器，因为计算机的字长是定长的，即存储和处理的位数是有限的，因此它也有一个计量范围，即都存在一个“模(mod)”。表示n位的计算机计量范围是0到2^n-1 ，模=2^n ，“模” 实质上是计量器产生“溢出”的量，它的值在计量器上表示不出来，计量器上只能表示出模的余数。</p>
+<p>任何有模的计量器，均可化减法为加法运算。</p>
+<p>假设一个时钟当前时针指向8点，而准确时间是6点，调整时间可有以下两种方式：</p>
+<p>其一是倒拨2小时，即8-2=6；</p>
+<p>其二是顺拨10小时，8+10=12+6=6，即8-2=8+10=8+12-2(mod 12)。</p>
+<p>在12为模的计时系统里，加10和减2效果是一样的，因此凡是减2运算，都可以用加10来代替。一般可用公式表示为：a-b=a-b+mod=a+mod-b。对“模”而言，2和10互为补数。实际上，以12为模的系统中11和1、8和4、9和3、7和5、6和6等等都有互为补数的性质，共同的特点是两者相加等于模。</p>
+<p>对于计算机的计数原理，其概念和方法完全一样。n位计算机，设n=8，所能表示的最大数是11111111，若再加1成100000000(9位)，但因只有8位，最高位1自然丢失（相当于丢失一个模）。又回到了 00000000，所以8位二进制系统的模为2^8 ——也就是11111111。</p>
+<p>同理在计算机系统中处理减法时，也可以按照时钟方式化减法为加法，只需把减数用相应的补数表示就可以了。</p>
+<p>以公式a-b=a-b+mod=a+mod-b为例，</p>
+<p>设: -b=10000101(-5的二进制)，</p>
+<p>模(mod)=11111111</p>
+<p>a-b=a+(-b的补数)=a+(mod-b)=a+(11111111-10000101)</p>
+<p>由于二进制的特性，11111111减去10000101得到补数11111010，实际就等于10000101各位取反——也就是反码，如下对应关系：</p>
+<p>11111111 #模(mod)</p>
+<p>10000101 # -5二进制</p>
+<p>11111010 #-5二进制补数（即反码）</p>
+<p>（这里要注意第一位符号位是不变的）</p>
+<p>但是在实际计算中补数（反码）还必须加1——即：</p>
+<p>11111010+1（00000001）=11111011</p>
+<p>这是因为在8位二进制系统中，模=2^8=256， 表示为二进制是100000000，是九位二进制数，在8位二进制系统中实际产生溢出位无法计算，而8位二进制系统计量范围是0<del>2^n-1 ，也就是0</del>257，最大值是257，也就是我们上面计算中模的取值二进制11111111，也就是说为了便于计算，我们是用257的二进制11111111，代替了模256的实际值100000000，那么在实际计算中取得补数后，必须加上这个差值1才不会出错，即：</p>
+<p>补数（反码）+1=补码</p>
+<p>这就是为什么补码加1的原因。</p>
+<p>看到这里也就明白了为什么正数的反码补码不变。</p>
+<hr>
+<h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>需要声明的是，本文涉及到的数字及运算均基于<strong>8位bit</strong>下的值。</p>
+<h3 id="原码-1"><a href="#原码-1" class="headerlink" title="原码"></a>原码</h3><p>最高位为符号位，0代表正数，1代表负数，非符号位为该数字绝对值的二进制表示。</p>
+<p>如：</p>
+<p>127的原码为0111 1111<br> -127的原码为1111 1111</p>
+<h3 id="反码-1"><a href="#反码-1" class="headerlink" title="反码"></a>反码</h3><p>正数的反码与原码一致；</p>
+<p>负数的反码是对原码按位取反，只是<strong>最高位(符号位)不变</strong>。</p>
+<p>如:</p>
+<p>127的反码为0111 1111<br> -127的反码为1000 0000</p>
+<h3 id="补码-1"><a href="#补码-1" class="headerlink" title="补码"></a>补码</h3><p>正数的补码与原码一致；</p>
+<p>负数的补码是该数的<strong>反码加1</strong>。</p>
+<p>如：</p>
+<p>127的补码为0111 1111<br> -127的补码为1000 0001</p>
+<p>总结一下就是：</p>
+<ol>
+<li>正数的原码、反码、补码是一致的；</li>
+<li>负数的补码是反码加1，反码是对原码按位取反，只是<strong>最高位(符号位)不变</strong>；</li>
+<li>计算机数字运算均是基于<strong>补码</strong>的。</li>
+</ol>
+<p>下面就来探讨一下，为啥要用补码来表示数字。</p>
+<p>补码有啥好？</p>
+<p>如果计算机内部采用原码来表示数，那么在进行加法和减法运算的时候，需要转化为两个绝对值的加法和减法运算；计算机既要实现加法器，又要实现减法器，代价有点大，那么可不可以只用一种类型的运算器来实现加和减的远算呢？</p>
+<p>很容易想到的就是<strong>化减为加</strong>，举一个生活中的例子来说明这个问题：时钟一圈是360度，当然也存在365度，但其实它和5度是一样的；相同的道理，-30度表示逆时针旋转30度，其与顺时针旋转330度是一样的；</p>
+<p>这里数字360表示时钟的一圈，在计算机里类似的概念叫<strong>模</strong>，它可以实现<strong>化减为加</strong>，本质上是将<strong>溢出的部分舍去</strong>而不改变结果。易得，单字节(8位)运算的模为256=2^8。在没有符号位的情况下，127+2=129，即：</p>
+<p><img src="/2022/08/30/%E5%8E%9F%E7%A0%81%E3%80%81%E5%8F%8D%E7%A0%81%E3%80%81%E8%A1%A5%E7%A0%81%E4%B9%8B%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB/webp-166193847969410.webp" alt="img"></p>
+<p>这时，我们将最高位作为符号位，计算机数字均以补码来表示，则1000 0001的原码为减1后按位取反得1111 1111，也就是-127。也就是说，计算机里的129即表示-127，相当于模256为一圈，顺时针的129则和逆时针127即-127是一样的。故可以得到以下结论：</p>
+<p>负数的补码为<strong>模减去该数的绝对值</strong>。</p>
+<p>如-5的补码为：</p>
+<p>-5=256-5=251=1111 1011(二进制)</p>
+<p>同样的，临界值-128也可以表示出来：</p>
+<p>-128=256-128=128=1000 0000(二进制)</p>
+<p>但是正128就会溢出了，故单字节(8位)表示的数字范围为-128–127。</p>
+<p>最后，我们来看一下，补码是如何通过模的<strong>溢出舍弃</strong>操作来完成<strong>化减为加</strong>的！</p>
+<p>16-5=16+(-5)=11</p>
+<p><img src="/2022/08/30/%E5%8E%9F%E7%A0%81%E3%80%81%E5%8F%8D%E7%A0%81%E3%80%81%E8%A1%A5%E7%A0%81%E4%B9%8B%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB/webp-166193848687313.webp" alt="img"></p>
+<p>1 0000 1011将溢出位舍去，得0000 1011(二进制)=11。</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Rui Zhang
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://yoursite.com/2022/08/30/%E5%8E%9F%E7%A0%81%E3%80%81%E5%8F%8D%E7%A0%81%E3%80%81%E8%A1%A5%E7%A0%81%E4%B9%8B%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB/" title="原码、反码、补码之间的关系">http://yoursite.com/2022/08/30/原码、反码、补码之间的关系/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/" rel="tag"># 计算机基础</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/08/12/Scala%E5%AD%A6%E4%B9%A0%E6%95%99%E7%A8%8B/" rel="prev" title="Scala学习教程">
+      <i class="fa fa-chevron-left"></i> Scala学习教程
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2022/10/26/Lambda%E8%A1%A8%E8%BE%BE%E5%BC%8F%E8%AF%A6%E8%A7%A3/" rel="next" title="Lambda表达式详解">
+      Lambda表达式详解 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#机器数"><span class="nav-number">1.</span> <span class="nav-text">机器数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#真数"><span class="nav-number">2.</span> <span class="nav-text">真数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#原码"><span class="nav-number">3.</span> <span class="nav-text">原码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#反码"><span class="nav-number">4.</span> <span class="nav-text">反码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#补码"><span class="nav-number">5.</span> <span class="nav-text">补码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#有了原码为什么要使用反码和补码"><span class="nav-number">6.</span> <span class="nav-text">有了原码为什么要使用反码和补码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#概念"><span class="nav-number">7.</span> <span class="nav-text">概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#原码-1"><span class="nav-number">8.</span> <span class="nav-text">原码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#反码-1"><span class="nav-number">9.</span> <span class="nav-text">反码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#补码-1"><span class="nav-number">10.</span> <span class="nav-text">补码</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Rui Zhang"
+      src="/images/head.jpg">
+  <p class="site-author-name" itemprop="name">Rui Zhang</p>
+  <div class="site-description" itemprop="description">不在沉默中爆发，就在沉默中灭亡</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">52</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2021 – 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Rui Zhang</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.7m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">25:10</span>
+</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"right","width":120,"height":230},"mobile":{"show":true},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/clicklove.js"></script>

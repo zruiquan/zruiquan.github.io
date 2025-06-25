@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="基于Flink的电商用户行为数据分析（6）订单支付实时监控在电商网站中，订单的支付作为直接与营销收入挂钩的一环，在业务流程中非常重要。对于订单而言，为了正确控制业务流程，也为了增加用户的支付意愿，网站一般会设置一个支付失效时间，超过一段时间不支付的订单就会被取消。另外，对于订单的支付，我们还应保证用户支付的正确性，这可以通过第三方支付平台的交易数据来做一个实时对账。在接下来的内容中，我们将实现这两">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于Flink的电商用户行为数据分析（6）">
+<meta property="og:url" content="http://yoursite.com/2021/11/28/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-6/index.html">
+<meta property="og:site_name" content="没有尾巴的小驴">
+<meta property="og:description" content="基于Flink的电商用户行为数据分析（6）订单支付实时监控在电商网站中，订单的支付作为直接与营销收入挂钩的一环，在业务流程中非常重要。对于订单而言，为了正确控制业务流程，也为了增加用户的支付意愿，网站一般会设置一个支付失效时间，超过一段时间不支付的订单就会被取消。另外，对于订单的支付，我们还应保证用户支付的正确性，这可以通过第三方支付平台的交易数据来做一个实时对账。在接下来的内容中，我们将实现这两">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/2021/11/28/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-6/image-20211128041316279.png">
+<meta property="og:image" content="http://yoursite.com/2021/11/28/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-6/image-20211128041450268.png">
+<meta property="og:image" content="http://yoursite.com/2021/11/28/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-6/image-20211128041531909.png">
+<meta property="og:image" content="http://yoursite.com/2021/11/28/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-6/image-20211128041607527.png">
+<meta property="og:image" content="http://yoursite.com/2021/11/28/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-6/image-20211128041650155.png">
+<meta property="og:image" content="http://yoursite.com/2021/11/28/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-6/image-20211128041906873.png">
+<meta property="og:image" content="http://yoursite.com/2021/11/28/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-6/image-20211128041932599.png">
+<meta property="article:published_time" content="2021-11-27T17:09:42.000Z">
+<meta property="article:modified_time" content="2025-06-25T08:08:46.203Z">
+<meta property="article:author" content="Rui Zhang">
+<meta property="article:tag" content="Flink">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2021/11/28/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-6/image-20211128041316279.png">
+
+<link rel="canonical" href="http://yoursite.com/2021/11/28/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-6/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true
+  };
+</script>
+
+  <title>基于Flink的电商用户行为数据分析（6） | 没有尾巴的小驴</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">没有尾巴的小驴</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">记录生活</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">22</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">22</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">52</span></a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/11/28/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/head.jpg">
+      <meta itemprop="name" content="Rui Zhang">
+      <meta itemprop="description" content="不在沉默中爆发，就在沉默中灭亡">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="没有尾巴的小驴">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          基于Flink的电商用户行为数据分析（6）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-11-28 01:09:42" itemprop="dateCreated datePublished" datetime="2021-11-28T01:09:42+08:00">2021-11-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-06-25 16:08:46" itemprop="dateModified" datetime="2025-06-25T16:08:46+08:00">2025-06-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Flink/" itemprop="url" rel="index"><span itemprop="name">Flink</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>18k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>16 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="基于Flink的电商用户行为数据分析（6）"><a href="#基于Flink的电商用户行为数据分析（6）" class="headerlink" title="基于Flink的电商用户行为数据分析（6）"></a>基于Flink的电商用户行为数据分析（6）</h2><h3 id="订单支付实时监控"><a href="#订单支付实时监控" class="headerlink" title="订单支付实时监控"></a>订单支付实时监控</h3><p>在电商网站中，订单的支付作为直接与营销收入挂钩的一环，在业务流程中非常重要。对于订单而言，为了正确控制业务流程，也为了增加用户的支付意愿，网站一般会设置一个支付失效时间，超过一段时间不支付的订单就会被取消。另外，对于订单的支付，我们还应保证用户支付的正确性，这可以通过第三方支付平台的交易数据来做一个实时对账。在接下来的内容中，我们将实现这两个需求。</p>
+<h4 id="模块创建和数据准备"><a href="#模块创建和数据准备" class="headerlink" title="模块创建和数据准备"></a>模块创建和数据准备</h4><p>同样地，在 UserBehaviorAnalysis 下新建一个 maven module 作为子项目，命名为 OrderTimeoutDetect。在这个子模块中，我们同样将会用到 flink 的 CEP 库来实现事件流的模式匹配，所以需要在 pom 文件中引入 CEP 的相关依赖：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span> </span><br><span class="line">	<span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.flink<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>flink-cep _$&#123;scala.binary.version&#125;<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;flink.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h4><p>在电商平台中，最终创造收入和利润的是用户下单购买的环节；更具体一点，是用户真正完成支付动作的时候。用户下单的行为可以表明用户对商品的需求，但在现实中，并不是每次下单都会被用户立刻支付。当拖延一段时间后，用户支付的意愿会降低。所以为了让用户更有紧迫感从而提高支付转化率，同时也为了防范订单支付环节的安全风险，电商网站往往会对订单状态进行监控，设置一个失效时间（比如 15 分钟），如果下单后一段时间仍未支付，订单就会被取消。</p>
+<h5 id="使用CEP实现"><a href="#使用CEP实现" class="headerlink" title="使用CEP实现"></a>使用CEP实现</h5><p>我们首先还是利用 CEP 库来实现这个功能。我们先将事件流按照订单号 orderId分流，然后定义这样的一个事件模式：在 15 分钟内，事件“create”与“pay”非严格紧邻：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.test.orderpay_detect;</span><br><span class="line"><span class="keyword">import</span> com.test.orderpay_detect.beans.OrderEvent;</span><br><span class="line"><span class="keyword">import</span> com.test.orderpay_detect.beans.OrderResult;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.cep.CEP;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.cep.PatternSelectFunction;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.cep.PatternStream;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.cep.PatternTimeoutFunction;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.cep.pattern.Pattern;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.cep.pattern.conditions.SimpleCondition;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.TimeCharacteristic;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.datastream.DataStream;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.functions.timestamps.AscendingTimestampExtractor;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.windowing.time.Time;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.util.OutputTag;</span><br><span class="line"><span class="keyword">import</span> java.net.URL;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OrderPayTimeout</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();</span><br><span class="line">        env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);</span><br><span class="line">        env.setParallelism(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 读取数据并转换成POJO类型</span></span><br><span class="line">        URL resource = OrderPayTimeout.class.getResource("/OrderLog.csv");</span><br><span class="line">        DataStream&lt;OrderEvent&gt; orderEventStream = env.readTextFile(resource.getPath())</span><br><span class="line">                .map( line -&gt; &#123;</span><br><span class="line">                    String[] fields = line.split(<span class="string">","</span>);</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> OrderEvent(<span class="keyword">new</span> Long(fields[<span class="number">0</span>]), fields[<span class="number">1</span>], fields[<span class="number">2</span>], <span class="keyword">new</span> Long(fields[<span class="number">3</span>]));</span><br><span class="line">                &#125; )</span><br><span class="line">                .assignTimestampsAndWatermarks(<span class="keyword">new</span> AscendingTimestampExtractor&lt;OrderEvent&gt;() &#123;</span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">extractAscendingTimestamp</span><span class="params">(OrderEvent element)</span> </span>&#123;</span><br><span class="line">                        <span class="keyword">return</span> element.getTimestamp() * <span class="number">1000L</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 1. 定义一个带时间限制的模式</span></span><br><span class="line">        Pattern&lt;OrderEvent, OrderEvent&gt; orderPayPattern = Pattern</span><br><span class="line">                .&lt;OrderEvent&gt;begin(<span class="string">"create"</span>).where(<span class="keyword">new</span> SimpleCondition&lt;OrderEvent&gt;() &#123;</span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">filter</span><span class="params">(OrderEvent value)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">                        <span class="keyword">return</span> <span class="string">"create"</span>.equals(value.getEventType());</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;)</span><br><span class="line">                .followedBy(<span class="string">"pay"</span>).where(<span class="keyword">new</span> SimpleCondition&lt;OrderEvent&gt;() &#123;</span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">filter</span><span class="params">(OrderEvent value)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">                        <span class="keyword">return</span> <span class="string">"pay"</span>.equals(value.getEventType());</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;)</span><br><span class="line">                .within(Time.minutes(<span class="number">15</span>));</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 2. 定义侧输出流标签，用来表示超时事件</span></span><br><span class="line">        OutputTag&lt;OrderResult&gt; orderTimeoutTag = <span class="keyword">new</span> OutputTag&lt;OrderResult&gt;(<span class="string">"order-timeout"</span>)&#123;&#125;;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 3. 将pattern应用到输入数据流上，得到pattern stream</span></span><br><span class="line">        PatternStream&lt;OrderEvent&gt; patternStream = CEP.pattern(orderEventStream.keyBy(OrderEvent::getOrderId), 				orderPayPattern);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 4. 调用select方法，实现对匹配复杂事件和超时复杂事件的提取和处理</span></span><br><span class="line">        SingleOutputStreamOperator&lt;OrderResult&gt; resultStream = patternStream</span><br><span class="line">                .select(orderTimeoutTag, <span class="keyword">new</span> OrderTimeoutSelect(), <span class="keyword">new</span> OrderPaySelect());</span><br><span class="line"></span><br><span class="line">        resultStream.print(<span class="string">"payed normally"</span>);</span><br><span class="line">        resultStream.getSideOutput(orderTimeoutTag).print(<span class="string">"timeout"</span>);</span><br><span class="line"></span><br><span class="line">        env.execute(<span class="string">"order timeout detect job"</span>);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 实现自定义的超时事件处理函数</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">OrderTimeoutSelect</span> <span class="keyword">implements</span> <span class="title">PatternTimeoutFunction</span>&lt;<span class="title">OrderEvent</span>, <span class="title">OrderResult</span>&gt;</span>&#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> OrderResult <span class="title">timeout</span><span class="params">(Map&lt;String, List&lt;OrderEvent&gt;&gt; pattern, <span class="keyword">long</span> timeoutTimestamp)</span> <span class="keyword">throws</span> 								Exception </span>&#123;</span><br><span class="line">            Long timeoutOrderId = pattern.get(<span class="string">"create"</span>).iterator().next().getOrderId();</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> OrderResult(timeoutOrderId, <span class="string">"timeout "</span> + timeoutTimestamp);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 实现自定义的正常匹配事件处理函数</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">OrderPaySelect</span> <span class="keyword">implements</span> <span class="title">PatternSelectFunction</span>&lt;<span class="title">OrderEvent</span>, <span class="title">OrderResult</span>&gt;</span>&#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> OrderResult <span class="title">select</span><span class="params">(Map&lt;String, List&lt;OrderEvent&gt;&gt; pattern)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">            Long payedOrderId = pattern.get(<span class="string">"pay"</span>).iterator().next().getOrderId();</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> OrderResult(payedOrderId, <span class="string">"payed"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="使用-Process-Function-实现"><a href="#使用-Process-Function-实现" class="headerlink" title="使用 Process Function 实现"></a>使用 Process Function 实现</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.test.orderpay_detect;</span><br><span class="line"><span class="keyword">import</span> com.test.orderpay_detect.beans.OrderEvent;</span><br><span class="line"><span class="keyword">import</span> com.test.orderpay_detect.beans.OrderResult;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.api.common.state.ValueState;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.api.common.state.ValueStateDescriptor;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.configuration.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.TimeCharacteristic;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.datastream.DataStream;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.functions.KeyedProcessFunction;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.functions.timestamps.AscendingTimestampExtractor;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.util.Collector;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.util.OutputTag;</span><br><span class="line"><span class="keyword">import</span> java.net.URL;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">OrderTimeoutWithoutCep</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 定义超时事件的侧输出流标签</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> OutputTag&lt;OrderResult&gt; orderTimeoutTag = <span class="keyword">new</span> OutputTag&lt;OrderResult&gt;(<span class="string">"order-timeout"</span>)		 &#123;&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();</span><br><span class="line">        env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);</span><br><span class="line">        env.setParallelism(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 读取数据并转换成POJO类型</span></span><br><span class="line">        URL resource = OrderPayTimeout.class.getResource("/OrderLog.csv");</span><br><span class="line">        DataStream&lt;OrderEvent&gt; orderEventStream = env.readTextFile(resource.getPath())</span><br><span class="line">                .map(line -&gt; &#123;</span><br><span class="line">                    String[] fields = line.split(<span class="string">","</span>);</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> OrderEvent(<span class="keyword">new</span> Long(fields[<span class="number">0</span>]), fields[<span class="number">1</span>], fields[<span class="number">2</span>], <span class="keyword">new</span> Long(fields[<span class="number">3</span>]));</span><br><span class="line">                &#125;)</span><br><span class="line">                .assignTimestampsAndWatermarks(<span class="keyword">new</span> AscendingTimestampExtractor&lt;OrderEvent&gt;() &#123;</span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">extractAscendingTimestamp</span><span class="params">(OrderEvent element)</span> </span>&#123;</span><br><span class="line">                        <span class="keyword">return</span> element.getTimestamp() * <span class="number">1000L</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 自定义处理函数，主流输出正常匹配订单事件，侧输出流输出超时报警事件</span></span><br><span class="line">        SingleOutputStreamOperator&lt;OrderResult&gt; resultStream = orderEventStream</span><br><span class="line">                .keyBy(OrderEvent::getOrderId)</span><br><span class="line">                .process(<span class="keyword">new</span> OrderPayMatchDetect());</span><br><span class="line"></span><br><span class="line">        resultStream.print(<span class="string">"payed normally"</span>);</span><br><span class="line">        resultStream.getSideOutput(orderTimeoutTag).print(<span class="string">"timeout"</span>);</span><br><span class="line"></span><br><span class="line">        env.execute(<span class="string">"order timeout detect without cep job"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 实现自定义KeyedProcessFunction</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">OrderPayMatchDetect</span> <span class="keyword">extends</span> <span class="title">KeyedProcessFunction</span>&lt;<span class="title">Long</span>, <span class="title">OrderEvent</span>, <span class="title">OrderResult</span>&gt;</span>&#123;</span><br><span class="line">        <span class="comment">// 定义状态，保存之前点单是否已经来过create、pay的事件</span></span><br><span class="line">        ValueState&lt;Boolean&gt; isPayedState;</span><br><span class="line">        ValueState&lt;Boolean&gt; isCreatedState;</span><br><span class="line">        <span class="comment">// 定义状态，保存定时器时间戳</span></span><br><span class="line">        ValueState&lt;Long&gt; timerTsState;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">open</span><span class="params">(Configuration parameters)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">            isPayedState = getRuntimeContext().getState(<span class="keyword">new</span> ValueStateDescriptor&lt;Boolean&gt;(<span class="string">"is-payed"</span>, 									Boolean<span class="class">.<span class="keyword">class</span>, <span class="title">false</span>))</span>;</span><br><span class="line">            isCreatedState = getRuntimeContext().getState(<span class="keyword">new</span> ValueStateDescriptor&lt;Boolean&gt;(<span class="string">"is-created"</span>, 							Boolean<span class="class">.<span class="keyword">class</span>, <span class="title">false</span>))</span>;</span><br><span class="line">            timerTsState = getRuntimeContext().getState(<span class="keyword">new</span> ValueStateDescriptor&lt;Long&gt;(<span class="string">"timer-ts"</span>, 											Long<span class="class">.<span class="keyword">class</span>))</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">processElement</span><span class="params">(OrderEvent value, Context ctx, Collector&lt;OrderResult&gt; out)</span> <span class="keyword">throws</span> 										Exception </span>&#123;</span><br><span class="line">            <span class="comment">// 先获取当前状态</span></span><br><span class="line">            Boolean isPayed = isPayedState.value();</span><br><span class="line">            Boolean isCreated = isCreatedState.value();</span><br><span class="line">            Long timerTs = timerTsState.value();</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 判断当前事件类型</span></span><br><span class="line">            <span class="keyword">if</span>( <span class="string">"create"</span>.equals(value.getEventType()) )&#123;</span><br><span class="line">                <span class="comment">// 1. 如果来的是create，要判断是否支付过</span></span><br><span class="line">                <span class="keyword">if</span>( isPayed )&#123;</span><br><span class="line">                    <span class="comment">// 1.1 如果已经正常支付，输出正常匹配结果</span></span><br><span class="line">                    out.collect(<span class="keyword">new</span> OrderResult(value.getOrderId(), <span class="string">"payed successfully"</span>));</span><br><span class="line">                    <span class="comment">// 清空状态，删除定时器</span></span><br><span class="line">                    isCreatedState.clear();</span><br><span class="line">                    isPayedState.clear();</span><br><span class="line">                    timerTsState.clear();</span><br><span class="line">                    ctx.timerService().deleteEventTimeTimer(timerTs);</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="comment">// 1.2 如果没有支付过，注册15分钟后的定时器，开始等待支付事件</span></span><br><span class="line">                    Long ts = ( value.getTimestamp() + <span class="number">15</span> * <span class="number">60</span> ) * <span class="number">1000L</span>;</span><br><span class="line">                    ctx.timerService().registerEventTimeTimer(ts);</span><br><span class="line">                    <span class="comment">// 更新状态</span></span><br><span class="line">                    timerTsState.update(ts);</span><br><span class="line">                    isCreatedState.update(<span class="keyword">true</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span>( <span class="string">"pay"</span>.equals(value.getEventType()) )&#123;</span><br><span class="line">                <span class="comment">// 2. 如果来的是pay，要判断是否有下单事件来过</span></span><br><span class="line">                <span class="keyword">if</span>( isCreated )&#123;</span><br><span class="line">                    <span class="comment">// 2.1 已经有过下单事件，要继续判断支付的时间戳是否超过15分钟</span></span><br><span class="line">                    <span class="keyword">if</span>( value.getTimestamp() * <span class="number">1000L</span> &lt; timerTs )&#123;</span><br><span class="line">                        <span class="comment">// 2.1.1 在15分钟内，没有超时，正常匹配输出</span></span><br><span class="line">                        out.collect(<span class="keyword">new</span> OrderResult(value.getOrderId(), <span class="string">"payed successfully"</span>));</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        <span class="comment">// 2.1.2 已经超时，输出侧输出流报警</span></span><br><span class="line">                        ctx.output(orderTimeoutTag, <span class="keyword">new</span> OrderResult(value.getOrderId(), <span class="string">"payed but already 													timeout"</span>));</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="comment">// 统一清空状态</span></span><br><span class="line">                    isCreatedState.clear();</span><br><span class="line">                    isPayedState.clear();</span><br><span class="line">                    timerTsState.clear();</span><br><span class="line">                    ctx.timerService().deleteEventTimeTimer(timerTs);</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="comment">// 2.2 没有下单事件，乱序，注册一个定时器，等待下单事件</span></span><br><span class="line">                    ctx.timerService().registerEventTimeTimer( value.getTimestamp() * <span class="number">1000L</span>);</span><br><span class="line">                    <span class="comment">// 更新状态</span></span><br><span class="line">                    timerTsState.update(value.getTimestamp() * <span class="number">1000L</span>);</span><br><span class="line">                    isPayedState.update(<span class="keyword">true</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onTimer</span><span class="params">(<span class="keyword">long</span> timestamp, OnTimerContext ctx, Collector&lt;OrderResult&gt; out)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">            <span class="comment">// 定时器触发，说明一定有一个事件没来</span></span><br><span class="line">            <span class="keyword">if</span>( isPayedState.value() )&#123;</span><br><span class="line">                <span class="comment">// 如果pay来了，说明create没来</span></span><br><span class="line">                ctx.output(orderTimeoutTag, <span class="keyword">new</span> OrderResult(ctx.getCurrentKey(), <span class="string">"payed but not found created 								log"</span>));</span><br><span class="line">            &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">// 如果pay没来，支付超时</span></span><br><span class="line">                ctx.output(orderTimeoutTag, <span class="keyword">new</span> OrderResult(ctx.getCurrentKey(), <span class="string">"timeout"</span>));</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 清空状态</span></span><br><span class="line">            isCreatedState.clear();</span><br><span class="line">            isPayedState.clear();</span><br><span class="line">            timerTsState.clear();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="来自两条流的订单交易匹配"><a href="#来自两条流的订单交易匹配" class="headerlink" title="来自两条流的订单交易匹配"></a>来自两条流的订单交易匹配</h4><h5 id="多流普通连接"><a href="#多流普通连接" class="headerlink" title="多流普通连接"></a>多流普通连接</h5><p>对于订单支付事件，用户支付完成其实并不算完，我们还得确认平台账户上是否到账了。而往往这会来自不同的日志信息，所以我们要同时读入两条流的数据来做 合 并 处 理 。 这 里 我 们 利 用 connect 将 两 条 流 进 行 连 接 ， 然 后 用 自 定 义 的CoProcessFunction 进行处理。</p>
+<p>具体代码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.atguigu.orderpay_detect;</span><br><span class="line"><span class="keyword">import</span> com.atguigu.orderpay_detect.beans.OrderEvent;</span><br><span class="line"><span class="keyword">import</span> com.atguigu.orderpay_detect.beans.ReceiptEvent;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.api.common.state.ValueState;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.api.common.state.ValueStateDescriptor;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.api.java.tuple.Tuple2;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.configuration.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.TimeCharacteristic;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.datastream.DataStream;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.functions.co.CoProcessFunction;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.functions.timestamps.AscendingTimestampExtractor;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.util.Collector;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.util.OutputTag;</span><br><span class="line"><span class="keyword">import</span> java.net.URL;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TxPayMatch</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 定义侧输出流标签</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> OutputTag&lt;OrderEvent&gt; unmatchedPays = <span class="keyword">new</span> OutputTag&lt;OrderEvent&gt;(<span class="string">"unmatched-pays"</span>)&#123;&#125;;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">static</span> OutputTag&lt;ReceiptEvent&gt; unmatchedReceipts = <span class="keyword">new</span> OutputTag&lt;ReceiptEvent&gt;(<span class="string">"unmatched-		receipts"</span>)&#123;&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();</span><br><span class="line">        env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);</span><br><span class="line">        env.setParallelism(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 读取数据并转换成POJO类型</span></span><br><span class="line">        <span class="comment">// 读取订单支付事件数据</span></span><br><span class="line">        URL orderResource = TxPayMatch.class.getResource("/OrderLog.csv");</span><br><span class="line">        DataStream&lt;OrderEvent&gt; orderEventStream = env.readTextFile(orderResource.getPath())</span><br><span class="line">                .map( line -&gt; &#123;</span><br><span class="line">                    String[] fields = line.split(<span class="string">","</span>);</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> OrderEvent(<span class="keyword">new</span> Long(fields[<span class="number">0</span>]), fields[<span class="number">1</span>], fields[<span class="number">2</span>], <span class="keyword">new</span> Long(fields[<span class="number">3</span>]));</span><br><span class="line">                &#125; )</span><br><span class="line">                .assignTimestampsAndWatermarks(<span class="keyword">new</span> AscendingTimestampExtractor&lt;OrderEvent&gt;() &#123;</span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">extractAscendingTimestamp</span><span class="params">(OrderEvent element)</span> </span>&#123;</span><br><span class="line">                        <span class="keyword">return</span> element.getTimestamp() * <span class="number">1000L</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;)</span><br><span class="line">                .filter( data -&gt; !<span class="string">""</span>.equals(data.getTxId()) );    <span class="comment">// 交易id不为空，必须是pay事件</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 读取到账事件数据</span></span><br><span class="line">        URL receiptResource = TxPayMatch.class.getResource("/ReceiptLog.csv");</span><br><span class="line">        SingleOutputStreamOperator&lt;ReceiptEvent&gt; receiptEventStream = 																							env.readTextFile(receiptResource.getPath())</span><br><span class="line">                .map(line -&gt; &#123;</span><br><span class="line">                    String[] fields = line.split(<span class="string">","</span>);</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> ReceiptEvent(fields[<span class="number">0</span>], fields[<span class="number">1</span>], <span class="keyword">new</span> Long(fields[<span class="number">2</span>]));</span><br><span class="line">                &#125;)</span><br><span class="line">                .assignTimestampsAndWatermarks(<span class="keyword">new</span> AscendingTimestampExtractor&lt;ReceiptEvent&gt;() &#123;</span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">extractAscendingTimestamp</span><span class="params">(ReceiptEvent element)</span> </span>&#123;</span><br><span class="line">                        <span class="keyword">return</span> element.getTimestamp() * <span class="number">1000L</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 将两条流进行连接合并，进行匹配处理，不匹配的事件输出到侧输出流</span></span><br><span class="line">        SingleOutputStreamOperator&lt;Tuple2&lt;OrderEvent, ReceiptEvent&gt;&gt; resultStream = 																			orderEventStream.keyBy(OrderEvent::getTxId)</span><br><span class="line">                .connect(receiptEventStream.keyBy(ReceiptEvent::getTxId))</span><br><span class="line">                .process(<span class="keyword">new</span> TxPayMatchDetect());</span><br><span class="line"></span><br><span class="line">        resultStream.print(<span class="string">"matched-pays"</span>);</span><br><span class="line">        resultStream.getSideOutput(unmatchedPays).print(<span class="string">"unmatched-pays"</span>);</span><br><span class="line">        resultStream.getSideOutput(unmatchedReceipts).print(<span class="string">"unmatched-receipts"</span>);</span><br><span class="line"></span><br><span class="line">        env.execute(<span class="string">"tx match detect job"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 实现自定义CoProcessFunction</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">TxPayMatchDetect</span> <span class="keyword">extends</span> <span class="title">CoProcessFunction</span>&lt;<span class="title">OrderEvent</span>, <span class="title">ReceiptEvent</span>, 												<span class="title">Tuple2</span>&lt;<span class="title">OrderEvent</span>, <span class="title">ReceiptEvent</span>&gt;&gt;</span>&#123;</span><br><span class="line">        <span class="comment">// 定义状态，保存当前已经到来的订单支付事件和到账时间</span></span><br><span class="line">        ValueState&lt;OrderEvent&gt; payState;</span><br><span class="line">        ValueState&lt;ReceiptEvent&gt; receiptState;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">open</span><span class="params">(Configuration parameters)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">            payState = getRuntimeContext().getState(<span class="keyword">new</span> ValueStateDescriptor&lt;OrderEvent&gt;(<span class="string">"pay"</span>, 													OrderEvent<span class="class">.<span class="keyword">class</span>))</span>;</span><br><span class="line">            receiptState = getRuntimeContext().getState(<span class="keyword">new</span> ValueStateDescriptor&lt;ReceiptEvent&gt;(<span class="string">"receipt"</span>, 								ReceiptEvent<span class="class">.<span class="keyword">class</span>))</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">processElement1</span><span class="params">(OrderEvent pay, Context ctx, Collector&lt;Tuple2&lt;OrderEvent, ReceiptEvent&gt;&gt; 						 out)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">            <span class="comment">// 订单支付事件来了，判断是否已经有对应的到账事件</span></span><br><span class="line">            ReceiptEvent receipt = receiptState.value();</span><br><span class="line">            <span class="keyword">if</span>( receipt != <span class="keyword">null</span> )&#123;</span><br><span class="line">                <span class="comment">// 如果receipt不为空，说明到账事件已经来过，输出匹配事件，清空状态</span></span><br><span class="line">                out.collect( <span class="keyword">new</span> Tuple2&lt;&gt;(pay, receipt) );</span><br><span class="line">                payState.clear();</span><br><span class="line">                receiptState.clear();</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">// 如果receipt没来，注册一个定时器，开始等待</span></span><br><span class="line">                ctx.timerService().registerEventTimeTimer( (pay.getTimestamp() + <span class="number">5</span>) * <span class="number">1000L</span> );    <span class="comment">// 等待5秒									钟，具体要看数据</span></span><br><span class="line">                <span class="comment">// 更新状态</span></span><br><span class="line">                payState.update(pay);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">processElement2</span><span class="params">(ReceiptEvent receipt, Context ctx, Collector&lt;Tuple2&lt;OrderEvent, 										ReceiptEvent&gt;&gt; out)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">            <span class="comment">// 到账事件来了，判断是否已经有对应的支付事件</span></span><br><span class="line">            OrderEvent pay = payState.value();</span><br><span class="line">            <span class="keyword">if</span>( pay != <span class="keyword">null</span> )&#123;</span><br><span class="line">                <span class="comment">// 如果pay不为空，说明支付事件已经来过，输出匹配事件，清空状态</span></span><br><span class="line">                out.collect( <span class="keyword">new</span> Tuple2&lt;&gt;(pay, receipt) );</span><br><span class="line">                payState.clear();</span><br><span class="line">                receiptState.clear();</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">// 如果pay没来，注册一个定时器，开始等待</span></span><br><span class="line">                ctx.timerService().registerEventTimeTimer( (receipt.getTimestamp() + <span class="number">3</span>) * <span class="number">1000L</span> );    <span class="comment">// 等待								 3秒钟，具体要看数据</span></span><br><span class="line">                <span class="comment">// 更新状态</span></span><br><span class="line">                receiptState.update(receipt);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onTimer</span><span class="params">(<span class="keyword">long</span> timestamp, OnTimerContext ctx, Collector&lt;Tuple2&lt;OrderEvent, ReceiptEvent&gt;&gt; 						out)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">            <span class="comment">// 定时器触发，有可能是有一个事件没来，不匹配，也有可能是都来过了，已经输出并清空状态</span></span><br><span class="line">            <span class="comment">// 判断哪个不为空，那么另一个就没来</span></span><br><span class="line">            <span class="keyword">if</span>( payState.value() != <span class="keyword">null</span> )&#123;</span><br><span class="line">                ctx.output(unmatchedPays, payState.value());</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span>( receiptState.value() != <span class="keyword">null</span> )&#123;</span><br><span class="line">                ctx.output(unmatchedReceipts, receiptState.value());</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 清空状态</span></span><br><span class="line">            payState.clear();</span><br><span class="line">            receiptState.clear();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="JOIN方法连接"><a href="#JOIN方法连接" class="headerlink" title="JOIN方法连接"></a>JOIN方法连接</h5><p>JOIN 分为窗口连接和区间连接</p>
+<h6 id="窗口连接"><a href="#窗口连接" class="headerlink" title="窗口连接"></a>窗口连接</h6><p><img src="/2021/11/28/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-6/image-20211128041316279.png" alt="image-20211128041316279"></p>
+<p><img src="/2021/11/28/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-6/image-20211128041450268.png" alt="image-20211128041450268"></p>
+<p><img src="/2021/11/28/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-6/image-20211128041531909.png" alt="image-20211128041531909"></p>
+<p><img src="/2021/11/28/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-6/image-20211128041607527.png" alt="image-20211128041607527"></p>
+<p><img src="/2021/11/28/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-6/image-20211128041650155.png" alt="image-20211128041650155"></p>
+<h6 id="区间连接"><a href="#区间连接" class="headerlink" title="区间连接"></a>区间连接</h6><p>区间连接需要先keyby</p>
+<p><img src="/2021/11/28/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-6/image-20211128041906873.png" alt="image-20211128041906873"></p>
+<p><img src="/2021/11/28/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-6/image-20211128041932599.png" alt="image-20211128041932599"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.test.orderpay_detect;</span><br><span class="line"><span class="keyword">import</span> com.test.orderpay_detect.beans.OrderEvent;</span><br><span class="line"><span class="keyword">import</span> com.test.orderpay_detect.beans.ReceiptEvent;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.api.java.tuple.Tuple2;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.TimeCharacteristic;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.datastream.DataStream;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.functions.co.ProcessJoinFunction;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.functions.timestamps.AscendingTimestampExtractor;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.windowing.time.Time;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.util.Collector;</span><br><span class="line"><span class="keyword">import</span> java.net.URL;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TxPayMatchByJoin</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();</span><br><span class="line">        env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);</span><br><span class="line">        env.setParallelism(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 读取数据并转换成POJO类型</span></span><br><span class="line">        <span class="comment">// 读取订单支付事件数据</span></span><br><span class="line">        URL orderResource = TxPayMatchByJoin.class.getResource("/OrderLog.csv");</span><br><span class="line">        DataStream&lt;OrderEvent&gt; orderEventStream = env.readTextFile(orderResource.getPath())</span><br><span class="line">                .map(line -&gt; &#123;</span><br><span class="line">                    String[] fields = line.split(<span class="string">","</span>);</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> OrderEvent(<span class="keyword">new</span> Long(fields[<span class="number">0</span>]), fields[<span class="number">1</span>], fields[<span class="number">2</span>], <span class="keyword">new</span> Long(fields[<span class="number">3</span>]));</span><br><span class="line">                &#125;)</span><br><span class="line">                .assignTimestampsAndWatermarks(<span class="keyword">new</span> AscendingTimestampExtractor&lt;OrderEvent&gt;() &#123;</span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">extractAscendingTimestamp</span><span class="params">(OrderEvent element)</span> </span>&#123;</span><br><span class="line">                        <span class="keyword">return</span> element.getTimestamp() * <span class="number">1000L</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;)</span><br><span class="line">                .filter(data -&gt; !<span class="string">""</span>.equals(data.getTxId()));    <span class="comment">// 交易id不为空，必须是pay事件</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 读取到账事件数据</span></span><br><span class="line">        URL receiptResource = TxPayMatchByJoin.class.getResource("/ReceiptLog.csv");</span><br><span class="line">        SingleOutputStreamOperator&lt;ReceiptEvent&gt; receiptEventStream = 																							env.readTextFile(receiptResource.getPath())</span><br><span class="line">                .map(line -&gt; &#123;</span><br><span class="line">                    String[] fields = line.split(<span class="string">","</span>);</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> ReceiptEvent(fields[<span class="number">0</span>], fields[<span class="number">1</span>], <span class="keyword">new</span> Long(fields[<span class="number">2</span>]));</span><br><span class="line">                &#125;)</span><br><span class="line">                .assignTimestampsAndWatermarks(<span class="keyword">new</span> AscendingTimestampExtractor&lt;ReceiptEvent&gt;() &#123;</span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">extractAscendingTimestamp</span><span class="params">(ReceiptEvent element)</span> </span>&#123;</span><br><span class="line">                        <span class="keyword">return</span> element.getTimestamp() * <span class="number">1000L</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 区间连接两条流，得到匹配的数据</span></span><br><span class="line">        SingleOutputStreamOperator&lt;Tuple2&lt;OrderEvent, ReceiptEvent&gt;&gt; resultStream = orderEventStream</span><br><span class="line">                .keyBy(OrderEvent::getTxId)</span><br><span class="line">                .intervalJoin(receiptEventStream.keyBy(ReceiptEvent::getTxId))</span><br><span class="line">                .between(Time.seconds(-<span class="number">3</span>), Time.seconds(<span class="number">5</span>))    <span class="comment">// -3，5 区间范围</span></span><br><span class="line">                .process(<span class="keyword">new</span> TxPayMatchDetectByJoin());</span><br><span class="line"></span><br><span class="line">        resultStream.print();</span><br><span class="line"></span><br><span class="line">        env.execute(<span class="string">"tx pay match by join job"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 实现自定义ProcessJoinFunction</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">TxPayMatchDetectByJoin</span> <span class="keyword">extends</span> <span class="title">ProcessJoinFunction</span>&lt;<span class="title">OrderEvent</span>, <span class="title">ReceiptEvent</span>, 								<span class="title">Tuple2</span>&lt;<span class="title">OrderEvent</span>, <span class="title">ReceiptEvent</span>&gt;&gt;</span>&#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">processElement</span><span class="params">(OrderEvent left, ReceiptEvent right, Context ctx, 																Collector&lt;Tuple2&lt;OrderEvent, ReceiptEvent&gt;&gt; out)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">            out.collect(<span class="keyword">new</span> Tuple2&lt;&gt;(left, right));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Rui Zhang
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://yoursite.com/2021/11/28/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-6/" title="基于Flink的电商用户行为数据分析（6）">http://yoursite.com/2021/11/28/基于Flink的电商用户行为数据分析-6/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Flink/" rel="tag"># Flink</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/11/28/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-5/" rel="prev" title="基于Flink的电商用户行为数据分析（5）">
+      <i class="fa fa-chevron-left"></i> 基于Flink的电商用户行为数据分析（5）
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/12/29/%E5%A4%A7%E6%95%B0%E6%8D%AE%E6%A6%82%E8%AE%BA/" rel="next" title="大数据概论">
+      大数据概论 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#基于Flink的电商用户行为数据分析（6）"><span class="nav-number">1.</span> <span class="nav-text">基于Flink的电商用户行为数据分析（6）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#订单支付实时监控"><span class="nav-number">1.1.</span> <span class="nav-text">订单支付实时监控</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#模块创建和数据准备"><span class="nav-number">1.1.1.</span> <span class="nav-text">模块创建和数据准备</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#代码实现"><span class="nav-number">1.1.2.</span> <span class="nav-text">代码实现</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#使用CEP实现"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">使用CEP实现</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#使用-Process-Function-实现"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">使用 Process Function 实现</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#来自两条流的订单交易匹配"><span class="nav-number">1.1.3.</span> <span class="nav-text">来自两条流的订单交易匹配</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#多流普通连接"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">多流普通连接</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#JOIN方法连接"><span class="nav-number">1.1.3.2.</span> <span class="nav-text">JOIN方法连接</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#窗口连接"><span class="nav-number">1.1.3.2.1.</span> <span class="nav-text">窗口连接</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#区间连接"><span class="nav-number">1.1.3.2.2.</span> <span class="nav-text">区间连接</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Rui Zhang"
+      src="/images/head.jpg">
+  <p class="site-author-name" itemprop="name">Rui Zhang</p>
+  <div class="site-description" itemprop="description">不在沉默中爆发，就在沉默中灭亡</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">52</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2021 – 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Rui Zhang</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.7m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">25:10</span>
+</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"right","width":120,"height":230},"mobile":{"show":true},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/clicklove.js"></script>

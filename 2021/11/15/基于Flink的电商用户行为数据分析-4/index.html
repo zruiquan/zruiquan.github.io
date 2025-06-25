@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="基于Flink的电商用户行为数据分析（4）市场营销商业指标统计分析模块创建和数据准备继续在 UserBehaviorAnalysis 下新建一个 maven module 作为子项目，命名为MarketAnalysis。这个模块中我们没有现成的数据，所以会用自定义的测试源来产生测试数据流，或者直接用生成测试数据文件。 APP市场推广统计">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基于Flink的电商用户行为数据分析（4）">
+<meta property="og:url" content="http://yoursite.com/2021/11/15/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-4/index.html">
+<meta property="og:site_name" content="没有尾巴的小驴">
+<meta property="og:description" content="基于Flink的电商用户行为数据分析（4）市场营销商业指标统计分析模块创建和数据准备继续在 UserBehaviorAnalysis 下新建一个 maven module 作为子项目，命名为MarketAnalysis。这个模块中我们没有现成的数据，所以会用自定义的测试源来产生测试数据流，或者直接用生成测试数据文件。 APP市场推广统计">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-11-15T10:49:30.000Z">
+<meta property="article:modified_time" content="2025-06-25T08:08:46.203Z">
+<meta property="article:author" content="Rui Zhang">
+<meta property="article:tag" content="Flink">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2021/11/15/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-4/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true
+  };
+</script>
+
+  <title>基于Flink的电商用户行为数据分析（4） | 没有尾巴的小驴</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">没有尾巴的小驴</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">记录生活</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">22</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">22</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">52</span></a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/11/15/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/head.jpg">
+      <meta itemprop="name" content="Rui Zhang">
+      <meta itemprop="description" content="不在沉默中爆发，就在沉默中灭亡">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="没有尾巴的小驴">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          基于Flink的电商用户行为数据分析（4）
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-11-15 18:49:30" itemprop="dateCreated datePublished" datetime="2021-11-15T18:49:30+08:00">2021-11-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-06-25 16:08:46" itemprop="dateModified" datetime="2025-06-25T16:08:46+08:00">2025-06-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Flink/" itemprop="url" rel="index"><span itemprop="name">Flink</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>17k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>16 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="基于Flink的电商用户行为数据分析（4）"><a href="#基于Flink的电商用户行为数据分析（4）" class="headerlink" title="基于Flink的电商用户行为数据分析（4）"></a>基于Flink的电商用户行为数据分析（4）</h2><h2 id="市场营销商业指标统计分析"><a href="#市场营销商业指标统计分析" class="headerlink" title="市场营销商业指标统计分析"></a>市场营销商业指标统计分析</h2><h3 id="模块创建和数据准备"><a href="#模块创建和数据准备" class="headerlink" title="模块创建和数据准备"></a>模块创建和数据准备</h3><p>继续在 UserBehaviorAnalysis 下新建一个 maven module 作为子项目，命名为MarketAnalysis。这个模块中我们没有现成的数据，所以会用自定义的测试源来产生测试数据流，或者直接用生成测试数据文件。</p>
+<h3 id="APP市场推广统计"><a href="#APP市场推广统计" class="headerlink" title="APP市场推广统计"></a>APP市场推广统计</h3><h4 id="APP-市场分渠道推广统计"><a href="#APP-市场分渠道推广统计" class="headerlink" title="APP 市场分渠道推广统计"></a>APP 市场分渠道推广统计</h4><p>随着智能手机的普及，在如今的电商网站中已经有越来越多的用户来自移动端，  相比起传统浏览器的登录方式，手机 APP 成为了更多用户访问电商网站的首选。对于电商企业来说，一般会通过各种不同的渠道对自己的 APP 进行市场推广，而这些渠道的统计数据（比如，不同网站上广告链接的点击量、 APP 下载量）就成了市场营销的重要商业指标。</p>
+<p>首 先 我 们 考 察 分 渠 道 的 市 场 推 广 统 计 。 在 src/main/java 下 创 建AppMarketingByChannel 类。 由于没有现成的数据，所以我们需要自定义一个测试源来生成用户行为的事件流。  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.test.market_analysis;</span><br><span class="line"><span class="keyword">import</span> com.test.market_analysis.beans.ChannelPromotionCount;</span><br><span class="line"><span class="keyword">import</span> com.test.market_analysis.beans.MarketingUserBehavior;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.api.common.functions.AggregateFunction;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.api.java.tuple.Tuple;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.TimeCharacteristic;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.datastream.DataStream;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.functions.source.SourceFunction;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.functions.timestamps.AscendingTimestampExtractor;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.functions.windowing.ProcessWindowFunction;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.windowing.time.Time;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.windowing.windows.TimeWindow;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.util.Collector;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.sql.Timestamp;</span><br><span class="line"><span class="keyword">import</span> java.util.Arrays;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> java.util.Random;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AppMarketingByChannel</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();</span><br><span class="line">        env.setParallelism(<span class="number">1</span>);</span><br><span class="line">        env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 1. 从自定义数据源中读取数据</span></span><br><span class="line">        DataStream&lt;MarketingUserBehavior&gt; dataStream = env.addSource( <span class="keyword">new</span> SimulatedMarketingUserBehaviorSource() )</span><br><span class="line">                .assignTimestampsAndWatermarks(<span class="keyword">new</span> AscendingTimestampExtractor&lt;MarketingUserBehavior&gt;() &#123;</span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">extractAscendingTimestamp</span><span class="params">(MarketingUserBehavior element)</span> </span>&#123;</span><br><span class="line">                        <span class="keyword">return</span> element.getTimestamp();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 2. 分渠道开窗统计</span></span><br><span class="line">        SingleOutputStreamOperator&lt;ChannelPromotionCount&gt; resultStream = dataStream</span><br><span class="line">                .filter(data -&gt; !<span class="string">"UNINSTALL"</span>.equals(data.getBehavior()))</span><br><span class="line">                .keyBy(<span class="string">"channel"</span>, <span class="string">"behavior"</span>)</span><br><span class="line">                .timeWindow(Time.hours(<span class="number">1</span>), Time.seconds(<span class="number">5</span>))    <span class="comment">// 定义滑窗</span></span><br><span class="line">                .aggregate(<span class="keyword">new</span> MarketingCountAgg(), <span class="keyword">new</span> MarketingCountResult());</span><br><span class="line"></span><br><span class="line">        resultStream.print();</span><br><span class="line"></span><br><span class="line">        env.execute(<span class="string">"app marketing by channel job"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 实现自定义的模拟市场用户行为数据源</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">SimulatedMarketingUserBehaviorSource</span> <span class="keyword">implements</span> <span class="title">SourceFunction</span>&lt;<span class="title">MarketingUserBehavior</span>&gt;</span>&#123;</span><br><span class="line">        <span class="comment">// 控制是否正常运行的标识位</span></span><br><span class="line">        Boolean running = <span class="keyword">true</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 定义用户行为和渠道的范围</span></span><br><span class="line">        List&lt;String&gt; behaviorList = Arrays.asList(<span class="string">"CLICK"</span>, <span class="string">"DOWNLOAD"</span>, <span class="string">"INSTALL"</span>, <span class="string">"UNINSTALL"</span>);</span><br><span class="line">        List&lt;String&gt; channelList = Arrays.asList(<span class="string">"app store"</span>, <span class="string">"wechat"</span>, <span class="string">"weibo"</span>);</span><br><span class="line"></span><br><span class="line">        Random random = <span class="keyword">new</span> Random();</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">(SourceContext&lt;MarketingUserBehavior&gt; ctx)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">            <span class="keyword">while</span>(running)&#123;</span><br><span class="line">                <span class="comment">// 随机生成所有字段</span></span><br><span class="line">                Long id = random.nextLong();</span><br><span class="line">                String behavior = behaviorList.get( random.nextInt(behaviorList.size()) );</span><br><span class="line">                String channel = channelList.get( random.nextInt(channelList.size()) );</span><br><span class="line">                Long timestamp = System.currentTimeMillis();</span><br><span class="line"></span><br><span class="line">                <span class="comment">// 发出数据</span></span><br><span class="line">                ctx.collect(<span class="keyword">new</span> MarketingUserBehavior(id, behavior, channel, timestamp));</span><br><span class="line"></span><br><span class="line">                Thread.sleep(<span class="number">100L</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">cancel</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            running = <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 实现自定义的增量聚合函数</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">MarketingCountAgg</span> <span class="keyword">implements</span> <span class="title">AggregateFunction</span>&lt;<span class="title">MarketingUserBehavior</span>, <span class="title">Long</span>, <span class="title">Long</span>&gt;</span>&#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> Long <span class="title">createAccumulator</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0L</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> Long <span class="title">add</span><span class="params">(MarketingUserBehavior value, Long accumulator)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> accumulator + <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> Long <span class="title">getResult</span><span class="params">(Long accumulator)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> accumulator;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> Long <span class="title">merge</span><span class="params">(Long a, Long b)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> a + b;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 实现自定义的全窗口函数</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">MarketingCountResult</span> <span class="keyword">extends</span> <span class="title">ProcessWindowFunction</span>&lt;<span class="title">Long</span>, <span class="title">ChannelPromotionCount</span>, <span class="title">Tuple</span>, <span class="title">TimeWindow</span>&gt;</span>&#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">process</span><span class="params">(Tuple tuple, Context context, Iterable&lt;Long&gt; elements, Collector&lt;ChannelPromotionCount&gt; out)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">            String channel = tuple.getField(<span class="number">0</span>);</span><br><span class="line">            String behavior = tuple.getField(<span class="number">1</span>);</span><br><span class="line">            String windowEnd = <span class="keyword">new</span> Timestamp(context.window().getEnd()).toString();</span><br><span class="line">            Long count = elements.iterator().next();</span><br><span class="line"></span><br><span class="line">            out.collect(<span class="keyword">new</span> ChannelPromotionCount(channel, behavior, windowEnd, count));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="APP-市场不分渠道推广统计"><a href="#APP-市场不分渠道推广统计" class="headerlink" title="APP 市场不分渠道推广统计"></a>APP 市场不分渠道推广统计</h4><p>同样我们还可以考察不分渠道的市场推广统计，这样得到的就是所有渠道推广的总量。在 src/main/java 下创建 AppMarketingStatistics 类，代码如下：  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.test.market_analysis;</span><br><span class="line"><span class="keyword">import</span> com.test.market_analysis.beans.ChannelPromotionCount;</span><br><span class="line"><span class="keyword">import</span> com.test.market_analysis.beans.MarketingUserBehavior;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.api.common.functions.AggregateFunction;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.api.common.functions.MapFunction;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.api.java.tuple.Tuple;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.api.java.tuple.Tuple2;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.TimeCharacteristic;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.datastream.DataStream;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.functions.timestamps.AscendingTimestampExtractor;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.functions.windowing.WindowFunction;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.windowing.time.Time;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.windowing.windows.TimeWindow;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.util.Collector;</span><br><span class="line"><span class="keyword">import</span> java.sql.Timestamp;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AppMarketingStatistics</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();</span><br><span class="line">        env.setParallelism(<span class="number">1</span>);</span><br><span class="line">        env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 1. 从自定义数据源中读取数据</span></span><br><span class="line">        DataStream&lt;MarketingUserBehavior&gt; dataStream = env.addSource( <span class="keyword">new</span> AppMarketingByChannel.SimulatedMarketingUserBehaviorSource() )</span><br><span class="line">                .assignTimestampsAndWatermarks(<span class="keyword">new</span> AscendingTimestampExtractor&lt;MarketingUserBehavior&gt;() &#123;</span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">extractAscendingTimestamp</span><span class="params">(MarketingUserBehavior element)</span> </span>&#123;</span><br><span class="line">                        <span class="keyword">return</span> element.getTimestamp();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 2. 开窗统计总量</span></span><br><span class="line">        SingleOutputStreamOperator&lt;ChannelPromotionCount&gt; resultStream = dataStream</span><br><span class="line">                .filter(data -&gt; !<span class="string">"UNINSTALL"</span>.equals(data.getBehavior()))</span><br><span class="line">                .map(<span class="keyword">new</span> MapFunction&lt;MarketingUserBehavior, Tuple2&lt;String, Long&gt;&gt;() &#123;</span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> Tuple2&lt;String, Long&gt; <span class="title">map</span><span class="params">(MarketingUserBehavior value)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">                        <span class="keyword">return</span> <span class="keyword">new</span> Tuple2&lt;&gt;(<span class="string">"total"</span>, <span class="number">1L</span>);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;)</span><br><span class="line">                .keyBy(<span class="number">0</span>)</span><br><span class="line">                .timeWindow(Time.hours(<span class="number">1</span>), Time.seconds(<span class="number">5</span>))    <span class="comment">// 定义滑窗</span></span><br><span class="line">                .aggregate( <span class="keyword">new</span> MarketingStatisticsAgg(), <span class="keyword">new</span> MarketingStatisticsResult() );</span><br><span class="line"></span><br><span class="line">        resultStream.print();</span><br><span class="line"></span><br><span class="line">        env.execute(<span class="string">"app marketing by channel job"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">MarketingStatisticsAgg</span> <span class="keyword">implements</span> <span class="title">AggregateFunction</span>&lt;<span class="title">Tuple2</span>&lt;<span class="title">String</span>, <span class="title">Long</span>&gt;, <span class="title">Long</span>, <span class="title">Long</span>&gt;</span>&#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> Long <span class="title">createAccumulator</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0L</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> Long <span class="title">add</span><span class="params">(Tuple2&lt;String, Long&gt; value, Long accumulator)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> accumulator + <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> Long <span class="title">getResult</span><span class="params">(Long accumulator)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> accumulator;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> Long <span class="title">merge</span><span class="params">(Long a, Long b)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> a + b;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">MarketingStatisticsResult</span> <span class="keyword">implements</span> <span class="title">WindowFunction</span>&lt;<span class="title">Long</span>, <span class="title">ChannelPromotionCount</span>, <span class="title">Tuple</span>, <span class="title">TimeWindow</span>&gt;</span>&#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">apply</span><span class="params">(Tuple tuple, TimeWindow window, Iterable&lt;Long&gt; input, Collector&lt;ChannelPromotionCount&gt; out)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">            String windowEnd = <span class="keyword">new</span> Timestamp( window.getEnd() ).toString();</span><br><span class="line">            Long count = input.iterator().next();</span><br><span class="line"></span><br><span class="line">            out.collect(<span class="keyword">new</span> ChannelPromotionCount(<span class="string">"total"</span>, <span class="string">"total"</span>, windowEnd, count));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="页面广告分析"><a href="#页面广告分析" class="headerlink" title="页面广告分析"></a>页面广告分析</h3><p>电商网站的市场营销商业指标中，除了自身的 APP 推广，还会考虑到页面上的广告投放（包括自己经营的产品和其它网站的广告）。 所以广告相关的统计分析，也是市场营销的重要指标。  </p>
+<p>对于广告的统计，最简单也最重要的就是页面广告的点击量，网站往往需要根据广告点击量来制定定价策略和调整推广方式，而且也可以借此收集用户的偏好信<br>息。更加具体的应用是，我们可以根据用户的地理位置进行划分，从而总结出不同省份用户对不同广告的偏好，这样更有助于广告的精准投放。  </p>
+<h4 id="页面广告点击量统计"><a href="#页面广告点击量统计" class="headerlink" title="页面广告点击量统计"></a>页面广告点击量统计</h4><p>接下来我们就进行页面广告按照省份划分的点击量的统计。在 src/main/java 下创建 AdStatisticsByProvince 类。 同样由于没有现成的数据，我们定义一些测试数据，放在 AdClickLog.csv 中，用来生成用户点击广告行为的事件流。  </p>
+<p>在代码中我们首先定义源数据的 POJO 类 AdClickEvent， 以及输出统计数据的POJO 类 AdCountByProvince。主函数中先以 province 进行 keyBy，然后开一小时的时间窗口，滑动距离为 5 秒，统计窗口内的点击事件数量。具体代码实现如下：  </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.test.market_analysis;</span><br><span class="line"><span class="keyword">import</span> com.test.market_analysis.beans.AdClickEvent;</span><br><span class="line"><span class="keyword">import</span> com.test.market_analysis.beans.AdCountViewByProvince;</span><br><span class="line"><span class="keyword">import</span> com.test.market_analysis.beans.BlackListUserWarning;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.api.common.functions.AggregateFunction;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.api.common.state.ValueState;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.api.common.state.ValueStateDescriptor;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.api.java.tuple.Tuple;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.configuration.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.TimeCharacteristic;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.datastream.DataStream;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.functions.KeyedProcessFunction;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.functions.timestamps.AscendingTimestampExtractor;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.functions.windowing.WindowFunction;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.windowing.time.Time;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.windowing.windows.TimeWindow;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.util.Collector;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.util.OutputTag;</span><br><span class="line"><span class="keyword">import</span> sun.awt.SunHints;</span><br><span class="line"><span class="keyword">import</span> java.net.URL;</span><br><span class="line"><span class="keyword">import</span> java.sql.Timestamp;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AdStatisticsByProvince</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();</span><br><span class="line">        env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);</span><br><span class="line">        env.setParallelism(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 1. 从文件中读取数据</span></span><br><span class="line">        URL resource = AdStatisticsByProvince.class.getResource("/AdClickLog.csv");</span><br><span class="line">        DataStream&lt;AdClickEvent&gt; adClickEventStream = env.readTextFile(resource.getPath())</span><br><span class="line">                .map( line -&gt; &#123;</span><br><span class="line">                    String[] fields = line.split(<span class="string">","</span>);</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> AdClickEvent(<span class="keyword">new</span> Long(fields[<span class="number">0</span>]), <span class="keyword">new</span> Long(fields[<span class="number">1</span>]), fields[<span class="number">2</span>], fields[<span class="number">3</span>], <span class="keyword">new</span>                                            Long(fields[<span class="number">4</span>]));</span><br><span class="line">                &#125; )</span><br><span class="line">                .assignTimestampsAndWatermarks(<span class="keyword">new</span> AscendingTimestampExtractor&lt;AdClickEvent&gt;() &#123;</span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">extractAscendingTimestamp</span><span class="params">(AdClickEvent element)</span> </span>&#123;</span><br><span class="line">                        <span class="keyword">return</span> element.getTimestamp() * <span class="number">1000L</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line">    </span><br><span class="line">        <span class="comment">// 2. 基于省份分组，开窗聚合</span></span><br><span class="line">        SingleOutputStreamOperator&lt;AdCountViewByProvince&gt; adCountResultStream = adClickEventStream</span><br><span class="line">                .keyBy(AdClickEvent::getProvince)</span><br><span class="line">                .timeWindow(Time.hours(<span class="number">1</span>), Time.minutes(<span class="number">5</span>))     <span class="comment">// 定义滑窗，5分钟输出一次</span></span><br><span class="line">                .aggregate(<span class="keyword">new</span> AdCountAgg(), <span class="keyword">new</span> AdCountResult());</span><br><span class="line"></span><br><span class="line">        adCountResultStream.print();</span><br><span class="line">        env.execute(<span class="string">"ad count by province job"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">AdCountAgg</span> <span class="keyword">implements</span> <span class="title">AggregateFunction</span>&lt;<span class="title">AdClickEvent</span>, <span class="title">Long</span>, <span class="title">Long</span>&gt;</span>&#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> Long <span class="title">createAccumulator</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0L</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> Long <span class="title">add</span><span class="params">(AdClickEvent value, Long accumulator)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> accumulator + <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> Long <span class="title">getResult</span><span class="params">(Long accumulator)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> accumulator;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> Long <span class="title">merge</span><span class="params">(Long a, Long b)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> a + b;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">AdCountResult</span> <span class="keyword">implements</span> <span class="title">WindowFunction</span>&lt;<span class="title">Long</span>, <span class="title">AdCountViewByProvince</span>, <span class="title">String</span>, <span class="title">TimeWindow</span>&gt;</span>&#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">apply</span><span class="params">(String province, TimeWindow window, Iterable&lt;Long&gt; input, Collector&lt;AdCountViewByProvince&gt; out)</span> <span class="keyword">throws</span>         Exception </span>&#123;</span><br><span class="line">            String windowEnd = <span class="keyword">new</span> Timestamp( window.getEnd() ).toString();</span><br><span class="line">            Long count = input.iterator().next();</span><br><span class="line">            out.collect( <span class="keyword">new</span> AdCountViewByProvince(province, windowEnd, count) );</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="黑名单过滤"><a href="#黑名单过滤" class="headerlink" title="黑名单过滤"></a>黑名单过滤</h4><p>上节我们进行的点击量统计，同一用户的重复点击是会叠加计算的。在实际场景中，同一用户确实可能反复点开同一个广告，这也说明了用户对广告更大的兴趣；<br>但是如果用户在一段时间非常频繁地点击广告， 这显然不是一个正常行为，有刷点击量的嫌疑。所以我们可以对一段时间内（比如一天内）的用户点击行为进行约束，如果对同一个广告点击超过一定限额（比如 100 次），应该把该用户加入黑名单并报警，此后其点击行为不应该再统计。<br>具体代码实现如下 ：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.test.market_analysis;</span><br><span class="line"><span class="keyword">import</span> com.test.market_analysis.beans.AdClickEvent;</span><br><span class="line"><span class="keyword">import</span> com.test.market_analysis.beans.AdCountViewByProvince;</span><br><span class="line"><span class="keyword">import</span> com.test.market_analysis.beans.BlackListUserWarning;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.api.common.functions.AggregateFunction;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.api.common.state.ValueState;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.api.common.state.ValueStateDescriptor;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.api.java.tuple.Tuple;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.configuration.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.TimeCharacteristic;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.datastream.DataStream;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.datastream.SingleOutputStreamOperator;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.functions.KeyedProcessFunction;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.functions.timestamps.AscendingTimestampExtractor;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.functions.windowing.WindowFunction;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.windowing.time.Time;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.streaming.api.windowing.windows.TimeWindow;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.util.Collector;</span><br><span class="line"><span class="keyword">import</span> org.apache.flink.util.OutputTag;</span><br><span class="line"><span class="keyword">import</span> sun.awt.SunHints;</span><br><span class="line"><span class="keyword">import</span> java.net.URL;</span><br><span class="line"><span class="keyword">import</span> java.sql.Timestamp;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AdStatisticsByProvince</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();</span><br><span class="line">        env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);</span><br><span class="line">        env.setParallelism(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 1. 从文件中读取数据</span></span><br><span class="line">        URL resource = AdStatisticsByProvince.class.getResource("/AdClickLog.csv");</span><br><span class="line">        DataStream&lt;AdClickEvent&gt; adClickEventStream = env.readTextFile(resource.getPath())</span><br><span class="line">                .map( line -&gt; &#123;</span><br><span class="line">                    String[] fields = line.split(<span class="string">","</span>);</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">new</span> AdClickEvent(<span class="keyword">new</span> Long(fields[<span class="number">0</span>]), <span class="keyword">new</span> Long(fields[<span class="number">1</span>]), fields[<span class="number">2</span>], fields[<span class="number">3</span>], <span class="keyword">new</span> 			                                Long(fields[<span class="number">4</span>]));</span><br><span class="line">                &#125; )</span><br><span class="line">                .assignTimestampsAndWatermarks(<span class="keyword">new</span> AscendingTimestampExtractor&lt;AdClickEvent&gt;() &#123;</span><br><span class="line">                    <span class="meta">@Override</span></span><br><span class="line">                    <span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">extractAscendingTimestamp</span><span class="params">(AdClickEvent element)</span> </span>&#123;</span><br><span class="line">                        <span class="keyword">return</span> element.getTimestamp() * <span class="number">1000L</span>;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 2. 对同一个用户点击同一个广告的行为进行检测报警</span></span><br><span class="line">        SingleOutputStreamOperator&lt;AdClickEvent&gt; filterAdClickStream = adClickEventStream</span><br><span class="line">                .keyBy(<span class="string">"userId"</span>, <span class="string">"adId"</span>)    <span class="comment">// 基于用户id和广告id做分组</span></span><br><span class="line">                .process(<span class="keyword">new</span> FilterBlackListUser(<span class="number">100</span>));</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 3. 基于省份分组，开窗聚合</span></span><br><span class="line">        SingleOutputStreamOperator&lt;AdCountViewByProvince&gt; adCountResultStream = filterAdClickStream</span><br><span class="line">                .keyBy(AdClickEvent::getProvince)</span><br><span class="line">                .timeWindow(Time.hours(<span class="number">1</span>), Time.minutes(<span class="number">5</span>))     <span class="comment">// 定义滑窗，5分钟输出一次</span></span><br><span class="line">                .aggregate(<span class="keyword">new</span> AdCountAgg(), <span class="keyword">new</span> AdCountResult());</span><br><span class="line"></span><br><span class="line">        adCountResultStream.print();</span><br><span class="line">        filterAdClickStream.getSideOutput(<span class="keyword">new</span> OutputTag&lt;BlackListUserWarning&gt;(<span class="string">"blacklist"</span>)&#123;&#125;).print(<span class="string">"blacklist-user"</span>);</span><br><span class="line"></span><br><span class="line">        env.execute(<span class="string">"ad count by province job"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">AdCountAgg</span> <span class="keyword">implements</span> <span class="title">AggregateFunction</span>&lt;<span class="title">AdClickEvent</span>, <span class="title">Long</span>, <span class="title">Long</span>&gt;</span>&#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> Long <span class="title">createAccumulator</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0L</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> Long <span class="title">add</span><span class="params">(AdClickEvent value, Long accumulator)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> accumulator + <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> Long <span class="title">getResult</span><span class="params">(Long accumulator)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> accumulator;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> Long <span class="title">merge</span><span class="params">(Long a, Long b)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> a + b;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">AdCountResult</span> <span class="keyword">implements</span> <span class="title">WindowFunction</span>&lt;<span class="title">Long</span>, <span class="title">AdCountViewByProvince</span>, <span class="title">String</span>, <span class="title">TimeWindow</span>&gt;</span>&#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">apply</span><span class="params">(String province, TimeWindow window, Iterable&lt;Long&gt; input, Collector&lt;AdCountViewByProvince&gt; out)</span> <span class="keyword">throws</span>             Exception </span>&#123;</span><br><span class="line">            String windowEnd = <span class="keyword">new</span> Timestamp( window.getEnd() ).toString();</span><br><span class="line">            Long count = input.iterator().next();</span><br><span class="line">            out.collect( <span class="keyword">new</span> AdCountViewByProvince(province, windowEnd, count) );</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 实现自定义处理函数</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">FilterBlackListUser</span> <span class="keyword">extends</span> <span class="title">KeyedProcessFunction</span>&lt;<span class="title">Tuple</span>, <span class="title">AdClickEvent</span>, <span class="title">AdClickEvent</span>&gt;</span>&#123;</span><br><span class="line">        <span class="comment">// 定义属性：点击次数上限</span></span><br><span class="line">        <span class="keyword">private</span> Integer countUpperBound;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">FilterBlackListUser</span><span class="params">(Integer countUpperBound)</span> </span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.countUpperBound = countUpperBound;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 定义状态，保存当前用户对某一广告的点击次数</span></span><br><span class="line">        ValueState&lt;Long&gt; countState;</span><br><span class="line">        <span class="comment">// 定义一个标志状态，保存当前用户是否已经被发送到了黑名单里</span></span><br><span class="line">        ValueState&lt;Boolean&gt; isSentState;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">open</span><span class="params">(Configuration parameters)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">            countState = getRuntimeContext().getState(<span class="keyword">new</span> ValueStateDescriptor&lt;Long&gt;(<span class="string">"ad-count"</span>, Long<span class="class">.<span class="keyword">class</span>, 0<span class="title">L</span>))</span>;</span><br><span class="line">            isSentState = getRuntimeContext().getState(<span class="keyword">new</span> ValueStateDescriptor&lt;Boolean&gt;(<span class="string">"is-sent"</span>, Boolean<span class="class">.<span class="keyword">class</span>, <span class="title">false</span>))</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">processElement</span><span class="params">(AdClickEvent value, Context ctx, Collector&lt;AdClickEvent&gt; out)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">            <span class="comment">// 判断当前用户对同一广告的点击次数，如果不够上限，就count加1正常输出；如果达到上限，直接过滤掉，并侧输出流输出黑名单报警</span></span><br><span class="line">            <span class="comment">// 首先获取当前的count值</span></span><br><span class="line">            Long curCount = countState.value();</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 1. 判断是否是第一个数据，如果是的话，注册一个第二天0点的定时器</span></span><br><span class="line">            <span class="keyword">if</span>( curCount == <span class="number">0</span> )&#123;</span><br><span class="line">                Long ts = (ctx.timerService().currentProcessingTime() / (<span class="number">24</span>*<span class="number">60</span>*<span class="number">60</span>*<span class="number">1000</span>) + <span class="number">1</span>) * (<span class="number">24</span>*<span class="number">60</span>*<span class="number">60</span>*<span class="number">1000</span>) - <span class="number">8</span>*<span class="number">60</span>*<span class="number">60</span>*<span class="number">1000</span>;</span><br><span class="line">                ctx.timerService().registerProcessingTimeTimer(ts);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 2. 判断是否报警</span></span><br><span class="line">            <span class="keyword">if</span>( curCount &gt;= countUpperBound )&#123;</span><br><span class="line">                <span class="comment">// 判断是否输出到黑名单过，如果没有的话就输出到侧输出流</span></span><br><span class="line">                <span class="keyword">if</span>( !isSentState.value() )&#123;</span><br><span class="line">                    isSentState.update(<span class="keyword">true</span>);    <span class="comment">// 更新状态</span></span><br><span class="line">                    ctx.output( <span class="keyword">new</span> OutputTag&lt;BlackListUserWarning&gt;(<span class="string">"blacklist"</span>)&#123;&#125;,</span><br><span class="line">                            <span class="keyword">new</span> BlackListUserWarning(value.getUserId(), value.getAdId(), <span class="string">"click over "</span> + 												countUpperBound + <span class="string">"times."</span>));</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">return</span>;    <span class="comment">// 不再执行下面操作</span></span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 如果没有返回，点击次数加1，更新状态，正常输出当前数据到主流</span></span><br><span class="line">            countState.update(curCount + <span class="number">1</span>);</span><br><span class="line">            out.collect(value);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onTimer</span><span class="params">(<span class="keyword">long</span> timestamp, OnTimerContext ctx, Collector&lt;AdClickEvent&gt; out)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">            <span class="comment">// 清空所有状态</span></span><br><span class="line">            countState.clear();</span><br><span class="line">            isSentState.clear();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Rui Zhang
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://yoursite.com/2021/11/15/%E5%9F%BA%E4%BA%8EFlink%E7%9A%84%E7%94%B5%E5%95%86%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90-4/" title="基于Flink的电商用户行为数据分析（4）">http://yoursite.com/2021/11/15/基于Flink的电商用户行为数据分析-4/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Flink/" rel="tag"># Flink</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/11/02/Phoenix%E6%89%B9%E9%87%8F%E5%AF%BC%E5%85%A5%E6%95%B0%E6%8D%AE/" rel="prev" title="Phoenix批量导入数据">
+      <i class="fa fa-chevron-left"></i> Phoenix批量导入数据
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/11/16/Kafka%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4/" rel="next" title="Kafka常用命令">
+      Kafka常用命令 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#基于Flink的电商用户行为数据分析（4）"><span class="nav-number">1.</span> <span class="nav-text">基于Flink的电商用户行为数据分析（4）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#市场营销商业指标统计分析"><span class="nav-number">2.</span> <span class="nav-text">市场营销商业指标统计分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#模块创建和数据准备"><span class="nav-number">2.1.</span> <span class="nav-text">模块创建和数据准备</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#APP市场推广统计"><span class="nav-number">2.2.</span> <span class="nav-text">APP市场推广统计</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#APP-市场分渠道推广统计"><span class="nav-number">2.2.1.</span> <span class="nav-text">APP 市场分渠道推广统计</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#APP-市场不分渠道推广统计"><span class="nav-number">2.2.2.</span> <span class="nav-text">APP 市场不分渠道推广统计</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#页面广告分析"><span class="nav-number">2.3.</span> <span class="nav-text">页面广告分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#页面广告点击量统计"><span class="nav-number">2.3.1.</span> <span class="nav-text">页面广告点击量统计</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#黑名单过滤"><span class="nav-number">2.3.2.</span> <span class="nav-text">黑名单过滤</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Rui Zhang"
+      src="/images/head.jpg">
+  <p class="site-author-name" itemprop="name">Rui Zhang</p>
+  <div class="site-description" itemprop="description">不在沉默中爆发，就在沉默中灭亡</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">52</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2021 – 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Rui Zhang</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.7m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">25:10</span>
+</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"right","width":120,"height":230},"mobile":{"show":true},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/clicklove.js"></script>

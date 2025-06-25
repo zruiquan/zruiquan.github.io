@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="概念采集项目和数据仓库项目的区别采集项目和数据仓库项目其实是企业中数据管理平台中的2个核心管理模块 采集项目和数据仓库项目其实具有独立性，可以分开来讲（开发）  从功能的角度 采集项目：以数据的采集，传输为主 数据仓库项目：以数据的统计分析和计算为主，同时也能存储数据  从技术的角度 采集项目：Flume，Kafka，Datax，Maxwell 数据仓库项目：Mysql，HDFS，Spark，Fl">
+<meta property="og:type" content="article">
+<meta property="og:title" content="电商数仓项目-前置概念0">
+<meta property="og:url" content="http://yoursite.com/2024/07/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E5%89%8D%E7%BD%AE%E6%A6%82%E5%BF%B50/index.html">
+<meta property="og:site_name" content="没有尾巴的小驴">
+<meta property="og:description" content="概念采集项目和数据仓库项目的区别采集项目和数据仓库项目其实是企业中数据管理平台中的2个核心管理模块 采集项目和数据仓库项目其实具有独立性，可以分开来讲（开发）  从功能的角度 采集项目：以数据的采集，传输为主 数据仓库项目：以数据的统计分析和计算为主，同时也能存储数据  从技术的角度 采集项目：Flume，Kafka，Datax，Maxwell 数据仓库项目：Mysql，HDFS，Spark，Fl">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/2024/07/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E5%89%8D%E7%BD%AE%E6%A6%82%E5%BF%B50/image-20240730143711985.png">
+<meta property="og:image" content="http://yoursite.com/2024/07/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E5%89%8D%E7%BD%AE%E6%A6%82%E5%BF%B50/image-20240730143930524.png">
+<meta property="og:image" content="http://yoursite.com/2024/07/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E5%89%8D%E7%BD%AE%E6%A6%82%E5%BF%B50/image-20240730144013414.png">
+<meta property="og:image" content="http://yoursite.com/2024/07/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E5%89%8D%E7%BD%AE%E6%A6%82%E5%BF%B50/image-20240730144606130.png">
+<meta property="og:image" content="http://yoursite.com/2024/07/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E5%89%8D%E7%BD%AE%E6%A6%82%E5%BF%B50/image-20240730150411913.png">
+<meta property="og:image" content="http://yoursite.com/2024/07/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E5%89%8D%E7%BD%AE%E6%A6%82%E5%BF%B50/image-20240731152456418.png">
+<meta property="article:published_time" content="2024-07-30T01:50:15.000Z">
+<meta property="article:modified_time" content="2025-06-25T08:08:46.317Z">
+<meta property="article:author" content="Rui Zhang">
+<meta property="article:tag" content="数仓">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2024/07/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E5%89%8D%E7%BD%AE%E6%A6%82%E5%BF%B50/image-20240730143711985.png">
+
+<link rel="canonical" href="http://yoursite.com/2024/07/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E5%89%8D%E7%BD%AE%E6%A6%82%E5%BF%B50/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true
+  };
+</script>
+
+  <title>电商数仓项目-前置概念0 | 没有尾巴的小驴</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">没有尾巴的小驴</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">记录生活</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-fw fa-user"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签<span class="badge">22</span></a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类<span class="badge">22</span></a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档<span class="badge">52</span></a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2024/07/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E5%89%8D%E7%BD%AE%E6%A6%82%E5%BF%B50/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/head.jpg">
+      <meta itemprop="name" content="Rui Zhang">
+      <meta itemprop="description" content="不在沉默中爆发，就在沉默中灭亡">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="没有尾巴的小驴">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          电商数仓项目-前置概念0
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-07-30 09:50:15" itemprop="dateCreated datePublished" datetime="2024-07-30T09:50:15+08:00">2024-07-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-06-25 16:08:46" itemprop="dateModified" datetime="2025-06-25T16:08:46+08:00">2025-06-25</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%95%B0%E4%BB%93/" itemprop="url" rel="index"><span itemprop="name">数仓</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-file-word-o"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-clock-o"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h1><h2 id="采集项目和数据仓库项目的区别"><a href="#采集项目和数据仓库项目的区别" class="headerlink" title="采集项目和数据仓库项目的区别"></a><strong>采集项目和数据仓库项目的区别</strong></h2><p>采集项目和数据仓库项目其实是企业中数据管理平台中的2个核心管理模块</p>
+<p>采集项目和数据仓库项目其实具有独立性，可以分开来讲（开发）</p>
+<ol>
+<li><p>从功能的角度</p>
+<p>采集项目：以数据的采集，传输为主</p>
+<p>数据仓库项目：以数据的统计分析和计算为主，同时也能存储数据</p>
+</li>
+<li><p>从技术的角度</p>
+<p>采集项目：Flume，Kafka，Datax，Maxwell</p>
+<p>数据仓库项目：Mysql，HDFS，Spark，Flink，MR，Hive</p>
+</li>
+</ol>
+<h2 id="数据库-amp-数据仓库"><a href="#数据库-amp-数据仓库" class="headerlink" title="数据库 &amp; 数据仓库"></a><strong>数据库 &amp; 数据仓库</strong></h2><ol>
+<li><p>从名称上进行区分</p>
+<p>数据库：Database（存储基础，核心的数据）</p>
+<p>数据仓库：Data Warehouse（Warehous：货栈，大商店），以数据的计算为主，同时也能存储数据</p>
+</li>
+<li><p>从数据来源进行区分</p>
+<p>数据库：企业中基础核心的业务数据</p>
+<p>数据仓库：数据库中的数据</p>
+</li>
+<li><p>从数据存储进行区分</p>
+<p>数据库：核心作用就是查找业务数据，主要使用行式存储，和索引的方式存储数据，不能存储海量数据</p>
+<p>数据仓库：核心作用就是统计分析数据，使用列式存储（如：parquet，orc），可以存储海量数据</p>
+</li>
+<li><p>从数据价值进行区分</p>
+<p>数据库：保障全企业全业务的正常运行</p>
+<p>数据仓库：将数据的统计结果为企业的经营决策提供数据支撑。注意：数据仓库不是数据流转的终点，需要将统计结果通过可视化平台呈现给客户，这个才是数据流转的终点</p>
+</li>
+</ol>
+<h2 id="数据流转的过程"><a href="#数据流转的过程" class="headerlink" title="数据流转的过程"></a><strong>数据流转的过程</strong></h2><p><img src="/2024/07/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E5%89%8D%E7%BD%AE%E6%A6%82%E5%BF%B50/image-20240730143711985.png" alt="image-20240730143711985"></p>
+<h2 id="数据仓库的核心功能：统计分析"><a href="#数据仓库的核心功能：统计分析" class="headerlink" title="数据仓库的核心功能：统计分析"></a><strong>数据仓库的核心功能：统计分析</strong></h2><p>使用技术：Spark，MR，Flink，<strong>SQL（主要使用）</strong></p>
+<p>SQL 主要有两种方式</p>
+<ol>
+<li><p>Spark On Hive：Spark解析SQL</p>
+</li>
+<li><p>Hive On Spark：Hive解析SQL（主要使用）</p>
+</li>
+</ol>
+<h2 id="统计分析的基本步骤"><a href="#统计分析的基本步骤" class="headerlink" title="统计分析的基本步骤"></a><strong>统计分析的基本步骤</strong></h2><p><img src="/2024/07/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E5%89%8D%E7%BD%AE%E6%A6%82%E5%BF%B50/image-20240730143930524.png" alt="image-20240730143930524"></p>
+<p>数据仓库也应该遵循这个步骤</p>
+<p><img src="/2024/07/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E5%89%8D%E7%BD%AE%E6%A6%82%E5%BF%B50/image-20240730144013414.png" alt="image-20240730144013414"></p>
+<p><img src="/2024/07/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E5%89%8D%E7%BD%AE%E6%A6%82%E5%BF%B50/image-20240730144606130.png" alt="image-20240730144606130"></p>
+<p>如果将数据库（MySQL）直接作为数据仓库的数据源</p>
+<ol>
+<li><p>业务数据库的数据存储为行式存储，而是数据仓库的数据要求为列式存储</p>
+<p>数据不能直接对接 ：行式数据转换为列式数据</p>
+</li>
+<li><p>业务数据库中存储的数据不是海量数据，但是数据仓库要求的数据必须是海量数据</p>
+<p>数据不能直接对接 ：数据量不够</p>
+</li>
+<li><p>数据库不是为了数据仓库服务的</p>
+<p>数据仓库在对接数据库数据时，会对数据库的性能造成影响</p>
+</li>
+</ol>
+<p>数据仓库应该设计一个自己的数据源，为了代替和补充数据库。<strong>数据存储应该是和数据库的同步（保持一致）的，并且进行汇总（数据库中的历史数据导入到数据仓库自己的数据源中）</strong></p>
+<p>数据仓库的开发使用SQL语言进行处理，那么数据的处理步骤中需要将数据转换为<strong>结构化数据：表</strong></p>
+<p><img src="/2024/07/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E5%89%8D%E7%BD%AE%E6%A6%82%E5%BF%B50/image-20240730150411913.png" alt="image-20240730150411913"></p>
+<p>数据仓库的数据源数据需要从数据库中周期性（天）同步过来，一般情况下，将这个同步过程，称之为<strong>采集</strong></p>
+<p>数据采集的时候，如果想要将数据同步到数据仓库的数据源，那么就必须知道数据源中的表结构，那么采集项目和数据仓库项目就存在耦合性，实际开发中，需要<strong>将采集项目和数据仓库项目解耦合（增加中间件）</strong></p>
+<p><img src="/2024/07/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E5%89%8D%E7%BD%AE%E6%A6%82%E5%BF%B50/image-20240731152456418.png" alt="image-20240731152456418"></p>
+<h2 id="数据同步的方式"><a href="#数据同步的方式" class="headerlink" title="数据同步的方式"></a>数据同步的方式</h2><p>全量数据同步：表的全部数据，不用于实时数据分析，可以使用 Datax 等工具</p>
+<p>增量数据同步：表的新增及变化的数据，用于实时数据分析，离线数据分析，可以使用 Maxwell 等工具</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Rui Zhang
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://yoursite.com/2024/07/30/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E5%89%8D%E7%BD%AE%E6%A6%82%E5%BF%B50/" title="电商数仓项目-前置概念0">http://yoursite.com/2024/07/30/电商数仓项目-前置概念0/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%95%B0%E4%BB%93/" rel="tag"># 数仓</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/07/29/Spark%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98/" rel="prev" title="Spark性能调优">
+      <i class="fa fa-chevron-left"></i> Spark性能调优
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/07/31/%E7%94%B5%E5%95%86%E6%95%B0%E4%BB%93%E9%A1%B9%E7%9B%AE-%E7%94%A8%E6%88%B7%E8%A1%8C%E4%B8%BA%E9%87%87%E9%9B%86%E5%B9%B3%E5%8F%B01/" rel="next" title="电商数仓项目-用户行为采集平台1">
+      电商数仓项目-用户行为采集平台1 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#概念"><span class="nav-number">1.</span> <span class="nav-text">概念</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#采集项目和数据仓库项目的区别"><span class="nav-number">1.1.</span> <span class="nav-text">采集项目和数据仓库项目的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据库-amp-数据仓库"><span class="nav-number">1.2.</span> <span class="nav-text">数据库 &amp; 数据仓库</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据流转的过程"><span class="nav-number">1.3.</span> <span class="nav-text">数据流转的过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据仓库的核心功能：统计分析"><span class="nav-number">1.4.</span> <span class="nav-text">数据仓库的核心功能：统计分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#统计分析的基本步骤"><span class="nav-number">1.5.</span> <span class="nav-text">统计分析的基本步骤</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据同步的方式"><span class="nav-number">1.6.</span> <span class="nav-text">数据同步的方式</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Rui Zhang"
+      src="/images/head.jpg">
+  <p class="site-author-name" itemprop="name">Rui Zhang</p>
+  <div class="site-description" itemprop="description">不在沉默中爆发，就在沉默中灭亡</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">52</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 2021 – 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Rui Zhang</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">1.7m</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">25:10</span>
+</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":{"jsonPath":"/live2dw/assets/shizuku.model.json"},"display":{"position":"right","width":120,"height":230},"mobile":{"show":true},"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
+<!-- 页面点击小红心 -->
+<script type="text/javascript" src="/js/src/clicklove.js"></script>
